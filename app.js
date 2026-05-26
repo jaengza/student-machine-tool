@@ -2221,7 +2221,7 @@ function applyImport() {
     document.getElementById('import-preview').style.display = 'none';
     
     // Clear forms
-    document.getElementById('sheets-url').value = 'https://docs.google.com/spreadsheets/d/1cGtBSblVKDqTyFCq8LUf0Yr6XpYLzHbPW_hKtG2i_tQ/edit?usp=sharing';
+    document.getElementById('sheets-url').value = 'https://docs.google.com/spreadsheets/d/16ly2qP4dXzQBPQo3gKJTQY9-Pxp9bMGtgAOMwSamPgA/edit?usp=sharing';
     document.getElementById('csv-file').value = '';
     
     goPage('dashboard');
