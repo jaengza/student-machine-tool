@@ -1476,12 +1476,17 @@ function viewProfile(studentId) {
   
   let headerPhotoHTML = '';
   if (hasImg) {
-    headerPhotoHTML = `<img src="${driveImg}" alt="Student Image" class="profile-big-avatar" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 fill=%22%23334155%22/><text x=%2250%25%22 y=%2255%25%22 font-size=%2228%22 fill=%22white%22 font-family=%22Prompt%22 font-weight=%22bold%22 text-anchor=%22middle%22>${dn.fn[0]}</text></svg>';">`;
+    headerPhotoHTML = `
+      <div class="profile-photo-wrap" onclick="openLightbox('${driveImg}', 'คุณ${dn.fn} ${dn.ln}${s.nickname ? ' (' + s.nickname + ')' : ''}')">
+        <img src="${driveImg}" alt="Student Image" class="profile-big-avatar"
+          onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 fill=%22%23334155%22/><text x=%2250%25%22 y=%2255%25%22 font-size=%2228%22 fill=%22white%22 font-family=%22Prompt%22 font-weight=%22bold%22 text-anchor=%22middle%22>${dn.fn[0]}</text></svg>';">
+        <div class="photo-zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i> กดดูรูปเต็ม</div>
+      </div>`;
   } else {
     const palette = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
     const bg = palette[(s.id || '').charCodeAt(0) % palette.length || 0];
     headerPhotoHTML = `
-      <div class="profile-big-avatar" style="background:${bg}; display:flex; align-items:center; justify-content:center; color:white; font-size:36px; font-weight:800; font-family:var(--fh);">
+      <div class="profile-big-avatar" style="background:${bg}; display:flex; align-items:center; justify-content:center; color:white; font-size:36px; font-weight:800; font-family:var(--fh); cursor:default;">
         ${(dn.fn[0] || '?').toUpperCase()}
       </div>
     `;
@@ -1580,6 +1585,46 @@ function viewProfile(studentId) {
   `;
   openModal('profile-modal');
 }
+
+// ── PHOTO LIGHTBOX FUNCTIONS (v10.0) ──
+
+// เปิด Lightbox ดูรูปภาพเต็มจอ
+function openLightbox(imgUrl, caption) {
+  const lightbox = document.getElementById('photo-lightbox');
+  const img = document.getElementById('lightbox-img');
+  const cap = document.getElementById('lightbox-caption');
+  if (!lightbox || !img) return;
+
+  img.src = imgUrl;
+  if (cap) cap.textContent = caption || '';
+
+  lightbox.classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  // ปิดด้วยปุ่ม ESC บน PC
+  document.addEventListener('keydown', _lightboxEscHandler);
+}
+
+// ปิด Lightbox
+function closeLightbox() {
+  const lightbox = document.getElementById('photo-lightbox');
+  const img = document.getElementById('lightbox-img');
+  if (!lightbox) return;
+
+  lightbox.classList.remove('active');
+  document.body.style.overflow = '';
+  document.removeEventListener('keydown', _lightboxEscHandler);
+
+  // ล้าง src หลังปิดเพื่อไม่โหลดค้าง
+  setTimeout(() => { if (img) img.src = ''; }, 300);
+}
+
+// ESC handler
+function _lightboxEscHandler(e) {
+  if (e.key === 'Escape') closeLightbox();
+}
+
+
 
 // Print profile window
 function printProfile() {

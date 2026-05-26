@@ -794,6 +794,18 @@
   <!-- ── TOAST NOTIFICATIONS ── -->
   <div id="toast-container" class="toast-wrapper"></div>
 
+  <!-- ── PHOTO LIGHTBOX VIEWER ── -->
+  <!-- กดรูปภาพเพื่อดูเต็มจอ พร้อม Zoom และ Animation -->
+  <div id="photo-lightbox" class="photo-lightbox" onclick="closeLightbox()" aria-modal="true" role="dialog" aria-label="ดูรูปภาพเต็มจอ">
+    <button class="lightbox-close-btn" onclick="closeLightbox()" title="ปิด">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="lightbox-body" onclick="event.stopPropagation()">
+      <img id="lightbox-img" src="" alt="รูปภาพนักเรียน" class="lightbox-img">
+      <div id="lightbox-caption" class="lightbox-caption"></div>
+    </div>
+  </div>
+
   <!-- ── MOBILE BOTTOM NAVIGATION BAR ── -->
   <!-- ปุ่มนำทางแถบล่างสำหรับมือถือโดยเฉพาะ ไม่แสดงบนจอ Desktop -->
   <nav id="mobile-bottom-nav" class="mob-bottom-nav" aria-label="Mobile Bottom Navigation">
