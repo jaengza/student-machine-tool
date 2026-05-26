@@ -2539,13 +2539,13 @@ async function syncGoogleSheetsFast() {
         importData = results.data;
         importHeaders = Object.keys(importData[0]);
         
-        // Auto map headers using predefined smart dictionary
+        // Auto map headers using predefined smart dictionary (supporting user's exact headers)
         const THAI_MAP = {
-          id: ['รหัสประจำตัวนักเรียนนักศึกษา', 'รหัสประจำตัว', 'รหัสนักเรียน', 'รหัส'],
-          fname: ['ชื่อ-นามสกุล', 'ชื่อจริง', 'ชื่อ', 'ชื่อผู้เรียน'],
-          lname: ['ชื่อ-นามสกุล', 'นามสกุล', 'สกุล'],
+          id: ['รหัสประจำตัวนักเรียนนักศึกษา', 'รหัสประจำตัวนักเรียน', 'รหัสประจำตัว', 'รหัสนักเรียน', 'รหัส'],
+          fname: ['ชื่อนาม-นามสกุล', 'ชื่อ-นามสกุล', 'ชื่อจริง', 'ชื่อ', 'ชื่อผู้เรียน'],
+          lname: ['ชื่อนาม-นามสกุล', 'ชื่อ-นามสกุล', 'นามสกุล', 'สกุล'],
           nickname: ['ชื่อเล่น'],
-          level: ['ระดับชั้น', 'ระดับการศึกษา', 'ระดับ'],
+          level: ['ระดับชั้นปี', 'ระดับชั้น', 'ระดับการศึกษา', 'ระดับ'],
           year: ['ชั้นปี', 'ชั้นปีที่', 'ปี'],
           room: ['กลุ่มเรียน', 'กลุ่มเรียน / ห้อง', 'ห้อง', 'กลุ่ม'],
           phone: ['เบอร์โทรศัพท์มือถือ ของนักเรียน', 'เบอร์โทรนักเรียน', 'เบอร์โทรศัพท์นักเรียน', 'เบอร์โทร', 'โทรศัพท์'],
@@ -2595,7 +2595,7 @@ async function syncGoogleSheetsFast() {
         importData.forEach(row => {
           const student = {};
           
-          // Smart Name Splitting logic if fname and lname map to the SAME column (e.g. ชื่อ-นามสกุล)
+          // Smart Name Splitting with Title Clean (นาย/นางสาว)
           let fnameVal = '';
           let lnameVal = '';
           const fnameCol = columnMap['fname'];
@@ -2603,17 +2603,22 @@ async function syncGoogleSheetsFast() {
           
           if (fnameCol && lnameCol && fnameCol === lnameCol) {
             const fullName = String(row[fnameCol] || '').trim();
-            const parts = fullName.split(/\s+/);
+            // Clean prefixes like นาย, นางสาว
+            const cleanFullName = fullName.replace(/^(นาย|นางสาว|เด็กชาย|เด็กหญิง|นาง|ด\.ช\.|ด\.ญ\.)\s*/, '').trim();
+            const parts = cleanFullName.split(/\s+/);
             if (parts.length >= 2) {
               fnameVal = parts[0];
               lnameVal = parts.slice(1).join(' ');
             } else {
-              fnameVal = fullName;
+              fnameVal = cleanFullName;
               lnameVal = '';
             }
           } else {
             fnameVal = fnameCol ? String(row[fnameCol] || '').trim() : '';
             lnameVal = lnameCol ? String(row[lnameCol] || '').trim() : '';
+            
+            // Clean prefixes even if in split columns
+            fnameVal = fnameVal.replace(/^(นาย|นางสาว|เด็กชาย|เด็กหญิง|นาง|ด\.ช\.|ด\.ญ\.)\s*/, '').trim();
           }
           
           FIELDS.forEach(f => {
@@ -2629,11 +2634,17 @@ async function syncGoogleSheetsFast() {
           });
           
           if (!student.id) return;
-          
-          // Clean ID value for lookup
           const idVal = String(student.id).trim();
           
-          // Fallback parsing for level & year from Student IDs
+          // Smart Header Mismatch Guard: If room contains a URL, it is actually a photo link!
+          if (student.room && (student.room.includes('drive.google.com') || student.room.includes('lh3.googleusercontent.com') || student.room.includes('http'))) {
+            if (!student.photo) {
+              student.photo = student.room;
+            }
+            student.room = ''; // Clear the corrupted room value
+          }
+          
+          // Parse level & year from Student IDs
           if (student.level) {
             const lvlClean = String(student.level).trim();
             const m = lvlClean.match(/^(ปวช|ปวส)/i);
@@ -2660,23 +2671,37 @@ async function syncGoogleSheetsFast() {
             }
             student.year = parsedYear;
           } else {
-            student.year = String(student.year).trim();
+            student.year = String(student.year).replace(/[^0-9]/g, '').trim(); // Keep only digits
           }
           
           if (!student.status) student.status = 'กำลังศึกษา';
           if (!student.risk_level) student.risk_level = 'ต่ำ';
           
-          // Clean photo Drive link
+          // Normalize Drive Photo Link
           if (student.photo) {
             student.photo = normalizeDriveUrl(student.photo);
           }
           
-          const existingIndex = DB.findIndex(x => String(x.id).trim() === idVal);
+          // lookup using Smart ID and Smart Merge to protect other existing fields
+          const existingIndex = DB.findIndex(x => {
+            const cleanXId = String(x.id).trim();
+            return cleanXId === idVal || (idVal.length >= 3 && cleanXId.endsWith(idVal));
+          });
+          
           if (existingIndex !== -1) {
-            // Retain old photo link if new one isn't loaded
-            const prevPhoto = DB[existingIndex].photo;
-            if (!student.photo && prevPhoto) student.photo = prevPhoto;
-            DB[existingIndex] = student;
+            // Smart Merge: Only update fields that are provided in the CSV row, keep other existing details
+            const existingStudent = DB[existingIndex];
+            
+            if (student.fname) existingStudent.fname = student.fname;
+            if (student.lname) existingStudent.lname = student.lname;
+            if (student.nickname) existingStudent.nickname = student.nickname;
+            if (student.level) existingStudent.level = student.level;
+            if (student.year) existingStudent.year = student.year;
+            if (student.room) existingStudent.room = student.room;
+            if (student.status) existingStudent.status = student.status;
+            if (student.phone) existingStudent.phone = student.phone;
+            if (student.photo) existingStudent.photo = student.photo;
+            
             updatedCount++;
           } else {
             DB.push(student);
@@ -2759,9 +2784,20 @@ function syncPhotosAutomaticallyFromSheetsUrl(url) {
         
         DB.forEach(student => {
           let isMatch = false;
-          if (rowId && String(student.id).trim() === rowId) {
-            isMatch = true;
-          } else if (cleanName) {
+          
+          // Smart ID Matching Fallback (handles 3-digit rowId matching 11-digit student.id)
+          if (rowId && rowId.trim() !== '') {
+            const cleanRowId = rowId.trim();
+            const cleanStuId = String(student.id).trim();
+            if (cleanStuId === cleanRowId) {
+              isMatch = true;
+            } else if (cleanRowId.length >= 3 && cleanStuId.endsWith(cleanRowId)) {
+              isMatch = true;
+            }
+          }
+          
+          // Fallback to name match if ID didn't match
+          if (!isMatch && cleanName) {
             const stuCleanName = (String(student.fname || '') + String(student.lname || '')).replace(/^(นาย|นางสาว|เด็กชาย|เด็กหญิง|นาง)\s*/, '').replace(/\s+/g, '');
             if (stuCleanName.includes(cleanName) || cleanName.includes(stuCleanName)) {
               isMatch = true;
