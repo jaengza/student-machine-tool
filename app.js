@@ -123,6 +123,9 @@ async function initApp() {
   updateDashboard();
   updateHeaderCount();
   
+  // เรียกเปิดกลไกการซิงค์ข้อมูลให้เป็นปัจจุบันตลอดเวลา (Real-time Sync Engine)
+  startAlwaysUpToDateEngine();
+  
   // Refresh views
   const activePage = document.querySelector('.page.active') ? document.querySelector('.page.active').id : 'page-dashboard';
   if (activePage === 'page-students') renderStudents();
@@ -1238,6 +1241,11 @@ function deleteStudent(studentId) {
     DB = DB.filter(x => String(x.id) !== String(studentId));
     saveDatabase();
     showToast(`🗑️ ลบข้อมูลนักเรียนเรียบร้อยแล้ว`, 'ok');
+    
+    // สั่งลบข้อมูลบนคลาวด์ Google Sheets
+    if (CLOUD_API_URL) {
+      deleteFromCloud(studentId);
+    }
     
     // Thorough refresh of all UI components
     buildRoomFilter();
@@ -2708,6 +2716,177 @@ async function saveToCloud(student) {
     console.error('Failed to sync to cloud', err);
     showToast('⚠️ ไม่สามารถส่งขึ้นคลาวด์ได้ทันที ข้อมูลจะเซฟไว้ในเครื่องนี้ก่อน', 'err');
   }
+}
+
+// Send delete student request to Google Sheets Cloud Web App API
+async function deleteFromCloud(studentId) {
+  if (!CLOUD_API_URL || !CLOUD_API_URL.startsWith('http')) return;
+  
+  const payload = {
+    id: studentId,
+    action: "delete"
+  };
+  
+  try {
+    showToast('🗑️ กำลังส่งคำสั่งลบประวัติไปที่ Google Sheets...', 'ok');
+    await fetch(CLOUD_API_URL, {
+      method: 'POST',
+      mode: 'no-cors', 
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    showToast('🟢 ลบประวัติบนคลาวด์ออนไลน์สำเร็จ!', 'ok');
+  } catch (err) {
+    console.error('Failed to delete from cloud', err);
+    showToast('⚠️ ไม่สามารถสั่งลบออนไลน์ได้ทันที ข้อมูลอาจยังค้างอยู่ในกูเกิลชีต', 'err');
+  }
+}
+
+// Background Cloud Synchronization Engine (Silent Auto-Sync)
+async function syncDatabaseBackground() {
+  if (!CLOUD_API_URL || !CLOUD_API_URL.startsWith('http')) return;
+  if (!isAuthorized) return; // Only sync if logged in
+  
+  // เกราะกันฟอร์มสะดุด (Active Form Guard): ห้ามดึงข้อมูลใหม่มาทับ หากคุณครูกำลังพิมพ์คีย์ข้อมูลอยู่!
+  const addModal = document.getElementById('add-modal');
+  const riskModal = document.getElementById('risk-modal');
+  if ((addModal && addModal.classList.contains('active')) || (riskModal && riskModal.classList.contains('active'))) {
+    console.log('Background Sync deferred: User is actively editing a form.');
+    return;
+  }
+  
+  try {
+    console.log('Running silent background cloud database sync...');
+    const response = await fetch(CLOUD_API_URL);
+    const cloudData = await response.json();
+    
+    if (cloudData && Array.isArray(cloudData)) {
+      const THAI_MAP_REVERSE = {
+        "รหัสประจำตัวนักเรียน": "id", "รหัสนักเรียน": "id", "รหัสประจำตัว": "id", "รหัส": "id", "id": "id",
+        "ชื่อจริง": "fname", "ชื่อ": "fname", "ชื่อนาม-นามสกุล": "fname", "ชื่อ-นามสกุล": "fname",
+        "นามสกุล": "lname", "สกุล": "lname",
+        "ชื่อเล่น": "nickname", "รูป": "photo", "รูปถ่าย": "photo", "รูปภาพ": "photo", "photo": "photo",
+        "ระดับชั้น": "level", "ระดับ": "level", "ระดับชั้นปี": "level",
+        "ชั้นปี": "year", "กลุ่มเรียน": "room", "ห้อง": "room", "เบอร์โทรนักเรียน": "phone", "เบอร์โทร": "phone",
+        "โซเชียล": "social", "line": "social", "facebook": "social",
+        "ชื่อผู้ปกครอง": "parent", "เบอร์โทรผู้ปกครอง": "parentphone", "เบอร์ฉุกเฉิน": "parentphone2",
+        "สถานศึกษาเดิม": "prevschool", "ไซส์เสื้อ": "shirt", "โรคประจำตัว": "health",
+        "การเดินทาง": "transport", "เงินมาเรียนต่อวัน": "allowance", "พฤติกรรมเสี่ยง": "smoke",
+        "สถานที่ฝึกงาน": "internship_place", "เบอร์โทรสถานที่ฝึกงาน": "internship_phone",
+        "ระดับความเสี่ยงภาพรวม": "risk_level", "เสี่ยงด้านการเรียน": "risk_academic",
+        "เสี่ยงด้านพฤติกรรม": "risk_behavior", "เสี่ยงด้านครอบครัว": "risk_family",
+        "เสี่ยงด้านเศรษฐกิจ": "risk_economic", "หมายเหตุช่วยเหลือ": "risk_note"
+      };
+      
+      let parsedDB = [];
+      cloudData.forEach(row => {
+        const student = {};
+        let fnameVal = '';
+        let lnameVal = '';
+        let fullName = '';
+        
+        for (var key in row) {
+          var cleanK = key.trim();
+          if (cleanK === "ชื่อนาม-นามสกุล" || cleanK === "ชื่อ-นามสกุล") {
+            fullName = String(row[key] || '').trim();
+            break;
+          }
+        }
+        
+        if (fullName !== '') {
+          const cleanFullName = fullName.replace(/^(นาย|นางสาว|เด็กชาย|เด็กหญิง|นาง|ด\.ช\.|ด\.ญ\.)\s*/, '').trim();
+          const parts = cleanFullName.split(/\s+/);
+          if (parts.length >= 2) {
+            fnameVal = parts[0];
+            lnameVal = parts.slice(1).join(' ');
+          } else {
+            fnameVal = cleanFullName;
+            lnameVal = '';
+          }
+        }
+        
+        FIELDS.forEach(f => {
+          student[f.k] = '';
+        });
+        
+        for (var sheetKey in row) {
+          var cleanSK = sheetKey.trim();
+          var mappedField = THAI_MAP_REVERSE[cleanSK];
+          if (mappedField) {
+            student[mappedField] = String(row[sheetKey] || '').trim();
+          }
+        }
+        
+        if (fnameVal !== '') student.fname = fnameVal;
+        if (lnameVal !== '') student.lname = lnameVal;
+        
+        if (student.id) {
+          student.id = String(student.id).trim();
+          if (!student.level) student.level = student.id.startsWith('6') ? 'ปวช.' : 'ปวส.';
+          if (!student.year) {
+            let parsedYear = '1';
+            const idVal = student.id;
+            if (idVal.length === 10 || idVal.length === 11) {
+              const prefixStr = idVal.substring(0, 2);
+              const prefixVal = parseInt(prefixStr, 10);
+              if (!isNaN(prefixVal) && prefixVal >= 60 && prefixVal <= 69) {
+                const calcYear = 69 - prefixVal + 1;
+                if (calcYear >= 1 && calcYear <= 3) parsedYear = String(calcYear);
+              }
+            }
+            student.year = parsedYear;
+          }
+          if (student.room && (student.room.includes('drive.google.com') || student.room.includes('lh3.googleusercontent.com') || student.room.includes('http'))) {
+            if (!student.photo) student.photo = student.room;
+            student.room = '';
+          }
+          if (student.photo) student.photo = normalizeDriveUrl(student.photo);
+          parsedDB.push(student);
+        }
+      });
+      
+      const isDifferent = JSON.stringify(DB) !== JSON.stringify(parsedDB);
+      
+      if (isDifferent && parsedDB.length > 0) {
+        console.log('Background Sync: Changes detected on Google Sheets. Updating Local Database...');
+        DB = parsedDB;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+        
+        buildRoomFilter();
+        updateDashboard();
+        updateHeaderCount();
+        
+        const activePage = document.querySelector('.page.active') ? document.querySelector('.page.active').id : 'page-dashboard';
+        if (activePage === 'page-students') renderStudents();
+        else if (activePage === 'page-search') doQuickSearch();
+        
+        showToast('🔄 อัปเดตฐานข้อมูลนักเรียนเป็นปัจจุบันจาก Google Sheets แล้ว!', 'ok');
+      } else {
+        console.log('Background Sync: Database is already up to date.');
+      }
+    }
+  } catch (err) {
+    console.error('Silent Background Sync failed:', err);
+  }
+}
+
+// Start Always-Up-To-Date Synchronization Engine (Focus + Polling)
+function startAlwaysUpToDateEngine() {
+  if (!CLOUD_API_URL || !CLOUD_API_URL.startsWith('http')) return;
+  
+  // 1. ซิงค์สดเบื้องหลังทันทีที่คุณครูสลับหน้าต่างกลับมาที่หน้านี้ (Window Focus Event)
+  window.removeEventListener('focus', syncDatabaseBackground);
+  window.addEventListener('focus', syncDatabaseBackground);
+  
+  // 2. ตั้งเวลาซิงค์อัตโนมัติเบื้องหลังทุกๆ 60 วินาที (Polling Event)
+  if (window.backgroundSyncInterval) {
+    clearInterval(window.backgroundSyncInterval);
+  }
+  window.backgroundSyncInterval = setInterval(syncDatabaseBackground, 60000);
+  
+  console.log('🚀 Real-time Always Up-to-Date Engine (v8.0) started successfully!');
 }
 
 // Save cloud settings configuration

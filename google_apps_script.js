@@ -103,6 +103,19 @@ function doPost(e) {
       }
     }
     
+    // พิเศษ: หากเป็นการเรียกเพื่อลบข้อมูลออนไลน์ (Delete Event)
+    if (params.action === "delete") {
+      if (targetRowIdx !== -1) {
+        sheet.deleteRow(targetRowIdx);
+        return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "ลบประวัตินักเรียนจากกูเกิลชีตเรียบร้อย!" }))
+          .setMimeType(ContentService.MimeType.JSON)
+          .setHeader('Access-Control-Allow-Origin', '*');
+      }
+      return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "ไม่พบข้อมูลนักเรียนคนนี้ในชีต ถือว่าลบแล้ว" }))
+        .setMimeType(ContentService.MimeType.JSON)
+        .setHeader('Access-Control-Allow-Origin', '*');
+    }
+    
     // 3. หากเป็นนักเรียนคนใหม่ (ยังไม่มีประวัติในชีต) ให้กดต่อท้ายแถวใหม่ให้ทันที!
     if (targetRowIdx === -1) {
       var newRow = [];
