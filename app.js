@@ -2572,7 +2572,7 @@ async function syncGoogleSheetsFast() {
         columnMap = {};
         FIELDS.forEach(f => {
           const match = importHeaders.find(h => {
-            const cleanH = h.trim().toLowerCase();
+            const cleanH = String(h || '').trim().toLowerCase();
             return (THAI_MAP[f.k] || []).some(opt => cleanH.includes(opt.toLowerCase()));
           });
           if (match) {
@@ -2582,7 +2582,10 @@ async function syncGoogleSheetsFast() {
         
         // Match photo column if not mapped
         if (!columnMap['photo']) {
-          const photoMatch = importHeaders.find(h => h.includes('รูป') || h.includes('ภาพ') || h.includes('photo'));
+          const photoMatch = importHeaders.find(h => {
+            const cleanH = String(h || '').trim();
+            return cleanH.includes('รูป') || cleanH.includes('ภาพ') || cleanH.includes('photo');
+          });
           if (photoMatch) columnMap['photo'] = photoMatch;
         }
         
@@ -2591,28 +2594,84 @@ async function syncGoogleSheetsFast() {
         
         importData.forEach(row => {
           const student = {};
+          
+          // Smart Name Splitting logic if fname and lname map to the SAME column (e.g. ชื่อ-นามสกุล)
+          let fnameVal = '';
+          let lnameVal = '';
+          const fnameCol = columnMap['fname'];
+          const lnameCol = columnMap['lname'];
+          
+          if (fnameCol && lnameCol && fnameCol === lnameCol) {
+            const fullName = String(row[fnameCol] || '').trim();
+            const parts = fullName.split(/\s+/);
+            if (parts.length >= 2) {
+              fnameVal = parts[0];
+              lnameVal = parts.slice(1).join(' ');
+            } else {
+              fnameVal = fullName;
+              lnameVal = '';
+            }
+          } else {
+            fnameVal = fnameCol ? String(row[fnameCol] || '').trim() : '';
+            lnameVal = lnameCol ? String(row[lnameCol] || '').trim() : '';
+          }
+          
           FIELDS.forEach(f => {
-            const mappedHeader = columnMap[f.k];
-            student[f.k] = mappedHeader ? (row[mappedHeader] || '').trim() : '';
+            if (f.k === 'fname') {
+              student.fname = fnameVal;
+            } else if (f.k === 'lname') {
+              student.lname = lnameVal;
+            } else {
+              const csvHeader = columnMap[f.k];
+              let val = csvHeader ? String(row[csvHeader] || '').trim() : '';
+              student[f.k] = val;
+            }
           });
           
           if (!student.id) return;
           
-          // Fallback parsing for year & level from BE Student IDs
+          // Clean ID value for lookup
+          const idVal = String(student.id).trim();
+          
+          // Fallback parsing for level & year from Student IDs
+          if (student.level) {
+            const lvlClean = String(student.level).trim();
+            const m = lvlClean.match(/^(ปวช|ปวส)/i);
+            if (m) {
+              student.level = m[1] === 'ปวช' ? 'ปวช.' : 'ปวส.';
+            }
+          }
+          
           if (!student.level) {
-            student.level = String(student.id).startsWith('6') ? 'ปวช.' : 'ปวส.';
+            student.level = idVal.startsWith('6') ? 'ปวช.' : 'ปวส.';
           }
+          
           if (!student.year) {
-            const idStr = String(student.id);
-            if (idStr.startsWith('69')) student.year = '1';
-            else if (idStr.startsWith('68')) student.year = '2';
-            else if (idStr.startsWith('67')) student.year = '3';
-            else student.year = '1';
+            let parsedYear = '1';
+            if (idVal.length === 10 || idVal.length === 11) {
+              const prefixStr = idVal.substring(0, 2);
+              const prefixVal = parseInt(prefixStr, 10);
+              if (!isNaN(prefixVal) && prefixVal >= 60 && prefixVal <= 69) {
+                const calcYear = 69 - prefixVal + 1;
+                if (calcYear >= 1 && calcYear <= 3) {
+                  parsedYear = String(calcYear);
+                }
+              }
+            }
+            student.year = parsedYear;
+          } else {
+            student.year = String(student.year).trim();
           }
+          
           if (!student.status) student.status = 'กำลังศึกษา';
           if (!student.risk_level) student.risk_level = 'ต่ำ';
           
-          const existingIndex = DB.findIndex(x => String(x.id) === String(student.id));
+          // Clean photo Drive link
+          if (student.photo) {
+            student.photo = normalizeDriveUrl(student.photo);
+          }
+          
+          const existingIndex = DB.findIndex(x => String(x.id).trim() === idVal);
           if (existingIndex !== -1) {
             // Retain old photo link if new one isn't loaded
             const prevPhoto = DB[existingIndex].photo;
@@ -2659,7 +2718,7 @@ function syncPhotosAutomaticallyFromSheetsUrl(url) {
       
       const headers = Object.keys(results.data[0]);
       let photoCol = headers.find(h => {
-        const cleanH = h.trim();
+        const cleanH = String(h || '').trim();
         return cleanH === 'รูป' || cleanH === 'รูปถ่าย' || cleanH === 'รูปภาพ' || cleanH === 'photo' || cleanH === 'picture';
       });
       
@@ -2672,8 +2731,8 @@ function syncPhotosAutomaticallyFromSheetsUrl(url) {
         });
       }
       
-      let nameCol = headers.find(h => h.includes('ชื่อ') || h.includes('นามสกุล') || h.includes('ชื่อ-นามสกุล'));
-      let idCol = headers.find(h => h.includes('รหัส') || h.includes('id') || h.includes('เลขประจำตัว'));
+      let nameCol = headers.find(h => String(h || '').includes('ชื่อ') || String(h || '').includes('นามสกุล') || String(h || '').includes('ชื่อ-นามสกุล'));
+      let idCol = headers.find(h => String(h || '').includes('รหัส') || String(h || '').includes('id') || String(h || '').includes('เลขประจำตัว'));
       
       if (!photoCol) {
         showToast('⚠️ ดึงข้อมูลเสร็จสิ้น แต่ไม่พบคอลัมน์รูปภาพนักเรียน', 'ok');
@@ -2700,10 +2759,10 @@ function syncPhotosAutomaticallyFromSheetsUrl(url) {
         
         DB.forEach(student => {
           let isMatch = false;
-          if (rowId && String(student.id) === rowId) {
+          if (rowId && String(student.id).trim() === rowId) {
             isMatch = true;
           } else if (cleanName) {
-            const stuCleanName = (student.fname + student.lname).replace(/^(นาย|นางสาว|เด็กชาย|เด็กหญิง|นาง)\s*/, '').replace(/\s+/g, '');
+            const stuCleanName = (String(student.fname || '') + String(student.lname || '')).replace(/^(นาย|นางสาว|เด็กชาย|เด็กหญิง|นาง)\s*/, '').replace(/\s+/g, '');
             if (stuCleanName.includes(cleanName) || cleanName.includes(stuCleanName)) {
               isMatch = true;
             }
