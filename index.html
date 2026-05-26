@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🎓 ฐานข้อมูลนักเรียน แผนกช่างกลโรงงาน และแผนกเทคนิคอุตสาหกรรม</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- PapaParse for CSV Parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <!-- Chart.js for Beautiful Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Custom Styling -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-dark"> <!-- Defaulting to premium dark theme for that WOW look, switcher provided -->
+
+  <!-- Overlay for Mobile Sidebar -->
+  <div id="mob-overlay" class="overlay" onclick="closeSidebar()"></div>
+
+  <!-- ── SIDEBAR NAV ── -->
+  <aside id="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-icon">
+        <i class="fa-solid fa-graduation-cap"></i>
+      </div>
+      <div class="sb-logo-info">
+        <div class="sb-logo-text">ฐานข้อมูลนักเรียน</div>
+        <div class="sb-logo-sub">ช่างกลโรงงาน & เทคนิคอุตสาหกรรม</div>
+      </div>
+    </div>
+    
+    <div class="sb-profile">
+      <div class="sb-profile-avatar">💻</div>
+      <div class="sb-profile-detail">
+        <div class="sb-profile-name">ช่างกล & เทคนิคอุตสาหกรรม</div>
+        <div class="sb-profile-role">ผู้ดูแลระบบสารสนเทศ</div>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      <div class="sb-section">เมนูหลัก</div>
+      <button class="sb-item active" onclick="goPage('dashboard')">
+        <i class="fa-solid fa-chart-line ico"></i> แดชบอร์ดสถิติ
+      </button>
+      <button class="sb-item" onclick="goPage('students')">
+        <i class="fa-solid fa-user-graduate ico"></i> รายชื่อนักเรียนทั้งหมด
+      </button>
+      <button class="sb-item" onclick="goPage('search')">
+        <i class="fa-solid fa-magnifying-glass ico"></i> ค้นหาข้อมูลด่วน
+      </button>
+      
+      <div class="sb-section">การจัดการข้อมูล</div>
+      <button class="sb-item" onclick="goPage('import')">
+        <i class="fa-solid fa-cloud-arrow-down ico"></i> นำเข้าข้อมูล / ซิงค์ Sheets
+      </button>
+      <button class="sb-item" onclick="exportCSV()">
+        <i class="fa-solid fa-file-export ico"></i> ส่งออกข้อมูล CSV
+      </button>
+      
+      <div class="sb-section">ตั้งค่า & บำรุงรักษา</div>
+      <button class="sb-item" onclick="goPage('settings')">
+        <i class="fa-solid fa-gears ico"></i> ตั้งค่าระบบ
+      </button>
+    </nav>
+    
+    <div class="sb-footer">
+      <div class="sb-footer-text">Antigravity AI Engine v4.0</div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main id="main">
+    <!-- Sticky Header -->
+    <header id="header">
+      <button id="mob-toggle" onclick="toggleSidebar()">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <div class="header-title-area">
+        <h2 id="page-title">แดชบอร์ดสถิติ</h2>
+        <span id="hdr-count" class="hdr-count-pill">โหลดข้อมูล...</span>
+      </div>
+      <div class="hdr-actions">
+        <!-- Light/Dark Mode Switcher -->
+        <button class="hdr-btn theme-switch-btn" onclick="toggleTheme()" title="สลับโหมดสี">
+          <i id="theme-icon" class="fa-solid fa-sun"></i>
+        </button>
+        <button class="btn btn-p" onclick="openAddModal()">
+          <i class="fa-solid fa-plus"></i> เพิ่มข้อมูลนักเรียน
+        </button>
+      </div>
+    </header>
+
+    <div id="content">
+
+      <!-- ── PAGE: DASHBOARD ── -->
+      <div id="page-dashboard" class="page active">
+        <!-- Stat Grid -->
+        <div class="stat-grid" id="stat-grid"></div>
+
+        <!-- Charts Section (Dual Column) -->
+        <div class="dash-charts-grid">
+          <div class="tbox chart-box animate-fade-in">
+            <div class="tbox-hdr">
+              <div class="tbox-title">
+                <i class="fa-solid fa-chart-pie font-accent"></i> สัดส่วนระดับความเสี่ยงในแผนกวิชา
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="riskChart"></canvas>
+            </div>
+          </div>
+          
+          <div class="tbox chart-box animate-fade-in">
+            <div class="tbox-hdr">
+              <div class="tbox-title">
+                <i class="fa-solid fa-chart-column font-accent"></i> จำนวนนักเรียนแยกตามชั้นปี
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="classChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Downward grid for groups and categories -->
+        <div class="dash-bottom-grid">
+          <div class="tbox">
+            <div class="tbox-hdr">
+              <div class="tbox-title">
+                <i class="fa-solid fa-users font-accent"></i> จำนวนนักเรียนแยกกลุ่ม / ห้องเรียน
+              </div>
+            </div>
+            <div id="group-bd" class="dashboard-list scroll-styled"></div>
+          </div>
+
+          <div class="tbox">
+            <div class="tbox-hdr">
+              <div class="tbox-title">
+                <i class="fa-solid fa-triangle-exclamation font-accent"></i> ปัจจัยความเสี่ยงรายด้าน
+              </div>
+            </div>
+            <div id="risk-bd" class="dashboard-list scroll-styled"></div>
+          </div>
+        </div>
+
+        <div class="tbox animate-fade-in" style="margin-top: 20px;">
+          <div class="tbox-hdr">
+            <div class="tbox-title">
+              <i class="fa-solid fa-clock-rotate-left font-accent"></i> รายชื่อที่พึ่งบันทึกหรือแก้ไขล่าสุด 10 ราย
+            </div>
+          </div>
+          <div id="recent-list" class="recent-students-grid"></div>
+        </div>
+      </div>
+
+      <!-- ── PAGE: STUDENTS LIST ── -->
+      <div id="page-students" class="page">
+        <!-- Filters panel -->
+        <div class="filter-panel animate-fade-in">
+          <div class="search-row">
+            <div class="search-bar-wrapper">
+              <i class="fa-solid fa-magnifying-glass s-ico"></i>
+              <input id="stu-search" type="search" placeholder="ค้นหา รหัส / ชื่อ / นามสกุล / ชื่อเล่น / เบอร์โทร..." oninput="renderStudents()">
+            </div>
+            <div class="filter-controls">
+              <select id="filter-level" class="filter" onchange="buildRoomFilter(); renderStudents()">
+                <option value="">ทุกระดับชั้น</option>
+                <option value="ปวช.">ปวช.</option>
+                <option value="ปวส.">ปวส.</option>
+              </select>
+              <select id="filter-year" class="filter" onchange="buildRoomFilter(); renderStudents()">
+                <option value="">ทุกชั้นปี</option>
+                <option value="1">ปี 1</option>
+                <option value="2">ปี 2</option>
+                <option value="3">ปี 3</option>
+              </select>
+              <select id="filter-room" class="filter" onchange="renderStudents()">
+                <option value="">ทุกกลุ่ม/ห้อง</option>
+              </select>
+              <select id="filter-status" class="filter" onchange="renderStudents()">
+                <option value="">ทุกสถานะ</option>
+                <option value="กำลังศึกษา">🟢 กำลังศึกษา</option>
+                <option value="สำเร็จการศึกษา">🔵 สำเร็จการศึกษา</option>
+                <option value="พ้นสภาพ">🔴 พ้นสภาพ</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Mobile Horizontal Scroll Filters (Hidden on Desktop) -->
+          <div class="mobile-filter-chips-container">
+            <div class="mobile-filter-label"><i class="fa-solid fa-graduation-cap"></i> ระดับการศึกษา</div>
+            <div class="chip-scroll-wrapper" id="mob-level-chips">
+              <button class="filter-chip active" onclick="selectMobileLevel('', '', event)">ทั้งหมด</button>
+              <button class="filter-chip" onclick="selectMobileLevel('ปวช.', '1', event)">ปวช. 1</button>
+              <button class="filter-chip" onclick="selectMobileLevel('ปวช.', '2', event)">ปวช. 2</button>
+              <button class="filter-chip" onclick="selectMobileLevel('ปวช.', '3', event)">ปวช. 3</button>
+              <button class="filter-chip" onclick="selectMobileLevel('ปวส.', '1', event)">ปวส. 1</button>
+              <button class="filter-chip" onclick="selectMobileLevel('ปวส.', '2', event)">ปวส. 2</button>
+            </div>
+            
+            <div class="mobile-filter-label" style="margin-top: 10px;"><i class="fa-solid fa-users"></i> กลุ่มเรียน</div>
+            <div class="chip-scroll-wrapper" id="mob-room-chips">
+              <button class="filter-chip active" onclick="selectMobileRoom('', event)">ทั้งหมด</button>
+              <button class="filter-chip" onclick="selectMobileRoom('1', event)">กลุ่ม 1</button>
+              <button class="filter-chip" onclick="selectMobileRoom('2', event)">กลุ่ม 2</button>
+              <button class="filter-chip" onclick="selectMobileRoom('3', event)">กลุ่ม 3</button>
+              <button class="filter-chip" onclick="selectMobileRoom('4', event)">กลุ่ม 4</button>
+              <button class="filter-chip" onclick="selectMobileRoom('5', event)">กลุ่ม 5</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PC VIEW (Beautiful Responsive Table) -->
+        <div id="pc-table" class="tbox animate-fade-in">
+          <div class="tbl-wrap">
+            <table class="premium-table">
+              <thead>
+                <tr>
+                  <th style="width: 70px;">รูปภาพ</th>
+                  <th>ชื่อ - นามสกุล (ชื่อเล่น)</th>
+                  <th>รหัสประจำตัว</th>
+                  <th>ระดับชั้น / ชั้นปี</th>
+                  <th>กลุ่มการเรียน</th>
+                  <th>สถานภาพ</th>
+                  <th>เบอร์โทรศัพท์</th>
+                  <th>ระดับความเสี่ยง</th>
+                  <th style="text-align: center; width: 120px;">การจัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="stu-tbody">
+                <!-- Filled via JS -->
+              </tbody>
+            </table>
+          </div>
+          <div id="stu-pg" class="pagination"></div>
+        </div>
+
+        <!-- MOBILE VIEW (Elegant Profile Cards) -->
+        <div id="mob-cards" class="mobile-cards-view animate-fade-in" style="display:none">
+          <div id="mob-card-list" class="mob-card-grid"></div>
+          <div id="mob-pg" class="pagination"></div>
+        </div>
+      </div>
+
+      <!-- ── PAGE: QUICK SEARCH ── -->
+      <div id="page-search" class="page">
+        <div class="tbox search-detail-box animate-fade-in" style="padding: 24px;">
+          <div class="search-detail-hdr">
+            <i class="fa-solid fa-magnifying-glass font-accent" style="font-size: 24px;"></i>
+            <div>
+              <h3>ค้นหาข้อมูลนักเรียนอย่างรวดเร็ว</h3>
+              <p style="color: var(--c5); font-size: 13px; margin-top: 4px;">ป้อน รหัสประจำตัว, ชื่อจริง, นามสกุล, ชื่อเล่น หรือเบอร์โทร เพื่อดึงหน้าต่างประวัติทันที</p>
+            </div>
+          </div>
+          
+          <div class="search-bar-wrapper search-detail-bar" style="margin-top: 20px;">
+            <i class="fa-solid fa-search s-ico"></i>
+            <input id="qs-input" type="search" placeholder="เริ่มพิมพ์ข้อมูลเพื่อค้นหาแบบทันที..." oninput="quickSearch()" autofocus>
+          </div>
+          
+          <div id="qs-results" class="quick-search-results-list"></div>
+        </div>
+      </div>
+
+      <!-- ── PAGE: DATA HUB (IMPORT/SYNC) ── -->
+      <div id="page-import" class="page">
+        <div class="grid-2col animate-fade-in">
+          
+          <!-- Cloud Sync Card -->
+          <div class="tbox padded-box">
+            <div class="form-section-title" style="color: var(--p);">
+              <i class="fa-solid fa-cloud-arrow-down"></i> เชื่อมต่อผ่าน Google Sheets หรือ ลิงก์ CSV
+            </div>
+            
+            <div class="fg" style="margin: 16px 0;">
+              <label class="form-label font-accent">ลิงก์ CSV สาธารณะ (Publish to Web)</label>
+              <input id="sheets-url" type="url" class="premium-input" value="https://docs.google.com/spreadsheets/d/1cGtBSblVKDqTyFCq8LUf0Yr6XpYLzHbPW_hKtG2i_tQ/edit?usp=sharing" placeholder="https://docs.google.com/spreadsheets/d/.../export?format=csv">
+            </div>
+
+            <div class="btn-group">
+              <button class="btn btn-p" onclick="importSheets()">
+                <i class="fa-solid fa-arrows-rotate"></i> ดึงข้อมูลและนำเข้า
+              </button>
+              <button class="btn btn-s" onclick="showHeaders()">
+                <i class="fa-solid fa-list-check"></i> ดูหัวคอลัมน์
+              </button>
+              <button class="btn btn-s" onclick="showImportHelp()">
+                <i class="fa-solid fa-circle-question"></i> คู่มือการลิงก์ Google Sheets
+              </button>
+            </div>
+
+            <!-- Mapping Area -->
+            <div id="import-preview" class="mapping-container" style="display:none; margin-top: 20px;">
+              <div class="form-section-title" style="font-size: 13px; color: var(--g); border: none; padding: 0; margin-bottom: 12px;">
+                <i class="fa-solid fa-shuffle"></i> จับคู่คอลัมน์ (Column Mapping Preview)
+              </div>
+              <div id="mapping-area" class="mapping-scroll scroll-styled"></div>
+              
+              <div class="btn-group" style="margin-top: 15px;">
+                <button class="btn btn-g" onclick="applyImport()">
+                  <i class="fa-solid fa-check"></i> ยืนยันการนำเข้าข้อมูล
+                </button>
+                <button class="btn btn-s" onclick="cancelImport()">ยกเลิก</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Photo Sync Card -->
+          <div class="tbox padded-box animate-fade-in" style="margin-top: 20px;">
+            <div class="form-section-title" style="color: var(--pu);">
+              <i class="fa-solid fa-image"></i> ดึงรูปภาพนักเรียนจาก Google Sheets
+            </div>
+            <p style="color: var(--c5); font-size: 12.5px; margin-bottom: 12px; line-height: 1.5;">ดึงรูปภาพจาก Google Drive ลิงก์ที่นักเรียนส่งมาในชีต แล้วจับคู่เข้ากับประวัติในฐานข้อมูลระบบโดยอัตโนมัติตามชื่อและรหัสประจำตัวผู้เรียน</p>
+            
+            <div class="fg" style="margin: 14px 0;">
+              <label class="form-label font-accent">ลิงก์ Google Sheets ของไฟล์รูปภาพ</label>
+              <input id="photo-sheets-url" type="url" class="premium-input" value="https://docs.google.com/spreadsheets/d/16ly2qP4dXzQBPQo3gKJTQY9-Pxp9bMGtgAOMwSamPgA/edit?usp=sharing" placeholder="วางลิงก์ Google Sheets รูปภาพ...">
+            </div>
+
+            <div class="btn-group" style="margin-bottom: 14px;">
+              <button class="btn btn-p" onclick="syncPhotosFromSheets()" style="background: linear-gradient(135deg, var(--pu) 0%, var(--p) 100%); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);">
+                <i class="fa-solid fa-arrows-spin"></i> เริ่มต้นประมวลผลและซิงค์รูปภาพ
+              </button>
+            </div>
+            
+            <div class="fg" style="border-top: 1px solid var(--border-color); padding-top: 14px;">
+              <label class="form-label font-accent" style="color: var(--pu);"><i class="fa-solid fa-file-csv"></i> หรือ เลือกไฟล์ CSV รูปภาพจากคอมพิวเตอร์ของคุณ (ป้องกัน CORS บล็อก)</label>
+              <input type="file" id="photo-csv-file" accept=".csv" onchange="syncPhotosFromLocalCsv()" class="premium-input" style="padding: 6px; font-size: 12px; background: rgba(0,0,0,0.15);">
+            </div>
+          </div>
+
+          <!-- Direct File Upload & Export Card -->
+          <div class="tbox padded-box">
+            <div class="form-section-title" style="color: var(--g);">
+              <i class="fa-solid fa-file-excel"></i> นำเข้าผ่านไฟล์สำรองเครื่อง
+            </div>
+            
+            <div class="csv-upload-box" onclick="document.getElementById('csv-file').click()">
+              <i class="fa-solid fa-file-csv font-accent"></i>
+              <p>ลากและวางไฟล์ CSV หรือ <strong>คลิกเลือกไฟล์</strong> เพื่อนำเข้าทันที</p>
+              <span class="upload-sub">รองรับการเข้าข้อมูลแบบจำนวนมาก</span>
+            </div>
+            <input type="file" id="csv-file" accept=".csv" onchange="importCsvFile()" style="display:none">
+            
+            <div class="info-note" style="margin-top: 16px;">
+              <i class="fa-solid fa-circle-info font-accent"></i>
+              <span>**หมายเหตุ**: ระบบจะทำการสแกนหัวตารางเพื่อทำการแมปโดยอัตโนมัติ หากมีโครงสร้างที่ตรงกัน ระบบจะเพิ่มข้อมูลให้ทันที</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PAGE: SETTINGS ── -->
+      <div id="page-settings" class="page">
+        <div class="tbox padded-box animate-fade-in" style="max-width: 700px; margin: 0 auto;">
+          <div class="form-section-title" style="color: var(--r);">
+            <i class="fa-solid fa-screwdriver-wrench"></i> บำรุงรักษาและสำรองข้อมูลระบบ
+          </div>
+          
+          <p style="color: var(--c5); margin-bottom: 20px;">ฐานข้อมูลนักเรียนและการคัดกรองความเสี่ยงนี้ ถูกจัดเก็บอยู่ในระดับ LocalStorage ของเบราว์เซอร์เครื่องนี้ คุณสามารถดาวน์โหลดไฟล์สำรองข้อมูลเพื่อนำไปใช้ในเครื่องอื่นหรือนำเข้าคืนภายหลังได้</p>
+          
+          <div class="settings-actions-grid">
+            <div class="setting-action-item">
+              <div>
+                <h4>ส่งออกเป็นเอกสาร Excel/CSV</h4>
+                <p>ดาวน์โหลดรายชื่อและข้อมูลคัดกรองทั้งหมดเป็นไฟล์ตารางสำหรับเปิดใน Excel</p>
+              </div>
+              <button class="btn btn-p btn-sm" onclick="exportCSV()">
+                <i class="fa-solid fa-file-export"></i> ส่งออกตาราง CSV
+              </button>
+            </div>
+
+            <div class="setting-action-item">
+              <div>
+                <h4>สำรองข้อมูลระบบเป็นไฟล์ JSON</h4>
+                <p>สร้างสำเนาโครงสร้างฐานข้อมูลดิบทั้งหมดเพื่อใช้กู้คืนอย่างสมบูรณ์แบบ</p>
+              </div>
+              <button class="btn btn-s btn-sm" onclick="backupData()">
+                <i class="fa-solid fa-download"></i> ดาวน์โหลด JSON
+              </button>
+            </div>
+
+            <div class="setting-action-item">
+              <div>
+                <h4>กู้คืนฐานข้อมูลจากไฟล์สำรอง</h4>
+                <p>เลือกไฟล์ JSON ของระบบที่ได้สำรองไว้มาทำการทับข้อมูลเดิม</p>
+              </div>
+              <button class="btn btn-s btn-sm" onclick="document.getElementById('restore-file').click()">
+                <i class="fa-solid fa-upload"></i> อัปโหลดไฟล์กู้คืน
+              </button>
+              <input type="file" id="restore-file" accept=".json" style="display:none" onchange="restoreData(event)">
+            </div>
+
+            <div class="setting-action-item danger-zone">
+              <div>
+                <h4 style="color: var(--r);">ล้างข้อมูลในระบบทั้งหมด</h4>
+                <p>ลบข้อมูลนักเรียนและประวัติการคัดกรองความเสี่ยงออกจากอุปกรณ์นี้ถาวร</p>
+              </div>
+              <button class="btn btn-d btn-sm" onclick="clearAll()">
+                <i class="fa-solid fa-trash-can"></i> ลบข้อมูลทั้งหมด
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── MOBILE BOTTOM NAVBAR ── -->
+  <nav id="bottomNav">
+    <button class="bn on" id="bn-dashboard" onclick="goPage('dashboard')">
+      <i class="fa-solid fa-chart-line bi"></i> หน้าหลัก
+    </button>
+    <button class="bn" id="bn-students" onclick="goPage('students')">
+      <i class="fa-solid fa-user-graduate bi"></i> รายชื่อ
+    </button>
+    <button class="bn" id="bn-search" onclick="goPage('search')">
+      <i class="fa-solid fa-magnifying-glass bi"></i> ค้นหา
+    </button>
+    <button class="bn bn-add" onclick="openAddModal()">
+      <div class="bi-add"><i class="fa-solid fa-plus"></i></div>
+    </button>
+    <button class="bn" id="bn-import" onclick="goPage('import')">
+      <i class="fa-solid fa-cloud-arrow-down bi"></i> นำเข้า
+    </button>
+  </nav>
+
+  <!-- ── MODAL: ADD / EDIT STUDENT ── -->
+  <div class="modal-backdrop" id="add-modal">
+    <div class="modal modal-wide">
+      <div class="modal-hdr">
+        <div class="modal-title" id="modal-title">เพิ่มข้อมูลนักเรียน</div>
+        <button class="modal-x" onclick="closeModal('add-modal')">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      
+      <!-- Tab Controls inside Modal for Clean View -->
+      <div class="modal-tabs">
+        <button type="button" class="tab-btn active" onclick="switchModalTab(event, 'tab-basic')">ข้อมูลพื้นฐาน</button>
+        <button type="button" class="tab-btn" onclick="switchModalTab(event, 'tab-contact')">ข้อมูลติดต่อ</button>
+        <button type="button" class="tab-btn" onclick="switchModalTab(event, 'tab-health')">สุขภาพ & พฤติกรรม</button>
+        <button type="button" class="tab-btn" onclick="switchModalTab(event, 'tab-risk')">คัดกรองความเสี่ยง</button>
+      </div>
+
+      <form id="stu-form" onsubmit="saveStudent(event)">
+        <input type="hidden" id="f-edit-id">
+
+        <!-- Tab 1: Basic Info -->
+        <div id="tab-basic" class="modal-tab-content active">
+          <div class="fgrid">
+            <div class="fg">
+              <label class="req">รหัสนักเรียน</label>
+              <input id="f-id" required class="premium-input" placeholder="เช่น 6601001">
+            </div>
+            <div class="fg">
+              <label class="req">ชื่อจริง (ไม่ต้องใส่คำนำหน้า)</label>
+              <input id="f-fname" required class="premium-input" placeholder="เช่น มานะ">
+            </div>
+            <div class="fg">
+              <label class="req">นามสกุล</label>
+              <input id="f-lname" required class="premium-input" placeholder="เช่น รักดี">
+            </div>
+            <div class="fg">
+              <label>ชื่อเล่น</label>
+              <input id="f-nickname" class="premium-input" placeholder="เช่น โอ๊ต">
+            </div>
+          </div>
+          
+          <div class="form-section-title" style="margin-top: 15px; font-size: 12px; color: var(--p);">
+            <i class="fa-solid fa-graduation-cap"></i> ระดับการเรียนและสถาบัน
+          </div>
+          <div class="fgrid fgrid3">
+            <div class="fg">
+              <label>ระดับการศึกษา</label>
+              <select id="f-level" class="premium-select" onchange="handleLevelChange()">
+                <option value="ปวช.">ปวช. (ช่างกลโรงงาน)</option>
+                <option value="ปวส.">ปวส. (เทคนิคอุตสาหกรรม)</option>
+              </select>
+            </div>
+             <div class="fg" id="year-form-group">
+              <label class="req">ชั้นปีที่</label>
+              <select id="f-year" class="premium-select">
+                <option value="1" selected>1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>ห้อง/กลุ่มการเรียน</label>
+              <input id="f-room" class="premium-input" placeholder="เช่น กช.1">
+            </div>
+          </div>
+
+          <div class="fgrid" style="margin-top: 10px;">
+            <div class="fg">
+              <label>สถานภาพการเรียน</label>
+              <select id="f-status" class="premium-select">
+                <option value="กำลังศึกษา">กำลังศึกษา</option>
+                <option value="สำเร็จการศึกษา">สำเร็จการศึกษา</option>
+                <option value="พ้นสภาพ">พ้นสภาพ</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>สถานศึกษาเดิมที่สำเร็จมา</label>
+              <input id="f-prevschool" class="premium-input" placeholder="เช่น รร.วัดบ้านไร่">
+            </div>
+          </div>
+
+          <div class="form-section-title" style="margin-top: 15px; font-size: 12px; color: var(--g);">
+            <i class="fa-brands fa-google-drive"></i> รูปภาพนักเรียนและ Google Drive
+          </div>
+          <div class="fgrid">
+            <div class="fg">
+              <label>ลิงก์รูปภาพทั่วไป / ลิงก์ Google Drive</label>
+              <input id="f-photo" class="premium-input" placeholder="วางลิงก์รูปภาพ หรือลิงก์แชร์จาก Google Drive ได้โดยตรง">
+              <span class="input-helper-text">
+                <i class="fa-solid fa-circle-question"></i> วางลิงก์แบ่งปันของ Google Drive ได้โดยตรง (ระบบจะสแกนและแปลงเพื่อดึงรูปมาแสดงผลโดยอัตโนมัติ)
+              </span>
+            </div>
+            <div class="fg">
+              <label>การเดินทางมาวิทยาลัย</label>
+              <select id="f-transport" class="premium-select">
+                <option value="">-- เลือกช่องทาง --</option>
+                <option value="รถส่วนตัว">🏍️ รถส่วนตัว (จักรยานยนต์/รถยนต์)</option>
+                <option value="รถสาธารณะ">🚌 รถสาธารณะ / รถเมล์</option>
+                <option value="รถรับ-ส่ง">🚐 รถรับ-ส่งโรงเรียน</option>
+                <option value="พักหอ">🏢 พักหอพักใกล้เคียง</option>
+                <option value="อื่นๆ">🚶 อื่นๆ / เดินเท้า</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- Internship Section (Dynamically displayed for ปวส. only) -->
+          <div id="internship-form-section" style="display: none; margin-top: 15px;">
+            <div class="form-section-title" style="font-size: 12px; color: var(--pu);">
+              <i class="fa-solid fa-industry"></i> ข้อมูลการฝึกงาน / สหกิจศึกษา (เฉพาะ ปวส.)
+            </div>
+            <div class="fgrid">
+              <div class="fg">
+                <label>สถานที่ฝึกงาน / สหกิจศึกษา</label>
+                <input id="f-internship-place" class="premium-input" placeholder="เช่น บริษัท ชลบุรี มิตซู จำกัด">
+              </div>
+              <div class="fg">
+                <label>เบอร์ติดต่อสถานที่ฝึกงาน / ผู้ควบคุม</label>
+                <input id="f-internship-phone" class="premium-input" placeholder="เช่น 038-xxx-xxxx">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Contact Info -->
+        <div id="tab-contact" class="modal-tab-content">
+          <div class="fgrid">
+            <div class="fg">
+              <label>เบอร์โทรศัพท์นักเรียน</label>
+              <input id="f-phone" type="tel" class="premium-input" placeholder="08x-xxx-xxxx">
+            </div>
+            <div class="fg">
+              <label>ช่องทางการติดต่ออื่น (IG / Facebook / LINE)</label>
+              <input id="f-social" class="premium-input" placeholder="เช่น Line ID หรือ IG handle">
+            </div>
+            <div class="fg">
+              <label>ชื่อ-นามสกุล ผู้ปกครอง</label>
+              <input id="f-parent" class="premium-input" placeholder="นายมานพ รักดี">
+            </div>
+            <div class="fg">
+              <label>เบอร์โทรศัพท์ผู้ปกครอง</label>
+              <input id="f-parentphone" type="tel" class="premium-input" placeholder="08x-xxx-xxxx">
+            </div>
+            <div class="fg">
+              <label>เบอร์ติดต่อฉุกเฉิน (สำรอง)</label>
+              <input id="f-parentphone2" type="tel" class="premium-input" placeholder="เบอร์โทรติดต่อญาติคนอื่น">
+            </div>
+            <div class="fg">
+              <label>เงินที่ได้รับมาเรียนต่อวัน (บาท)</label>
+              <input id="f-allowance" type="number" class="premium-input" placeholder="เช่น 100">
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Health & Conduct -->
+        <div id="tab-health" class="modal-tab-content">
+          <div class="fgrid">
+            <div class="fg">
+              <label>ข้อมูลสุขภาพ / โรคประจำตัว / การแพ้ยา</label>
+              <textarea id="f-health" class="premium-textarea" placeholder="ระบุโรคประจำตัว ยาที่แพ้ หรือข้อมูลด้านสุขภาพที่ครูประจำชั้นต้องระวังเป็นพิเศษ"></textarea>
+            </div>
+            <div class="fg">
+              <label>พฤติกรรมการสูบบุหรี่ / สารเสพติด / เครื่องดื่มมึนเมา</label>
+              <textarea id="f-smoke" class="premium-textarea" placeholder="เช่น สูบบุหรี่ไฟฟ้าเป็นบางครั้ง / ดื่มสังสรรค์กับกลุ่มเพื่อน / ไม่มี"></textarea>
+            </div>
+            <div class="fg">
+              <label>ขนาดเสื้อกิจกรรมนักเรียน (Shirt Size)</label>
+              <select id="f-shirt" class="premium-select">
+                <option value="">-- ระบุไซส์ --</option>
+                <option value="XS">XS (รอบอก 34-36 นิ้ว)</option>
+                <option value="S">S (รอบอก 36-38 นิ้ว)</option>
+                <option value="M">M (รอบอก 38-40 นิ้ว)</option>
+                <option value="L">L (รอบอก 40-42 นิ้ว)</option>
+                <option value="XL">XL (รอบอก 42-44 นิ้ว)</option>
+                <option value="XXL">XXL (รอบอก 44-46 นิ้ว)</option>
+                <option value="3XL">3XL ขึ้นไป</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Risk Screening -->
+        <div id="tab-risk" class="modal-tab-content">
+          <div class="form-section-title" style="color: var(--r); font-size: 13px; margin-bottom: 12px; border: none; padding: 0;">
+            <i class="fa-solid fa-shield-halved"></i> การประเมินเพื่อช่วยเหลือนักเรียนเบื้องต้น
+          </div>
+          
+          <div class="fgrid">
+            <div class="fg">
+              <label class="req font-accent" style="font-weight: 700;">ระดับความเสี่ยงภาพรวม</label>
+              <select id="f-risk-level" class="premium-select" style="font-weight: bold;">
+                <option value="">-- ยังไม่ทำการประเมิน --</option>
+                <option value="ต่ำ">🟢 ความเสี่ยงต่ำ (ปกติ)</option>
+                <option value="ปานกลาง">🟡 ความเสี่ยงปานกลาง</option>
+                <option value="สูง">🔴 ความเสี่ยงสูงมาก</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>ด้านการเรียนและความรู้</label>
+              <select id="f-risk-academic" class="premium-select">
+                <option value="ปกติ">ปกติ (ไม่มีความเสี่ยง)</option>
+                <option value="ผลการเรียนต่ำ">ผลการเรียนต่ำกว่า 2.00</option>
+                <option value="ขาดเรียนบ่อย">ขาดเรียนบ่อยโดยไม่มีเหตุผล</option>
+                <option value="ไม่ส่งงาน">ไม่ทำงาน/ส่งงานล่าช้าสะสม</option>
+                <option value="มีแนวโน้มออกกลางคัน">มีแนวโน้มต้องออกจากการเรียนกลางคัน</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>ด้านพฤติกรรมและการคบเพื่อน</label>
+              <select id="f-risk-behavior" class="premium-select">
+                <option value="ปกติ">ปกติ (ไม่มีความเสี่ยง)</option>
+                <option value="ก้าวร้าว / ทะเลาะวิวาท">ก้าวร้าว / ทะเลาะวิวาท</option>
+                <option value="เก็บตัว / ซึมเศร้า">เก็บตัวเงียบ / มีภาวะซึมเศร้า</option>
+                <option value="ติดเพื่อน / แก๊งค์">ติดเพื่อนพากันละเลยการเรียน</option>
+                <option value="ดื่ม / สูบ / ยาเสพติด">มีพฤติกรรม ยุ่งเกี่ยวกับสุรา/ยาเสพติด</option>
+                <option value="มีแฟน / ตั้งครรภ์">มีแฟนนอกสถาบัน / การตั้งครรภ์ก่อนวัย</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>ด้านสภาพแวดล้อมครอบครัว</label>
+              <select id="f-risk-family" class="premium-select">
+                <option value="ปกติ">ปกติ (ไม่มีความเสี่ยง)</option>
+                <option value="ครอบครัวแตกแยก">บิดามารดาหย่าร้าง/แยกกันอยู่</option>
+                <option value="อยู่กับปู่ย่าตายาย">ไม่ได้อยู่กับพ่อแม่ (อยู่กับปู่ย่าตายาย/ญาติ)</option>
+                <option value="ผู้ปกครองเสียชีวิต">บิดา หรือ มารดา หรือทั้งสองเสียชีวิต</option>
+                <option value="ครอบครัวมีความรุนแรง">มีความขัดแย้ง/รุนแรงภายในครอบครัว</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>ด้านภาวะเศรษฐกิจและการเงิน</label>
+              <select id="f-risk-economic" class="premium-select">
+                <option value="ปกติ">ปกติ / ปานกลาง</option>
+                <option value="ยากจน / ขาดแคลน">ครอบครัวยากจนมาก / ขาดทุนการศึกษา</option>
+                <option value="ต้องทำงานพิเศษ">ต้องทำงานพิเศษพาร์ตไทม์เพื่อส่งตัวเองเรียน</option>
+                <option value="ดี">เศรษฐกิจครอบครัวดีเยี่ยม</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>บันทึกการสังเกตการณ์ครูประจำชั้น / แผนการดูแลช่วยเหลือ</label>
+              <textarea id="f-risk-note" class="premium-textarea" placeholder="รายละเอียดแผนช่วยเหลือ เช่น ติดต่อผู้ปกครองเพื่อเข้าพบ / แนะนำเข้าขอทุนการศึกษาแผนก"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer" style="margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--c2); display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn btn-s" onclick="closeModal('add-modal')">ยกเลิก</button>
+          <button type="submit" class="btn btn-p" id="save-btn">
+            <i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูลนักเรียน
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── MODAL: STUDENT PROFILE VIEW ── -->
+  <div class="modal-backdrop" id="profile-modal">
+    <div class="modal modal-wide">
+      <div class="modal-hdr" style="margin-bottom: 10px;">
+        <div class="modal-title"><i class="fa-solid fa-id-card font-accent"></i> รายละเอียดประวัตินักเรียนรายบุคคล</div>
+        <div style="display:flex; gap: 8px; align-items: center;">
+          <button class="btn btn-p btn-sm" onclick="editFromProfile()" style="background: var(--p); color: white;"><i class="fa-solid fa-pen-to-square"></i> แก้ไขข้อมูล</button>
+          <button class="btn btn-s btn-sm" onclick="printProfile()"><i class="fa-solid fa-print"></i> พิมพ์</button>
+          <button class="modal-x" onclick="closeModal('profile-modal')">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+      <div id="profile-content" class="profile-scroll-box scroll-styled">
+        <!-- Filled dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL: RISK LEVEL STUDENT LIST ── -->
+  <div class="modal-backdrop" id="risk-modal">
+    <div class="modal modal-wide">
+      <div class="modal-hdr">
+        <div class="modal-title" id="risk-modal-title">รายชื่อกลุ่มเสี่ยง</div>
+        <button class="modal-x" onclick="closeModal('risk-modal')">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div id="risk-modal-content" class="risk-modal-table-scroll scroll-styled">
+        <!-- Filled dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TOAST NOTIFICATIONS ── -->
+  <div id="toast-container" class="toast-wrapper"></div>
+
+  <!-- Main JavaScript File -->
+  <script src="app.js"></script>
+</body>
+</html>
