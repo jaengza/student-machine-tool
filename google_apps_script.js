@@ -332,7 +332,7 @@ function normalizeDriveUrl(url) {
 // ── Text Similarity Distance Utility (Levenshtein) ──
 function getLevenshteinDistance(s1, s2) {
   if (!s1) return s2 ? s2.length : 0;
-  if (!s2) return s1.length : 0;
+  if (!s2) return s1 ? s1.length : 0;
   
   const track = Array(s2.length + 1).fill(null).map(() => Array(s1.length + 1).fill(null));
   for (let i = 0; i <= s1.length; i += 1) track[0][i] = i;
