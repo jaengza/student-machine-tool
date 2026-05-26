@@ -5,6 +5,8 @@
 
 // ── DATA STATE & LOCAL STORAGE KEY ──
 const STORAGE_KEY = 'dept_stu_v3';
+const CLOUD_KEY = 'cstc_cloud_api';
+let CLOUD_API_URL = '';
 let DB = [];
 let editId = null;
 let currentPage = 1;
@@ -85,6 +87,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Check if user is logged in
 function checkAuth() {
+  // Load cloud URL configuration
+  CLOUD_API_URL = localStorage.getItem(CLOUD_KEY) || '';
+  const apiInput = document.getElementById('cloud-api-url');
+  if (apiInput) apiInput.value = CLOUD_API_URL;
+  updateCloudStatusUI();
+
   const auth = sessionStorage.getItem('cstc_auth');
   const overlay = document.getElementById('login-overlay');
   
@@ -106,11 +114,19 @@ function checkAuth() {
 }
 
 // Complete application startup after login is successful
-function initApp() {
-  loadDatabase();
+async function initApp() {
+  const cloudActive = await loadDatabaseOnline();
+  if (!cloudActive) {
+    loadDatabase(); // fallback to LocalStorage
+  }
   initializeCharts();
   updateDashboard();
   updateHeaderCount();
+  
+  // Refresh views
+  const activePage = document.querySelector('.page.active') ? document.querySelector('.page.active').id : 'page-dashboard';
+  if (activePage === 'page-students') renderStudents();
+  else if (activePage === 'page-search') doQuickSearch();
 }
 
 // Load DB with strict authorization checks
@@ -1202,6 +1218,9 @@ function saveStudent(e) {
   }
 
   saveDatabase();
+  if (CLOUD_API_URL) {
+    saveToCloud(s);
+  }
   closeModal('add-modal');
   
   // Rebuild and refresh ALL views to avoid caching or filter mismatch bugs
@@ -2513,6 +2532,257 @@ function handleLogout() {
 }
 
 // Utility to calculate SHA-256 hex string using browser-native subtle crypto
+// ── REAL-TIME CLOUD DATABASE STORAGE INTEGRATIONS ──
+
+// Load database from cloud (Google Sheets Apps Script API)
+async function loadDatabaseOnline() {
+  if (!CLOUD_API_URL || !CLOUD_API_URL.startsWith('http')) return false;
+  
+  try {
+    showToast('🌐 กำลังเชื่อมต่อซิงค์ประวัติสดกับ Google Sheets...', 'ok');
+    const response = await fetch(CLOUD_API_URL);
+    const cloudData = await response.json();
+    
+    if (cloudData && Array.isArray(cloudData)) {
+      // พจนานุกรมแปลงหัวคอลัมน์ภาษาไทยจาก Sheets กลับเป็นฟิลด์ระบบ
+      const THAI_MAP_REVERSE = {
+        "รหัสประจำตัวนักเรียน": "id", "รหัสนักเรียน": "id", "รหัสประจำตัว": "id", "รหัส": "id", "id": "id",
+        "ชื่อจริง": "fname", "ชื่อ": "fname", "ชื่อนาม-นามสกุล": "fname", "ชื่อ-นามสกุล": "fname",
+        "นามสกุล": "lname", "สกุล": "lname",
+        "ชื่อเล่น": "nickname", "รูป": "photo", "รูปถ่าย": "photo", "รูปภาพ": "photo", "photo": "photo",
+        "ระดับชั้น": "level", "ระดับ": "level", "ระดับชั้นปี": "level",
+        "ชั้นปี": "year", "กลุ่มเรียน": "room", "ห้อง": "room", "เบอร์โทรนักเรียน": "phone", "เบอร์โทร": "phone",
+        "โซเชียล": "social", "line": "social", "facebook": "social",
+        "ชื่อผู้ปกครอง": "parent", "เบอร์โทรผู้ปกครอง": "parentphone", "เบอร์ฉุกเฉิน": "parentphone2",
+        "สถานศึกษาเดิม": "prevschool", "ไซส์เสื้อ": "shirt", "โรคประจำตัว": "health",
+        "การเดินทาง": "transport", "เงินมาเรียนต่อวัน": "allowance", "พฤติกรรมเสี่ยง": "smoke",
+        "สถานที่ฝึกงาน": "internship_place", "เบอร์โทรสถานที่ฝึกงาน": "internship_phone",
+        "ระดับความเสี่ยงภาพรวม": "risk_level", "เสี่ยงด้านการเรียน": "risk_academic",
+        "เสี่ยงด้านพฤติกรรม": "risk_behavior", "เสี่ยงด้านครอบครัว": "risk_family",
+        "เสี่ยงด้านเศรษฐกิจ": "risk_economic", "หมายเหตุช่วยเหลือ": "risk_note"
+      };
+      
+      let parsedDB = [];
+      cloudData.forEach(row => {
+        const student = {};
+        let fnameVal = '';
+        let lnameVal = '';
+        let fullName = '';
+        
+        // ค้นหาคอลัมน์ชื่อจริง
+        for (var key in row) {
+          var cleanK = key.trim();
+          if (cleanK === "ชื่อนาม-นามสกุล" || cleanK === "ชื่อ-นามสกุล") {
+            fullName = String(row[key] || '').trim();
+            break;
+          }
+        }
+        
+        if (fullName !== '') {
+          // ล้างคำนำหน้า
+          const cleanFullName = fullName.replace(/^(นาย|นางสาว|เด็กชาย|เด็กหญิง|นาง|ด\.ช\.|ด\.ญ\.)\s*/, '').trim();
+          const parts = cleanFullName.split(/\s+/);
+          if (parts.length >= 2) {
+            fnameVal = parts[0];
+            lnameVal = parts.slice(1).join(' ');
+          } else {
+            fnameVal = cleanFullName;
+            lnameVal = '';
+          }
+        }
+        
+        // กำหนดค่าเริ่มต้นทุกฟิลด์ป้องกัน undefined
+        FIELDS.forEach(f => {
+          student[f.k] = '';
+        });
+        
+        // แมปข้อมูลจากคอลัมน์ของชีต
+        for (var sheetKey in row) {
+          var cleanSK = sheetKey.trim();
+          var mappedField = THAI_MAP_REVERSE[cleanSK];
+          if (mappedField) {
+            student[mappedField] = String(row[sheetKey] || '').trim();
+          }
+        }
+        
+        if (fnameVal !== '') student.fname = fnameVal;
+        if (lnameVal !== '') student.lname = lnameVal;
+        
+        if (student.id) {
+          student.id = String(student.id).trim();
+          
+          // คัดกรองและสแกน Fallbacks สำหรับระดับและชั้นปี
+          if (!student.level) student.level = student.id.startsWith('6') ? 'ปวช.' : 'ปวส.';
+          if (!student.year) {
+            let parsedYear = '1';
+            const idVal = student.id;
+            if (idVal.length === 10 || idVal.length === 11) {
+              const prefixStr = idVal.substring(0, 2);
+              const prefixVal = parseInt(prefixStr, 10);
+              if (!isNaN(prefixVal) && prefixVal >= 60 && prefixVal <= 69) {
+                const calcYear = 69 - prefixVal + 1;
+                if (calcYear >= 1 && calcYear <= 3) parsedYear = String(calcYear);
+              }
+            }
+            student.year = parsedYear;
+          }
+          
+          // ลบกลุ่มเรียนถ้าห้องเรียนถูกทับด้วยลิงก์รูป
+          if (student.room && (student.room.includes('drive.google.com') || student.room.includes('lh3.googleusercontent.com') || student.room.includes('http'))) {
+            if (!student.photo) student.photo = student.room;
+            student.room = '';
+          }
+          
+          if (student.photo) {
+            student.photo = normalizeDriveUrl(student.photo);
+          }
+          
+          parsedDB.push(student);
+        }
+      });
+      
+      if (parsedDB.length > 0) {
+        DB = parsedDB;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DB)); // เซฟสำรองในเครื่องเผื่อออฟไลน์
+        showToast('🟢 ดึงประวัติเชื่อมโยงสดสำเร็จ!', 'ok');
+        return true;
+      }
+    }
+  } catch (err) {
+    console.error('Cloud Sync failed, falling back to Local Storage', err);
+    showToast('⚠️ เชื่อมต่อออนไลน์ไม่ได้ กำลังใช้ข้อมูลประวัติสำรองในเครื่องแทน', 'err');
+  }
+  return false;
+}
+
+// Send single student update request to Google Sheets Cloud Web App API (CORS-friendly POST)
+async function saveToCloud(student) {
+  if (!CLOUD_API_URL || !CLOUD_API_URL.startsWith('http')) return;
+  
+  const payload = {
+    id: student.id,
+    fname: student.fname,
+    lname: student.lname,
+    nickname: student.nickname,
+    photo: student.photo,
+    level: student.level,
+    year: student.year,
+    room: student.room,
+    status: student.status,
+    phone: student.phone,
+    social: student.social,
+    parent: student.parent,
+    parentphone: student.parentphone,
+    parentphone2: student.parentphone2,
+    prevschool: student.prevschool,
+    shirt: student.shirt,
+    health: student.health,
+    transport: student.transport,
+    allowance: student.allowance,
+    smoke: student.smoke,
+    internship_place: student.internship_place,
+    internship_phone: student.internship_phone,
+    risk_level: student.risk_level,
+    risk_academic: student.risk_academic,
+    risk_behavior: student.risk_behavior,
+    risk_family: student.risk_family,
+    risk_economic: student.risk_economic,
+    risk_note: student.risk_note
+  };
+  
+  try {
+    showToast('📤 กำลังส่งข้อมูลประวัติขึ้น Google Sheets...', 'ok');
+    
+    // mode: 'no-cors' ช่วยเลี่ยง CORS บล็อกของกูเกิลได้อย่างสมบูรณ์แบบ 
+    await fetch(CLOUD_API_URL, {
+      method: 'POST',
+      mode: 'no-cors', 
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    
+    showToast('🟢 บันทึกและซิงค์คลาวด์ออนไลน์สำเร็จ!', 'ok');
+  } catch (err) {
+    console.error('Failed to sync to cloud', err);
+    showToast('⚠️ ไม่สามารถส่งขึ้นคลาวด์ได้ทันที ข้อมูลจะเซฟไว้ในเครื่องนี้ก่อน', 'err');
+  }
+}
+
+// Save cloud settings configuration
+function saveCloudConfig() {
+  const urlInput = document.getElementById('cloud-api-url');
+  if (urlInput) {
+    CLOUD_API_URL = urlInput.value.trim();
+    localStorage.setItem(CLOUD_KEY, CLOUD_API_URL);
+    updateCloudStatusUI();
+  }
+}
+
+// Update status text on Settings panel
+function updateCloudStatusUI() {
+  const statusText = document.getElementById('cloud-status-text');
+  const cloudUrl = localStorage.getItem(CLOUD_KEY) || '';
+  
+  if (statusText) {
+    if (cloudUrl && cloudUrl.startsWith('http')) {
+      statusText.innerHTML = '🟢 โหมดปัจจุบัน: <strong>คลาวด์ออนไลน์ซิงค์สด (Google Sheets Cloud Mode)</strong>';
+      statusText.style.color = '#34d399'; // Emerald สีเขียว
+    } else {
+      statusText.innerHTML = '⚪ โหมดปัจจุบัน: <strong>ความจำเฉพาะเครื่อง (LocalStorage Mode)</strong>';
+      statusText.style.color = 'var(--c5)';
+    }
+  }
+}
+
+// Test cloud API connection manually
+async function testCloudConnection() {
+  const urlInput = document.getElementById('cloud-api-url');
+  if (!urlInput) return;
+  
+  const testUrl = urlInput.value.trim();
+  if (!testUrl || !testUrl.startsWith('http')) {
+    showToast('⚠️ กรุณากรอกลิงก์ Web App API ที่ถูกต้องก่อนทดสอบ', 'err');
+    return;
+  }
+  
+  const testBtn = document.getElementById('cloud-test-btn');
+  if (testBtn) {
+    testBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังทดสอบ...';
+    testBtn.disabled = true;
+  }
+  
+  showToast('🔍 กำลังทดสอบเชื่อมต่อและดึงตารางข้อมูล...', 'ok');
+  
+  try {
+    const response = await fetch(testUrl);
+    const data = await response.json();
+    
+    if (data && Array.isArray(data)) {
+      showToast("🟢 เชื่อมต่อคลาวด์สำเร็จ! พบประวัตินักเรียน " + data.length + " รายการในชีต", "ok");
+      
+      // Auto save and activate
+      CLOUD_API_URL = testUrl;
+      localStorage.setItem(CLOUD_KEY, testUrl);
+      updateCloudStatusUI();
+      
+      // Sync DB
+      initApp();
+    } else {
+      showToast('⚠️ ผลลัพธ์ชีตว่างเปล่า หรือเกิดข้อผิดพลาดในการดึงข้อมูล', 'err');
+    }
+  } catch (err) {
+    console.error(err);
+    showToast('❌ เชื่อมต่อล้มเหลว ลิงก์ไม่ถูกต้อง หรือยังไม่ได้เปิดแชร์สาธารณะ (Anyone)', 'err');
+  } finally {
+    if (testBtn) {
+      testBtn.innerHTML = '<i class="fa-solid fa-circle-nodes"></i> ทดสอบการซิงค์สด';
+      testBtn.disabled = false;
+    }
+  }
+}
+
 async function sha256(message) {
   const msgBuffer = new TextEncoder().encode(message);
   const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);

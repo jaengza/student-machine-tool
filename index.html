@@ -13,7 +13,7 @@
   <!-- Chart.js for Beautiful Analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Custom Styling -->
-  <link rel="stylesheet" href="style.css?v=20260526_04">
+  <link rel="stylesheet" href="style.css?v=20260526_05">
 </head>
 <body class="theme-dark"> <!-- Defaulting to premium dark theme for that WOW look, switcher provided -->
 
@@ -405,6 +405,30 @@
 
       <!-- ── PAGE: SETTINGS ── -->
       <div id="page-settings" class="page">
+        <!-- Cloud Synchronization Settings (Premium API Setup) -->
+        <div class="tbox padded-box animate-fade-in" style="max-width: 700px; margin: 0 auto 24px;">
+          <div class="form-section-title" style="color: var(--p);">
+            <i class="fa-solid fa-cloud-arrow-up"></i> ระบบฐานข้อมูลออนไลน์ซิงค์สด (Cloud Sync API)
+          </div>
+          <p style="color: var(--c5); margin-bottom: 16px; line-height: 1.5; font-size: 13px;">
+            เชื่อมต่อกับ Google Sheets หลังบ้านเพื่อส่งข้อมูลแก้ไขและแชร์ประวัตินักเรียนข้ามเครื่องแบบสด ๆ ทันที (คอมพิวเตอร์และโทรศัพท์มือถือ) โดยไม่มีค่าดูแลรักษาระบบและปลอดภัยสูงสุด
+          </p>
+          
+          <div class="fg" style="margin-bottom: 15px;">
+            <label class="form-label font-accent">URL ของ Google Web App API (ลิงก์ Apps Script เผยแพร่)</label>
+            <input id="cloud-api-url" type="url" class="premium-input" placeholder="วางลิงก์ https://script.google.com/macros/s/.../exec ..." oninput="saveCloudConfig()">
+          </div>
+          
+          <div class="cloud-status-box" id="cloud-status" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--r8); padding: 12px 16px; font-size: 12.5px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <span id="cloud-status-text" style="color: var(--c5); font-weight: 500;">
+              ⚪ โหมดปัจจุบัน: <strong>ความจำเฉพาะเครื่อง (LocalStorage Mode)</strong>
+            </span>
+            <button class="btn btn-s btn-sm" onclick="testCloudConnection()" id="cloud-test-btn" style="padding: 6px 12px; font-size: 11px;">
+              <i class="fa-solid fa-circle-nodes"></i> ทดสอบการซิงค์สด
+            </button>
+          </div>
+        </div>
+
         <div class="tbox padded-box animate-fade-in" style="max-width: 700px; margin: 0 auto;">
           <div class="form-section-title" style="color: var(--r);">
             <i class="fa-solid fa-screwdriver-wrench"></i> บำรุงรักษาและสำรองข้อมูลระบบ
@@ -771,6 +795,6 @@
   <div id="toast-container" class="toast-wrapper"></div>
 
   <!-- Main JavaScript File -->
-  <script src="app.js?v=20260526_04"></script>
+  <script src="app.js?v=20260526_05"></script>
 </body>
 </html>
