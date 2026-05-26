@@ -3212,11 +3212,94 @@ async function testCloudConnection() {
 }
 
 async function sha256(message) {
-  const msgBuffer = new TextEncoder().encode(message);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  return hashHex;
+  if (window.crypto && window.crypto.subtle) {
+    try {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      return hashHex;
+    } catch (e) {
+      console.warn("crypto.subtle failed, falling back to pure JS", e);
+    }
+  }
+  return pureJsSha256(message);
+}
+
+function pureJsSha256(str) {
+  function rotateRight(n, x) {
+    return (x >>> n) | (x << (32 - n));
+  }
+  const mathPow = Math.pow;
+  const maxWord = mathPow(2, 32);
+  const result = [];
+  const words = [];
+  const ascii = str;
+  let asciiLength = ascii.length * 8;
+  const hash = [];
+  const k = [];
+  let primeCounter = 0;
+  const isPrime = {};
+  let candidate = 2;
+  while (primeCounter < 64) {
+    if (!isPrime[candidate]) {
+      for (let i = candidate * candidate; i < 312; i += candidate) {
+        isPrime[i] = true;
+      }
+      hash[primeCounter] = (mathPow(candidate, .5) * maxWord) | 0;
+      k[primeCounter] = (mathPow(candidate, 1/3) * maxWord) | 0;
+      primeCounter++;
+    }
+    candidate++;
+  }
+  str += String.fromCharCode(0x80);
+  while (str.length % 64 - 56) {
+    str += String.fromCharCode(0);
+  }
+  for (let i = 0; i < str.length; i++) {
+    const charCode = str.charCodeAt(i);
+    words[i >> 2] |= charCode << ((3 - i % 4) * 8);
+  }
+  words[words.length] = ((asciiLength / maxWord) | 0);
+  words[words.length] = (asciiLength | 0);
+  for (let j = 0; j < words.length; ) {
+    const w = words.slice(j, j += 16);
+    const oldHash = hash.slice(0);
+    for (let i = 0; i < 64; i++) {
+      const w16 = w[i - 16] || 0;
+      const w7 = w[i - 7] || 0;
+      const w15 = w[i - 15] || 0;
+      const w2 = w[i - 2] || 0;
+      const s0 = rotateRight(7, w15) ^ rotateRight(18, w15) ^ (w15 >>> 3);
+      const s1 = rotateRight(17, w2) ^ rotateRight(19, w2) ^ (w2 >>> 10);
+      const register = w[i] = (i < 16) ? (w[i] || 0) : (
+        w16 + s0 + w7 + s1
+      ) | 0;
+      const ch = (hash[4] & hash[5]) ^ (~hash[4] & hash[6]);
+      const maj = (hash[0] & hash[1]) ^ (hash[0] & hash[2]) ^ (hash[1] & hash[2]);
+      const S0 = rotateRight(2, hash[0]) ^ rotateRight(13, hash[0]) ^ rotateRight(22, hash[0]);
+      const S1 = rotateRight(6, hash[4]) ^ rotateRight(11, hash[4]) ^ rotateRight(25, hash[4]);
+      const temp1 = hash[7] + S1 + ch + k[i] + register;
+      const temp2 = S0 + maj;
+      hash[7] = hash[6];
+      hash[6] = hash[5];
+      hash[5] = hash[4];
+      hash[4] = (hash[3] + temp1) | 0;
+      hash[3] = hash[2];
+      hash[2] = hash[1];
+      hash[1] = hash[0];
+      hash[0] = (temp1 + temp2) | 0;
+    }
+    for (let i = 0; i < 8; i++) {
+      hash[i] = (hash[i] + oldHash[i]) | 0;
+    }
+  }
+  for (let i = 0; i < 8; i++) {
+    let word = hash[i];
+    if (word < 0) word += maxWord;
+    result.push(word.toString(16).padStart(8, '0'));
+  }
+  return result.join('');
 }
 
 // ── FAST MOBILE-DASHBOARD SYNCRONIZATION ENGINE ──
@@ -3757,7 +3840,7 @@ async function syncGoogleSheetsFast() {
 // ── HELPER UTILITY FOR TEXT SIMILARITY MATCHING (v10.0) ──
 function getLevenshteinDistance(s1, s2) {
   if (!s1) return s2 ? s2.length : 0;
-  if (!s2) return s1.length : 0;
+  if (!s2) return s1 ? s1.length : 0;
   
   const track = Array(s2.length + 1).fill(null).map(() => Array(s1.length + 1).fill(null));
   for (let i = 0; i <= s1.length; i += 1) track[0][i] = i;
