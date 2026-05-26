@@ -189,13 +189,12 @@ function goPage(pageId) {
     }
   });
 
-  // Mobile Bottom Nav Update
-  document.querySelectorAll('.bn').forEach(btn => {
-    btn.classList.remove('on');
-    if (btn.id === `bn-${pageId}`) {
-      btn.classList.add('on');
-    }
+  // Mobile Bottom Nav Update (ใหม่ v9.0)
+  document.querySelectorAll('.mob-nav-item').forEach(btn => {
+    btn.classList.remove('active');
   });
+  const activeNavBtn = document.getElementById(`mob-nav-${pageId}`);
+  if (activeNavBtn) activeNavBtn.classList.add('active');
 
   // Page Content Update
   document.querySelectorAll('.page').forEach(page => {
@@ -246,6 +245,125 @@ function closeSidebar() {
     sb.classList.remove('open');
     overlay.classList.remove('show');
   }
+}
+
+// ── MOBILE BOTTOM NAV FUNCTIONS (v9.0) ──
+
+// นำทางจาก Mobile Bottom Nav (ซิงค์ active state)
+function mobileNavGo(pageId) {
+  goPage(pageId);
+  // ถ้ากด search ใน Bottom Nav ที่ไม่ใช่ปุ่มกลาง ให้ focus search input ด้านบน
+}
+
+// เปิดหน้าต่างค้นหาลอยตัวบนมือถือ
+function openMobileSearch() {
+  const overlay = document.getElementById('mobile-search-overlay');
+  const panel = document.getElementById('mobile-search-panel');
+  if (overlay) overlay.classList.add('visible');
+  if (panel) {
+    panel.style.display = 'flex';
+    // รอ 1 frame ก่อน add class เพื่อให้ animation ทำงานได้
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        panel.classList.add('open');
+      });
+    });
+    // Focus input ค้นหา
+    setTimeout(() => {
+      const input = document.getElementById('mob-qs-input');
+      if (input) input.focus();
+    }, 300);
+  }
+  // ป้องกัน body scroll
+  document.body.style.overflow = 'hidden';
+}
+
+// ปิดหน้าต่างค้นหาลอยตัวบนมือถือ
+function closeMobileSearch() {
+  const overlay = document.getElementById('mobile-search-overlay');
+  const panel = document.getElementById('mobile-search-panel');
+  if (overlay) overlay.classList.remove('visible');
+  if (panel) {
+    panel.classList.remove('open');
+    setTimeout(() => {
+      panel.style.display = 'none';
+      // ล้างผลการค้นหาหลังปิด
+      const results = document.getElementById('mob-qs-results');
+      if (results) results.innerHTML = '';
+      const input = document.getElementById('mob-qs-input');
+      if (input) input.value = '';
+      const clearBtn = document.getElementById('mob-clear-btn');
+      if (clearBtn) clearBtn.style.display = 'none';
+    }, 350);
+  }
+  document.body.style.overflow = '';
+}
+
+// ล้างช่องค้นหามือถือ
+function clearMobileSearch() {
+  const input = document.getElementById('mob-qs-input');
+  const clearBtn = document.getElementById('mob-clear-btn');
+  const results = document.getElementById('mob-qs-results');
+  if (input) { input.value = ''; input.focus(); }
+  if (clearBtn) clearBtn.style.display = 'none';
+  if (results) results.innerHTML = '';
+}
+
+// ค้นหาข้อมูลนักเรียนในหน้าต่างลอยตัวมือถือ (Instant Search)
+function mobileQuickSearch() {
+  const input = document.getElementById('mob-qs-input');
+  const clearBtn = document.getElementById('mob-clear-btn');
+  const resultsEl = document.getElementById('mob-qs-results');
+  if (!input || !resultsEl) return;
+
+  const query = input.value.trim().toLowerCase();
+
+  // แสดง/ซ่อน ปุ่มล้าง
+  if (clearBtn) clearBtn.style.display = query ? 'flex' : 'none';
+
+  if (!query) {
+    resultsEl.innerHTML = '';
+    return;
+  }
+
+  // กรองนักเรียนที่ตรงกับคำค้นหา
+  const matched = DB.filter(s => {
+    const fullName = `${s.fname || ''} ${s.lname || ''}`.toLowerCase();
+    const nick = (s.nickname || '').toLowerCase();
+    const id = String(s.id || '').toLowerCase();
+    const phone = (s.phone || '').toLowerCase();
+    return fullName.includes(query) || nick.includes(query) || id.includes(query) || phone.includes(query);
+  }).slice(0, 20);
+
+  if (matched.length === 0) {
+    resultsEl.innerHTML = `
+      <div class="mob-search-empty">
+        <i class="fa-solid fa-user-slash"></i>
+        <div>ไม่พบนักเรียนที่ตรงกับ "<strong>${query}</strong>"</div>
+      </div>`;
+    return;
+  }
+
+  // สร้าง Card ผลลัพธ์
+  resultsEl.innerHTML = matched.map(s => {
+    const avatarHtml = getAvatarHTML(s, 44);
+    const riskBadge = getRiskBadgesHTML(s);
+    const displayName = getDisplayName(s);
+    const room = s.room ? ` · กลุ่ม ${s.room}` : '';
+    const levelYear = s.level && s.year ? `${s.level} ปี ${s.year}${room}` : '';
+    return `
+      <div class="qs-result-item" onclick="closeMobileSearch(); setTimeout(()=>viewProfile('${s.id}'), 200);">
+        ${avatarHtml}
+        <div style="flex:1; min-width:0;">
+          <div style="font-weight:600; font-size:14px; color:var(--c-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+            ${displayName}
+          </div>
+          <div style="font-size:11.5px; color:var(--c-text-muted); margin-top:2px;">${levelYear}</div>
+          <div style="margin-top:4px;">${riskBadge}</div>
+        </div>
+        <i class="fa-solid fa-chevron-right" style="color:var(--c-text-muted); font-size:12px; flex-shrink:0;"></i>
+      </div>`;
+  }).join('');
 }
 
 // ── THEME LIGHT / DARK SWITCHER ──

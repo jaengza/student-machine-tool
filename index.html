@@ -794,7 +794,55 @@
   <!-- ── TOAST NOTIFICATIONS ── -->
   <div id="toast-container" class="toast-wrapper"></div>
 
+  <!-- ── MOBILE BOTTOM NAVIGATION BAR ── -->
+  <!-- ปุ่มนำทางแถบล่างสำหรับมือถือโดยเฉพาะ ไม่แสดงบนจอ Desktop -->
+  <nav id="mobile-bottom-nav" class="mob-bottom-nav" aria-label="Mobile Bottom Navigation">
+    <button class="mob-nav-item active" onclick="mobileNavGo('dashboard')" id="mob-nav-dashboard">
+      <i class="fa-solid fa-house"></i>
+      <span>หน้าหลัก</span>
+    </button>
+    <button class="mob-nav-item" onclick="mobileNavGo('students')" id="mob-nav-students">
+      <i class="fa-solid fa-user-graduate"></i>
+      <span>นักเรียน</span>
+    </button>
+    <button class="mob-nav-item mob-nav-search-center" onclick="openMobileSearch()" id="mob-nav-search-btn">
+      <div class="mob-nav-search-bubble">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </div>
+      <span>ค้นหา</span>
+    </button>
+    <button class="mob-nav-item" onclick="mobileNavGo('import')" id="mob-nav-import">
+      <i class="fa-solid fa-cloud-arrow-down"></i>
+      <span>ซิงค์</span>
+    </button>
+    <button class="mob-nav-item" onclick="mobileNavGo('settings')" id="mob-nav-settings">
+      <i class="fa-solid fa-gears"></i>
+      <span>ตั้งค่า</span>
+    </button>
+  </nav>
+
+  <!-- ── MOBILE FLOATING SEARCH MODAL ── -->
+  <!-- หน้าต่างค้นหาแบบลอยตัวสำหรับมือถือ -->
+  <div id="mobile-search-overlay" class="mob-search-overlay" onclick="closeMobileSearch()"></div>
+  <div id="mobile-search-panel" class="mob-search-panel">
+    <div class="mob-search-header">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <span>ค้นหาข้อมูลนักเรียน</span>
+      <button class="mob-search-close-btn" onclick="closeMobileSearch()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="mob-search-input-wrap">
+      <i class="fa-solid fa-search mob-s-ico"></i>
+      <input id="mob-qs-input" type="search" placeholder="รหัส / ชื่อ / นามสกุล / ชื่อเล่น / เบอร์โทร..." oninput="mobileQuickSearch()" autocomplete="off" autofocus>
+      <button class="mob-search-clear-btn" onclick="clearMobileSearch()" id="mob-clear-btn" style="display:none;">
+        <i class="fa-solid fa-circle-xmark"></i>
+      </button>
+    </div>
+    <div id="mob-qs-results" class="mob-search-results scroll-styled"></div>
+  </div>
+
   <!-- Main JavaScript File -->
-  <script src="app.js?v=20260526_08"></script>
+  <script src="app.js?v=20260526_09"></script>
 </body>
 </html>
