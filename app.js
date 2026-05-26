@@ -155,6 +155,10 @@ async function initApp() {
   // เรียกเปิดกลไกการซิงค์ข้อมูลให้เป็นปัจจุบันตลอดเวลา (Real-time Sync Engine)
   startAlwaysUpToDateEngine();
   
+  // โหลดหน้าประวัติล็อกระบบ
+  renderDiagnosticsLogsUI();
+  logSystemActivity("APP_START", "", "เปิดแอปพลิเคชันและโหลดโครงสร้างสำเร็จ");
+  
   // Refresh views
   const activePage = document.querySelector('.page.active') ? document.querySelector('.page.active').id : 'page-dashboard';
   if (activePage === 'page-students') renderStudents();
@@ -198,6 +202,10 @@ function updateHeaderCount() {
     badge.textContent = `ทั้งหมด ${DB.length} คน`;
   }
 }
+
+/* ==========================================================================
+   🎨 MODULE 1: UI & VISUAL MODULE (ส่วนการแสดงผล แดชบอร์ด และสกรอลล์ฟิลเตอร์)
+   ========================================================================== */
 
 // ── NAVIGATION CONTROLS ──
 const PAGE_TITLES = {
@@ -253,6 +261,8 @@ function goPage(pageId) {
       const input = document.getElementById('qs-input');
       if (input) input.focus();
     }, 150);
+  } else if (pageId === 'settings') {
+    renderDiagnosticsLogsUI();
   }
 
   closeSidebar();
@@ -2699,6 +2709,10 @@ function editFromProfile() {
   }, 200);
 }
 
+/* ==========================================================================
+   🔒 MODULE 2: SECURITY & AUTH MODULE (ระบบรักษาความปลอดภัยและการเข้าถึง)
+   ========================================================================== */
+
 // ── SECURITY & PASSWORD PROTECTION LOGIC ──
 
 // Toggle visible text inside login password input
@@ -2747,6 +2761,7 @@ async function handleLogin(e) {
     // Initialize full app data and render stats
     initApp();
     showToast('🔓 เข้าสู่ระบบเรียบร้อย ยินดีต้อนรับครับ', 'ok');
+    logSystemActivity("LOGIN_SUCCESS", "", "เข้าสู่ระบบสำเร็จ");
   } else {
     // Show premium error styling and card shaking effect
     if (errorMsg) errorMsg.classList.add('visible');
@@ -2758,6 +2773,7 @@ async function handleLogin(e) {
     }
     passwordInput.value = '';
     passwordInput.focus();
+    logSystemActivity("LOGIN_FAIL", "", "ความพยายามเข้าสู่ระบบไม่ถูกต้อง");
   }
 }
 
@@ -2768,6 +2784,7 @@ function handleLogout() {
   DB = [];
   
   showToast('🔒 ออกจากระบบสำเร็จ กำลังรีเซ็ตหน่วยความจำ...', 'ok');
+  logSystemActivity("LOGOUT", "", "ออกจากระบบ");
   
   setTimeout(() => {
     window.location.reload();
@@ -2775,6 +2792,10 @@ function handleLogout() {
 }
 
 // Utility to calculate SHA-256 hex string using browser-native subtle crypto
+/* ==========================================================================
+   💾 MODULE 4: LOCAL CACHE & SYNC CONTROLLER (ระบบหน่วยความจำสำรองและการซิงค์สด)
+   ========================================================================== */
+
 // ── REAL-TIME CLOUD DATABASE STORAGE INTEGRATIONS ──
 
 // Load database from cloud (Google Sheets Apps Script API)
@@ -2895,12 +2916,14 @@ async function loadDatabaseOnline() {
         DB = parsedDB;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(DB)); // เซฟสำรองในเครื่องเผื่อออฟไลน์
         showToast('🟢 ดึงประวัติเชื่อมโยงสดสำเร็จ!', 'ok');
+        logSystemActivity("SYNC_BACKGROUND", "", `ดึงประวัติสดสำเร็จ โหลดข้อมูลนักเรียน ${parsedDB.length} คน`);
         return true;
       }
     }
   } catch (err) {
     console.error('Cloud Sync failed, falling back to Local Storage', err);
     showToast('⚠️ เชื่อมต่อออนไลน์ไม่ได้ กำลังใช้ข้อมูลประวัติสำรองในเครื่องแทน', 'err');
+    logSystemActivity("SYNC_BACKGROUND_FAIL", "", `ดึงประวัติสดล้มเหลว: ${err.message || err}`);
   }
   return false;
 }
@@ -2954,9 +2977,11 @@ async function saveToCloud(student) {
     });
     
     showToast('🟢 บันทึกและซิงค์คลาวด์ออนไลน์สำเร็จ!', 'ok');
+    logSystemActivity("SAVE_STUDENT", student.id, `บันทึกประวัตินักเรียนคุณ ${student.fname} ${student.lname} ขึ้นคลาวด์`);
   } catch (err) {
     console.error('Failed to sync to cloud', err);
     showToast('⚠️ ไม่สามารถส่งขึ้นคลาวด์ได้ทันที ข้อมูลจะเซฟไว้ในเครื่องนี้ก่อน', 'err');
+    logSystemActivity("SAVE_STUDENT_FAIL", student.id, `ส่งขึ้นคลาวด์ล้มเหลว: ${err.message || err}`);
   }
 }
 
@@ -2980,9 +3005,11 @@ async function deleteFromCloud(studentId) {
       body: JSON.stringify(payload)
     });
     showToast('🟢 ลบประวัติบนคลาวด์ออนไลน์สำเร็จ!', 'ok');
+    logSystemActivity("DELETE_STUDENT", studentId, "ส่งคำสั่งลบประวัตินักเรียนไปบนคลาวด์สำเร็จ");
   } catch (err) {
     console.error('Failed to delete from cloud', err);
     showToast('⚠️ ไม่สามารถสั่งลบออนไลน์ได้ทันที ข้อมูลอาจยังค้างอยู่ในกูเกิลชีต', 'err');
+    logSystemActivity("DELETE_STUDENT_FAIL", studentId, `สั่งลบบนคลาวด์ล้มเหลว: ${err.message || err}`);
   }
 }
 
@@ -3189,6 +3216,7 @@ async function testCloudConnection() {
     
     if (data && Array.isArray(data)) {
       showToast("🟢 เชื่อมต่อคลาวด์สำเร็จ! พบประวัตินักเรียน " + data.length + " รายการในชีต", "ok");
+      logSystemActivity("CLOUD_TEST_SUCCESS", "", `ทดสอบเชื่อมต่อคลาวด์สำเร็จ พบประวัติ ${data.length} รายการ`);
       
       // Auto save and activate
       CLOUD_API_URL = testUrl;
@@ -3199,10 +3227,12 @@ async function testCloudConnection() {
       initApp();
     } else {
       showToast('⚠️ ผลลัพธ์ชีตว่างเปล่า หรือเกิดข้อผิดพลาดในการดึงข้อมูล', 'err');
+      logSystemActivity("CLOUD_TEST_FAIL", "", "ผลลัพธ์ชีตว่างเปล่า หรือดึงข้อมูลขัดข้อง");
     }
   } catch (err) {
     console.error(err);
     showToast('❌ เชื่อมต่อล้มเหลว ลิงก์ไม่ถูกต้อง หรือยังไม่ได้เปิดแชร์สาธารณะ (Anyone)', 'err');
+    logSystemActivity("CLOUD_TEST_FAIL", "", `เชื่อมต่อล้มเหลว: ${err.message || err}`);
   } finally {
     if (testBtn) {
       testBtn.innerHTML = '<i class="fa-solid fa-circle-nodes"></i> ทดสอบการซิงค์สด';
@@ -3301,6 +3331,10 @@ function pureJsSha256(str) {
   }
   return result.join('');
 }
+
+/* ==========================================================================
+   🧬 MODULE 3: DUAL-SOURCE MERGE ENGINE (ตัวผสานกูเกิลชีตและรูปภาพอัจฉริยะ)
+   ========================================================================== */
 
 // ── FAST MOBILE-DASHBOARD SYNCRONIZATION ENGINE ──
 
@@ -3824,15 +3858,18 @@ async function syncGoogleSheetsFast() {
             else if (activePage === 'page-search') quickSearch();
             
             showToast(`🎉 สำเร็จ! ดึงข้อมูลนักเรียนหลักเข้ามา ${parsedStudents.length} คน พร้อมตรวจจับซิงค์รูปถ่ายได้สำเร็จ ${matchedPhotosCount} คน!`, 'ok');
+            logSystemActivity("SYNC_FAST_SUCCESS", "", `ซิงค์ด่วนเสร็จสิ้น ดึงข้อมูลหลัก ${parsedStudents.length} คน ซิงค์รูปภาพ ${matchedPhotosCount} คน`);
           }
         });
         
       } else {
         showToast('❌ โครงสร้างใน Google Sheets หลักว่างเปล่า', 'err');
+        logSystemActivity("SYNC_FAST_FAIL", "", "โครงสร้างใน Google Sheets หลักว่างเปล่า");
       }
     },
     error: function() {
       showToast('❌ ดาวน์โหลดรายชื่อหลักล้มเหลว กรุณาตรวจสอบการแชร์ไฟล์ชีตหลักเป็นสาธารณะ', 'err');
+      logSystemActivity("SYNC_FAST_FAIL", "", "ดาวน์โหลดรายชื่อหลักล้มเหลว (ตรวจสอบการแชร์ไฟล์ชีต)");
     }
   });
 }
@@ -3857,4 +3894,221 @@ function getLevenshteinDistance(s1, s2) {
     }
   }
   return track[s2.length][s1.length];
+}
+
+/* ==========================================================================
+   🧠 MODULE 5: DIAGNOSTICS & LOGGING MODULE (ระบบประวัติกิจกรรมและการดักจับบั๊ก)
+   ========================================================================== */
+
+// Global Error Catchers for Browser-level Issues
+window.addEventListener('error', function(e) {
+  logSystemActivity("SYSTEM_ERROR", "", `${e.message} ที่ ${e.filename ? e.filename.split('/').pop() : 'unknown'}:${e.lineno || 0}`);
+});
+
+window.addEventListener('unhandledrejection', function(e) {
+  logSystemActivity("PROMISE_ERROR", "", `Promise rejection ตกหล่น: ${e.reason}`);
+});
+
+// Primary System Logger Engine
+function logSystemActivity(action, studentId, details) {
+  try {
+    let logs = [];
+    try {
+      const rawLogs = localStorage.getItem('app_system_logs');
+      logs = rawLogs ? JSON.parse(rawLogs) : [];
+      if (!Array.isArray(logs)) logs = [];
+    } catch (e) {
+      logs = [];
+    }
+    
+    const newLog = {
+      timestamp: new Date().toISOString(),
+      action: action,
+      studentId: studentId || '',
+      details: details || '',
+      device: getSimpleBrowserInfo()
+    };
+    
+    logs.unshift(newLog); // Add to beginning of array (latest first)
+    
+    // Keep quota limit (max 100 entries to prevent LocalStorage bloat)
+    if (logs.length > 100) {
+      logs = logs.slice(0, 100);
+    }
+    
+    localStorage.setItem('app_system_logs', JSON.stringify(logs));
+    
+    // Auto-update UI if settings page is active
+    const activePage = document.querySelector('.page.active') ? document.querySelector('.page.active').id : '';
+    if (activePage === 'page-settings') {
+      renderDiagnosticsLogsUI();
+    }
+  } catch (err) {
+    console.error('System logger failed:', err);
+  }
+}
+
+// Helper to extract simple browser info for reports
+function getSimpleBrowserInfo() {
+  const ua = navigator.userAgent;
+  let browser = "Unknown Browser";
+  if (ua.includes("Chrome")) browser = "Chrome";
+  else if (ua.includes("Safari") && !ua.includes("Chrome")) browser = "Safari";
+  else if (ua.includes("Firefox")) browser = "Firefox";
+  else if (ua.includes("Edge")) browser = "Microsoft Edge";
+  
+  let os = "Unknown OS";
+  if (ua.includes("Windows")) os = "Windows";
+  else if (ua.includes("Macintosh")) os = "macOS";
+  else if (ua.includes("Android")) os = "Android";
+  else if (ua.includes("iPhone") || ua.includes("iPad")) os = "iOS";
+  
+  return `${browser} (${os})`;
+}
+
+// Render Diagnostics List in Glassmorphism Container on Settings Page
+function renderDiagnosticsLogsUI() {
+  const container = document.getElementById('diagnostics-logs-container');
+  if (!container) return;
+  
+  let logs = [];
+  try {
+    const rawLogs = localStorage.getItem('app_system_logs');
+    logs = rawLogs ? JSON.parse(rawLogs) : [];
+    if (!Array.isArray(logs)) logs = [];
+  } catch (e) {
+    logs = [];
+  }
+  
+  if (logs.length === 0) {
+    container.innerHTML = `<span style="color: var(--c4); font-style: italic;">⚪ ไม่มีประวัติกิจกรรมระบบในขณะนี้</span>`;
+    return;
+  }
+  
+  let html = '';
+  // Show only up to 15 entries on settings screen
+  const displayLogs = logs.slice(0, 15);
+  
+  displayLogs.forEach(l => {
+    // Format timestamp nicely: hh:mm:ss
+    let timeStr = '00:00:00';
+    try {
+      const dt = new Date(l.timestamp);
+      timeStr = dt.toTimeString().split(' ')[0];
+    } catch (e) {}
+    
+    // Choose status color
+    let color = '#34d399'; // Emerald Green
+    let actionLabel = l.action;
+    
+    if (l.action.includes('ERROR') || l.action.includes('FAIL')) {
+      color = '#f87171'; // Red
+    } else if (l.action.includes('LOGIN')) {
+      color = '#60a5fa'; // Light Blue
+    } else if (l.action.includes('DELETE')) {
+      color = '#f97316'; // Orange
+    }
+    
+    const stuPart = l.studentId ? ` [รหัส: ${l.studentId}]` : '';
+    html += `
+      <div style="margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 4px; word-break: break-all;">
+        <span style="color: var(--c4); font-size: 11px;">[${timeStr}]</span>
+        <strong style="color: ${color}; text-transform: uppercase;">[${actionLabel}]</strong>${stuPart}
+        <span style="color: var(--c7); margin-left: 4px;">${l.details}</span>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+
+// Generate text Debug Report and Copy to Clipboard
+function copyDebugReport() {
+  try {
+    let logs = [];
+    try {
+      const rawLogs = localStorage.getItem('app_system_logs');
+      logs = rawLogs ? JSON.parse(rawLogs) : [];
+    } catch (e) {}
+    
+    const reportDate = new Date().toLocaleString('th-TH');
+    const cloudUrlVal = localStorage.getItem(CLOUD_KEY) || 'ไม่ได้ระบุ';
+    const totalStudents = DB.length;
+    
+    let report = `==================================================\n`;
+    report += `🎓 REPORT: SYSTEM DIAGNOSTICS & STATUS REPORT\n`;
+    report += `==================================================\n`;
+    report += `📅 วันเวลาที่ออกรายงาน: ${reportDate}\n`;
+    report += `💻 ข้อมูลอุปกรณ์ผู้ใช้งาน: ${navigator.userAgent}\n`;
+    report += `🟢 Status การเชื่อมต่อ: ${navigator.onLine ? 'ออนไลน์ (ONLINE)' : 'ออฟไลน์ (OFFLINE)'}\n`;
+    report += `🔐 การเข้าระบบผู้ดูแล: ${isAuthorized ? 'ล็อกอินเข้าระบบเรียบร้อย' : 'ยังไม่ได้ล็อกอิน'}\n`;
+    report += `📊 ขนาดฐานข้อมูลในเครื่อง: ${totalStudents} รายชื่อนักเรียน\n`;
+    report += `☁️ API Google Apps Script: ${cloudUrlVal}\n\n`;
+    
+    report += `==================================================\n`;
+    report += `📝 ประวัติกิจกรรมระบบล่าสุด (20 รายการหลังสุด)\n`;
+    report += `==================================================\n`;
+    
+    const logs20 = logs.slice(0, 20);
+    if (logs20.length === 0) {
+      report += `(ไม่มีประวัติกิจกรรมเก็บไว้ใน LocalStorage)\n`;
+    } else {
+      logs20.forEach((l, idx) => {
+        report += `${idx + 1}. [${l.timestamp}] [${l.action}] ${l.studentId ? 'Student ID: ' + l.studentId + ' | ' : ''}${l.details} (${l.device})\n`;
+      });
+    }
+    report += `==================================================\n`;
+    report += `🎓 END OF SYSTEM DIAGNOSTICS REPORT\n`;
+    report += `==================================================\n`;
+    
+    // Copy using modern Clipboard API or fallback
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(report).then(() => {
+        showToast('📋 คัดลอกรายงานดีบักระบบเข้าสู่ Clipboard เรียบร้อยแล้ว!', 'ok');
+      }).catch(err => {
+        fallbackCopyText(report);
+      });
+    } else {
+      fallbackCopyText(report);
+    }
+    
+    logSystemActivity("REPORT_EXPORT", "", "คัดลอกรายงานดีบักระบบออกเป็นข้อความสำเร็จ");
+  } catch (err) {
+    console.error(err);
+    showToast('❌ ไม่สามารถสร้างรายงานดีบักได้', 'err');
+  }
+}
+
+function fallbackCopyText(text) {
+  const textArea = document.createElement("textarea");
+  textArea.value = text;
+  textArea.style.position = "fixed"; // Avoid scrolling to bottom
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  try {
+    document.execCommand('copy');
+    showToast('📋 คัดลอกรายงานดีบักระบบเรียบร้อย (Fallback)!', 'ok');
+  } catch (err) {
+    showToast('❌ คัดลอกรายงานล้มเหลว กรุณาคลุมดำคัดลอกเองจาก F12', 'err');
+  }
+  document.body.removeChild(textArea);
+}
+
+// Clear all logs inside LocalStorage
+function clearDiagnosticsLogs() {
+  if (confirm('🗑️ คุณแน่ใจหรือไม่ว่าต้องการล้างประวัติกิจกรรมและข้อผิดพลาดระบบทั้งหมดบนเครื่องนี้?')) {
+    localStorage.removeItem('app_system_logs');
+    renderDiagnosticsLogsUI();
+    showToast('🧹 ล้างประวัติล็อกข้อผิดพลาดเรียบร้อยแล้ว!', 'ok');
+  }
+}
+
+// Trigger Simulation Error for testing global error listener
+function triggerTestError() {
+  showToast('💥 กำลังจำลองสคริปต์ขัดข้อง (Simulating crash)...', 'err');
+  setTimeout(() => {
+    // Throws intentional crash to test system diagnostics catcher (Window Error Listener)
+    throw new Error("Test diagnostic error triggered by technical admin user.");
+  }, 300);
 }

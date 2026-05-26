@@ -429,6 +429,35 @@
           </div>
         </div>
 
+        <!-- Diagnostics & Activity Logging Card (v12.0) -->
+        <div class="tbox padded-box animate-fade-in" style="max-width: 700px; margin: 0 auto 24px;">
+          <div class="form-section-title" style="color: var(--pu);">
+            <i class="fa-solid fa-brain"></i> ระบบวิเคราะห์ประวัติกิจกรรมและข้อผิดพลาด (Diagnostics & Logs)
+          </div>
+          <p style="color: var(--c5); margin-bottom: 16px; line-height: 1.5; font-size: 13px;">
+            บันทึกประวัติกิจกรรมล่าสุดภายในเครื่องและดักจับข้อผิดพลาดเชิงลึกแบบอัตโนมัติ เพื่อช่วยระบุต้นตอปัญหาเน็ตหลุดหรือความขัดข้องของโครงสร้างชีตได้ทันที
+          </p>
+          
+          <div class="fg" style="margin-bottom: 15px;">
+            <label class="form-label font-accent" style="color: var(--c6); font-weight: 700;"><i class="fa-solid fa-list-ul"></i> ประวัติกิจกรรมระบบล่าสุด (15 รายการล่าสุด)</label>
+            <div id="diagnostics-logs-container" class="scroll-styled" style="background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-color); border-radius: var(--r8); padding: 12px 14px; font-size: 12px; max-height: 180px; overflow-y: auto; font-family: monospace; line-height: 1.6; color: var(--c7);">
+              <span style="color: var(--c4); font-style: italic;">⚪ ไม่มีประวัติกิจกรรมระบบในขณะนี้</span>
+            </div>
+          </div>
+          
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-p btn-sm" onclick="copyDebugReport()" style="background: linear-gradient(135deg, var(--pu) 0%, var(--p) 100%);">
+              <i class="fa-solid fa-copy"></i> คัดลอกรายงานดีบักระบบ
+            </button>
+            <button class="btn btn-s btn-sm" onclick="clearDiagnosticsLogs()">
+              <i class="fa-solid fa-trash-can"></i> ล้างประวัติล็อก
+            </button>
+            <button class="btn btn-s btn-sm" onclick="triggerTestError()" style="border-color: rgba(239, 68, 68, 0.3); color: #f87171;">
+              <i class="fa-solid fa-bug"></i> ทดสอบดักจับบั๊ก
+            </button>
+          </div>
+        </div>
+
         <div class="tbox padded-box animate-fade-in" style="max-width: 700px; margin: 0 auto;">
           <div class="form-section-title" style="color: var(--r);">
             <i class="fa-solid fa-screwdriver-wrench"></i> บำรุงรักษาและสำรองข้อมูลระบบ

@@ -267,9 +267,9 @@ function doPost(e) {
           const prefix = postData.level.includes("ปวช") ? "นาย " : "นาย "; // ปรับเพศเบื้องต้น
           const fn = postData.fname || "";
           const ln = postData.lname || "";
-          sheet.getCell(studentRowIndex, colIdx + 1).setValue(`${fn} ${ln}`.trim());
+          sheet.getRange(studentRowIndex, colIdx + 1).setValue(`${fn} ${ln}`.trim());
         } else if (fieldKey && postData[fieldKey] !== undefined) {
-          sheet.getCell(studentRowIndex, colIdx + 1).setValue(String(postData[fieldKey]).trim());
+          sheet.getRange(studentRowIndex, colIdx + 1).setValue(String(postData[fieldKey]).trim());
         }
       });
     } else {
