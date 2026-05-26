@@ -148,13 +148,11 @@ function doGet(e) {
     
     // แปลงผลลัพธ์ส่งออกเป็น JSON
     return ContentService.createTextOutput(JSON.stringify(students))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeader('Access-Control-Allow-Origin', '*'); // ป้องกัน CORS บล็อก
+      .setMimeType(ContentService.MimeType.JSON); // ป้องกัน CORS บล็อก
       
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeader('Access-Control-Allow-Origin', '*');
+      .setMimeType(ContentService.MimeType.JSON);
   }
 }
 
@@ -169,8 +167,7 @@ function doPost(e) {
     const studentId = String(postData.id || '').trim();
     if (!studentId) {
       return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Missing student ID" }))
-        .setMimeType(ContentService.MimeType.JSON)
-        .setHeader('Access-Control-Allow-Origin', '*');
+        .setMimeType(ContentService.MimeType.JSON);
     }
     
     // ค้นหาคอลัมน์สำคัญ
@@ -178,8 +175,7 @@ function doPost(e) {
     
     if (idColIdx === -1) {
       return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "ID Column not found in Sheet" }))
-        .setMimeType(ContentService.MimeType.JSON)
-        .setHeader('Access-Control-Allow-Origin', '*');
+        .setMimeType(ContentService.MimeType.JSON);
     }
     
     // ตรวจสอบแอ็กชันลบประวัติ
@@ -195,12 +191,10 @@ function doPost(e) {
       if (foundRow !== -1) {
         sheet.deleteRow(foundRow);
         return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Deleted successfully" }))
-          .setMimeType(ContentService.MimeType.JSON)
-          .setHeader('Access-Control-Allow-Origin', '*');
+          .setMimeType(ContentService.MimeType.JSON);
       } else {
         return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Student not found" }))
-          .setMimeType(ContentService.MimeType.JSON)
-          .setHeader('Access-Control-Allow-Origin', '*');
+          .setMimeType(ContentService.MimeType.JSON);
       }
     }
     
@@ -291,13 +285,11 @@ function doPost(e) {
     }
     
     return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Saved successfully" }))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeader('Access-Control-Allow-Origin', '*');
+      .setMimeType(ContentService.MimeType.JSON);
       
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeader('Access-Control-Allow-Origin', '*');
+      .setMimeType(ContentService.MimeType.JSON);
   }
 }
 
