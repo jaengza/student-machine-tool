@@ -27,6 +27,7 @@ const FIELDS = [
   { k: 'fname', l: 'ชื่อจริง', req: true },
   { k: 'lname', l: 'นามสกุล', req: true },
   { k: 'nickname', l: 'ชื่อเล่น', req: false },
+  { k: 'gender', l: 'เพศ', req: false },
   { k: 'photo', l: 'รูปภาพ / ลิงก์ Drive', req: false },
   { k: 'level', l: 'ระดับชั้น', req: false },
   { k: 'year', l: 'ชั้นปี', req: false },
@@ -45,6 +46,17 @@ const FIELDS = [
   { k: 'smoke', l: 'พฤติกรรมเสี่ยงดื่ม/สูบ', req: false },
   { k: 'internship_place', l: 'สถานที่ฝึกงาน / สหกิจศึกษา', req: false },
   { k: 'internship_phone', l: 'เบอร์โทรสถานที่ฝึกงาน', req: false },
+  
+  // ที่อยู่และข้อมูลครอบครัวเพิ่มเติม (v11)
+  { k: 'address_no', l: 'บ้านเลขที่', req: false },
+  { k: 'address_road', l: 'ถนน', req: false },
+  { k: 'address_subdistrict', l: 'ตำบล', req: false },
+  { k: 'address_district', l: 'อำเภอ', req: false },
+  { k: 'address_zipcode', l: 'รหัสไปรษณีย์', req: false },
+  { k: 'needs_scholarship', l: 'ความต้องการทุนการศึกษา', req: false },
+  { k: 'parent_job', l: 'อาชีพผู้ปกครอง', req: false },
+  { k: 'parent_income', l: 'รายได้ครอบครัว', req: false },
+
   { k: 'risk_level', l: 'ระดับความเสี่ยงภาพรวม', req: false },
   { k: 'risk_academic', l: 'ความเสี่ยงด้านการเรียน', req: false },
   { k: 'risk_behavior', l: 'ความเสี่ยงด้านพฤติกรรม', req: false },
@@ -1259,6 +1271,17 @@ function openEditModal(studentId) {
   document.getElementById('f-allowance').value = s.allowance || '';
   document.getElementById('f-smoke').value = s.smoke || '';
   
+  // 9 Additional Fields (v11)
+  document.getElementById('f-gender').value = s.gender || '';
+  document.getElementById('f-address-no').value = s.address_no || '';
+  document.getElementById('f-address-road').value = s.address_road || '';
+  document.getElementById('f-address-subdistrict').value = s.address_subdistrict || '';
+  document.getElementById('f-address-district').value = s.address_district || '';
+  document.getElementById('f-address-zipcode').value = s.address_zipcode || '';
+  document.getElementById('f-needs-scholarship').value = s.needs_scholarship || '';
+  document.getElementById('f-parent-job').value = s.parent_job || '';
+  document.getElementById('f-parent-income').value = s.parent_income || '';
+  
   // Set internship values
   const intPlace = document.getElementById('f-internship-place');
   const intPhone = document.getElementById('f-internship-phone');
@@ -1318,6 +1341,17 @@ function saveStudent(e) {
     transport: document.getElementById('f-transport').value,
     allowance: document.getElementById('f-allowance').value.trim(),
     smoke: document.getElementById('f-smoke').value.trim(),
+    
+    // 9 Additional Fields (v11)
+    gender: document.getElementById('f-gender').value,
+    address_no: document.getElementById('f-address-no').value.trim(),
+    address_road: document.getElementById('f-address-road').value.trim(),
+    address_subdistrict: document.getElementById('f-address-subdistrict').value.trim(),
+    address_district: document.getElementById('f-address-district').value.trim(),
+    address_zipcode: document.getElementById('f-address-zipcode').value.trim(),
+    needs_scholarship: document.getElementById('f-needs-scholarship').value,
+    parent_job: document.getElementById('f-parent-job').value.trim(),
+    parent_income: document.getElementById('f-parent-income').value,
     
     // Risks
     risk_level: document.getElementById('f-risk-level').value,
@@ -1518,6 +1552,7 @@ function viewProfile(studentId) {
         <div class="info-row"><div class="ir-lbl">ชั้นปีการศึกษา</div><div class="ir-val">ปีที่ ${s.year || '-'}</div></div>
         <div class="info-row"><div class="ir-lbl">กลุ่มการเรียน</div><div class="ir-val">${s.room || '-'}</div></div>
         <div class="info-row"><div class="ir-lbl">สถานภาพปัจจุบัน</div><div class="ir-val">${s.status || '-'}</div></div>
+        <div class="info-row"><div class="ir-lbl">เพศ</div><div class="ir-val">${s.gender || '-'}</div></div>
         <div class="info-row"><div class="ir-lbl">ไซส์เสื้อกิจกรรม</div><div class="ir-val"><span class="badge b-blue" style="font-size:12px;">${s.shirt || '-'}</span></div></div>
         <div class="info-row"><div class="ir-lbl">สถานศึกษาเดิม</div><div class="ir-val">${s.prevschool || '-'}</div></div>
         <div class="info-row"><div class="ir-lbl">การเดินทางมาเรียน</div><div class="ir-val">${s.transport || '-'}</div></div>
@@ -1561,6 +1596,26 @@ function viewProfile(studentId) {
           </div>
         </div>
         <div class="info-row"><div class="ir-lbl">เงินได้รับต่อวัน</div><div class="ir-val">${s.allowance ? `${s.allowance} บาท` : '-'}</div></div>
+        <div class="info-row"><div class="ir-lbl">อาชีพผู้ปกครอง</div><div class="ir-val">${s.parent_job || '-'}</div></div>
+        <div class="info-row"><div class="ir-lbl">รายได้ครอบครัว</div><div class="ir-val">${s.parent_income || '-'}</div></div>
+        <div class="info-row"><div class="ir-lbl">ความต้องการทุน</div><div class="ir-val">${s.needs_scholarship || '-'}</div></div>
+      </div>
+
+      <!-- Section 2.5: Address -->
+      <div class="profile-sect animate-fade-in" style="grid-column: 1 / -1; border-color: rgba(16, 185, 129, 0.25);">
+        <div class="profile-sect-title" style="color: var(--g); border-bottom-color: var(--g);"><i class="fa-solid fa-house-user"></i> ที่อยู่ตามทะเบียนบ้านของนักเรียน</div>
+        <div class="info-row">
+          <div class="ir-lbl">ที่อยู่ปัจจุบัน</div>
+          <div class="ir-val" style="font-weight:600;">
+            ${[
+              s.address_no ? `บ้านเลขที่ ${s.address_no}` : '',
+              s.address_road ? `ถนน ${s.address_road}` : '',
+              s.address_subdistrict ? `ตำบล ${s.address_subdistrict}` : '',
+              s.address_district ? `อำเภอ ${s.address_district}` : '',
+              s.address_zipcode ? `รหัสไปรษณีย์ ${s.address_zipcode}` : ''
+            ].filter(Boolean).join(' ') || '<span style="color:var(--c4);">ไม่ระบุข้อมูลที่อยู่</span>'}
+          </div>
+        </div>
       </div>
 
       <!-- Section 3: Health & Behavior -->
@@ -2738,6 +2793,7 @@ async function loadDatabaseOnline() {
         "ชื่อจริง": "fname", "ชื่อ": "fname", "ชื่อนาม-นามสกุล": "fname", "ชื่อ-นามสกุล": "fname",
         "นามสกุล": "lname", "สกุล": "lname",
         "ชื่อเล่น": "nickname", "รูป": "photo", "รูปถ่าย": "photo", "รูปภาพ": "photo", "photo": "photo",
+        "เพศ": "gender",
         "ระดับชั้น": "level", "ระดับ": "level", "ระดับชั้นปี": "level",
         "ชั้นปี": "year", "กลุ่มเรียน": "room", "ห้อง": "room", "เบอร์โทรนักเรียน": "phone", "เบอร์โทร": "phone",
         "โซเชียล": "social", "line": "social", "facebook": "social",
@@ -2745,6 +2801,12 @@ async function loadDatabaseOnline() {
         "สถานศึกษาเดิม": "prevschool", "ไซส์เสื้อ": "shirt", "โรคประจำตัว": "health",
         "การเดินทาง": "transport", "เงินมาเรียนต่อวัน": "allowance", "พฤติกรรมเสี่ยง": "smoke",
         "สถานที่ฝึกงาน": "internship_place", "เบอร์โทรสถานที่ฝึกงาน": "internship_phone",
+        
+        "บ้านเลขที่": "address_no", "ถนน": "address_road", "ตำบล": "address_subdistrict",
+        "อำเภอ": "address_district", "รหัสไปรษณีย์": "address_zipcode",
+        "นักเรียนมีความต้องกาารทุนการศึกษาไหมในอนาคต": "needs_scholarship", "ความต้องการทุนการศึกษา": "needs_scholarship",
+        "อาชีพของผู้ปกครอง": "parent_job", "รายได้โดยเฉลี่ยของครอบครัว": "parent_income",
+
         "ระดับความเสี่ยงภาพรวม": "risk_level", "เสี่ยงด้านการเรียน": "risk_academic",
         "เสี่ยงด้านพฤติกรรม": "risk_behavior", "เสี่ยงด้านครอบครัว": "risk_family",
         "เสี่ยงด้านเศรษฐกิจ": "risk_economic", "หมายเหตุช่วยเหลือ": "risk_note"
@@ -2948,6 +3010,7 @@ async function syncDatabaseBackground() {
         "ชื่อจริง": "fname", "ชื่อ": "fname", "ชื่อนาม-นามสกุล": "fname", "ชื่อ-นามสกุล": "fname",
         "นามสกุล": "lname", "สกุล": "lname",
         "ชื่อเล่น": "nickname", "รูป": "photo", "รูปถ่าย": "photo", "รูปภาพ": "photo", "photo": "photo",
+        "เพศ": "gender",
         "ระดับชั้น": "level", "ระดับ": "level", "ระดับชั้นปี": "level",
         "ชั้นปี": "year", "กลุ่มเรียน": "room", "ห้อง": "room", "เบอร์โทรนักเรียน": "phone", "เบอร์โทร": "phone",
         "โซเชียล": "social", "line": "social", "facebook": "social",
@@ -2955,6 +3018,12 @@ async function syncDatabaseBackground() {
         "สถานศึกษาเดิม": "prevschool", "ไซส์เสื้อ": "shirt", "โรคประจำตัว": "health",
         "การเดินทาง": "transport", "เงินมาเรียนต่อวัน": "allowance", "พฤติกรรมเสี่ยง": "smoke",
         "สถานที่ฝึกงาน": "internship_place", "เบอร์โทรสถานที่ฝึกงาน": "internship_phone",
+        
+        "บ้านเลขที่": "address_no", "ถนน": "address_road", "ตำบล": "address_subdistrict",
+        "อำเภอ": "address_district", "รหัสไปรษณีย์": "address_zipcode",
+        "นักเรียนมีความต้องกาารทุนการศึกษาไหมในอนาคต": "needs_scholarship", "ความต้องการทุนการศึกษา": "needs_scholarship",
+        "อาชีพของผู้ปกครอง": "parent_job", "รายได้โดยเฉลี่ยของครอบครัว": "parent_income",
+
         "ระดับความเสี่ยงภาพรวม": "risk_level", "เสี่ยงด้านการเรียน": "risk_academic",
         "เสี่ยงด้านพฤติกรรม": "risk_behavior", "เสี่ยงด้านครอบครัว": "risk_family",
         "เสี่ยงด้านเศรษฐกิจ": "risk_economic", "หมายเหตุช่วยเหลือ": "risk_note"
@@ -3218,6 +3287,7 @@ async function syncGoogleSheetsFast() {
           fname: ['ชื่อนาม-นามสกุล', 'ชื่อ-นามสกุล', 'ชื่อจริง', 'ชื่อ', 'ชื่อผู้เรียน'],
           lname: ['ชื่อนาม-นามสกุล', 'ชื่อ-นามสกุล', 'นามสกุล', 'สกุล'],
           nickname: ['ชื่อเล่น'],
+          gender: ['เพศ'],
           level: ['ระดับชั้นปี', 'ระดับชั้น', 'ระดับการศึกษา', 'ระดับ'],
           year: ['ชั้นปี', 'ชั้นปีที่', 'ปี'],
           phone: ['เบอร์โทรศัพท์มือถือ ของนักเรียน', 'เบอร์โทรนักเรียน', 'เบอร์โทรศัพท์นักเรียน', 'เบอร์โทร', 'โทรศัพท์'],
@@ -3233,6 +3303,14 @@ async function syncGoogleSheetsFast() {
           smoke: ['พฤติกรรมเสี่ยงดื่ม/สูบ', 'ดิ่มหรือสูบไหม'],
           internship_place: ['สถานที่ฝึกงาน / สหกิจศึกษา'],
           internship_phone: ['เบอร์โทรสถานที่ฝึกงาน'],
+          address_no: ['บ้านเลขที่'],
+          address_road: ['ถนน'],
+          address_subdistrict: ['ตำบล'],
+          address_district: ['อำเภอ'],
+          address_zipcode: ['รหัสไปรษณีย์'],
+          needs_scholarship: ['นักเรียนมีความต้องกาารทุนการศึกษาไหมในอนาคต', 'ความต้องการทุนการศึกษา', 'ต้องการทุน'],
+          parent_job: ['อาชีพของผู้ปกครอง'],
+          parent_income: ['รายได้โดยเฉลี่ยของครอบครัว', 'รายได้ครอบครัว'],
           risk_level: ['ระดับความเสี่ยงภาพรวม'],
           risk_academic: ['ความเสี่ยงด้านการเรียน'],
           risk_behavior: ['ความเสี่ยงด้านพฤติกรรม'],
@@ -3256,6 +3334,9 @@ async function syncGoogleSheetsFast() {
           }
           if (MAP_PATTERNS.nickname.some(p => cleanH.includes(p.toLowerCase()))) {
             if (nicknameColIdx === -1) nicknameColIdx = idx;
+          }
+          if (MAP_PATTERNS.gender.some(p => cleanH.includes(p.toLowerCase()))) {
+            if (genderColIdx === -1) genderColIdx = idx;
           }
           if (MAP_PATTERNS.level.some(p => cleanH.includes(p.toLowerCase()))) {
             if (levelColIdx === -1) levelColIdx = idx;
@@ -3301,6 +3382,30 @@ async function syncGoogleSheetsFast() {
           }
           if (MAP_PATTERNS.internship_phone.some(p => cleanH.includes(p.toLowerCase()))) {
             if (internshipPhoneColIdx === -1) internshipPhoneColIdx = idx;
+          }
+          if (MAP_PATTERNS.address_no.some(p => cleanH.includes(p.toLowerCase()))) {
+            if (addressNoColIdx === -1) addressNoColIdx = idx;
+          }
+          if (MAP_PATTERNS.address_road.some(p => cleanH.includes(p.toLowerCase()))) {
+            if (addressRoadColIdx === -1) addressRoadColIdx = idx;
+          }
+          if (MAP_PATTERNS.address_subdistrict.some(p => cleanH.includes(p.toLowerCase()))) {
+            if (addressSubdistrictColIdx === -1) addressSubdistrictColIdx = idx;
+          }
+          if (MAP_PATTERNS.address_district.some(p => cleanH.includes(p.toLowerCase()))) {
+            if (addressDistrictColIdx === -1) addressDistrictColIdx = idx;
+          }
+          if (MAP_PATTERNS.address_zipcode.some(p => cleanH.includes(p.toLowerCase()))) {
+            if (addressZipcodeColIdx === -1) addressZipcodeColIdx = idx;
+          }
+          if (MAP_PATTERNS.needs_scholarship.some(p => cleanH.includes(p.toLowerCase()))) {
+            if (needsScholarshipColIdx === -1) needsScholarshipColIdx = idx;
+          }
+          if (MAP_PATTERNS.parent_job.some(p => cleanH.includes(p.toLowerCase()))) {
+            if (parentJobColIdx === -1) parentJobColIdx = idx;
+          }
+          if (MAP_PATTERNS.parent_income.some(p => cleanH.includes(p.toLowerCase()))) {
+            if (parentIncomeColIdx === -1) parentIncomeColIdx = idx;
           }
           if (MAP_PATTERNS.risk_level.some(p => cleanH.includes(p.toLowerCase()))) {
             if (riskLevelColIdx === -1) riskLevelColIdx = idx;
@@ -3366,6 +3471,7 @@ async function syncGoogleSheetsFast() {
           student.fname = fnameVal;
           student.lname = lnameVal;
           student.nickname = nicknameColIdx !== -1 ? String(row[nicknameColIdx] || '').trim() : '';
+          student.gender = genderColIdx !== -1 ? String(row[genderColIdx] || '').trim() : '';
           student.level = levelColIdx !== -1 ? String(row[levelColIdx] || '').trim() : '';
           student.year = yearColIdx !== -1 ? String(row[yearColIdx] || '').trim() : '';
           student.room = roomColIdx !== -1 ? String(row[roomColIdx] || '').trim() : '';
@@ -3383,6 +3489,17 @@ async function syncGoogleSheetsFast() {
           student.smoke = smokeColIdx !== -1 ? String(row[smokeColIdx] || '').trim() : '';
           student.internship_place = internshipPlaceColIdx !== -1 ? String(row[internshipPlaceColIdx] || '').trim() : '';
           student.internship_phone = internshipPhoneColIdx !== -1 ? String(row[internshipPhoneColIdx] || '').trim() : '';
+          
+          // ที่อยู่และข้อมูลครอบครัวเพิ่มเติม (v11)
+          student.address_no = addressNoColIdx !== -1 ? String(row[addressNoColIdx] || '').trim() : '';
+          student.address_road = addressRoadColIdx !== -1 ? String(row[addressRoadColIdx] || '').trim() : '';
+          student.address_subdistrict = addressSubdistrictColIdx !== -1 ? String(row[addressSubdistrictColIdx] || '').trim() : '';
+          student.address_district = addressDistrictColIdx !== -1 ? String(row[addressDistrictColIdx] || '').trim() : '';
+          student.address_zipcode = addressZipcodeColIdx !== -1 ? String(row[addressZipcodeColIdx] || '').trim() : '';
+          student.needs_scholarship = needsScholarshipColIdx !== -1 ? String(row[needsScholarshipColIdx] || '').trim() : '';
+          student.parent_job = parentJobColIdx !== -1 ? String(row[parentJobColIdx] || '').trim() : '';
+          student.parent_income = parentIncomeColIdx !== -1 ? String(row[parentIncomeColIdx] || '').trim() : '';
+
           student.risk_level = riskLevelColIdx !== -1 ? String(row[riskLevelColIdx] || '').trim() : '';
           student.risk_academic = riskAcademicColIdx !== -1 ? String(row[riskAcademicColIdx] || '').trim() : 'ปกติ';
           student.risk_behavior = riskBehaviorColIdx !== -1 ? String(row[riskBehaviorColIdx] || '').trim() : 'ปกติ';

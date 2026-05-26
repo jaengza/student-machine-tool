@@ -543,6 +543,14 @@
               <label>ชื่อเล่น</label>
               <input id="f-nickname" class="premium-input" placeholder="เช่น โอ๊ต">
             </div>
+            <div class="fg">
+              <label>เพศ</label>
+              <select id="f-gender" class="premium-select">
+                <option value="">-- ระบุเพศ --</option>
+                <option value="ชาย">ชาย</option>
+                <option value="หญิง">หญิง</option>
+              </select>
+            </div>
           </div>
           
           <div class="form-section-title" style="margin-top: 15px; font-size: 12px; color: var(--p);">
@@ -653,6 +661,57 @@
             <div class="fg">
               <label>เงินที่ได้รับมาเรียนต่อวัน (บาท)</label>
               <input id="f-allowance" type="number" class="premium-input" placeholder="เช่น 100">
+            </div>
+            <div class="fg">
+              <label>อาชีพของผู้ปกครอง</label>
+              <input id="f-parent-job" class="premium-input" placeholder="เช่น ค้าขาย / ทำงานโรงงาน">
+            </div>
+            <div class="fg">
+              <label>รายได้โดยเฉลี่ยของครอบครัว</label>
+              <select id="f-parent-income" class="premium-select">
+                <option value="">-- ระบุรายได้ --</option>
+                <option value="ต่ำกว่า 10000 บาท">ต่ำกว่า 10,000 บาท</option>
+                <option value="10000-15000 บาท">10,000 - 15,000 บาท</option>
+                <option value="15000-20000 บาท">15,000 - 20,000 บาท</option>
+                <option value="20000-30000 บาท">20,000 - 30,000 บาท</option>
+                <option value="30000-40000 บาท">30,000 - 40,000 บาท</option>
+                <option value="มากกว่า 400000 บาท">มากกว่า 40,000 บาท (ขึ้นไป)</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>ความต้องการทุนการศึกษาในอนาคต</label>
+              <select id="f-needs-scholarship" class="premium-select">
+                <option value="">-- ระบุความต้องการ --</option>
+                <option value="ต้องการ">ต้องการ</option>
+                <option value="ไม่ต้องการ">ไม่ต้องการ</option>
+                <option value="ยังไม่ตัดสินใจ">ยังไม่ตัดสินใจ</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-section-title" style="margin-top: 20px; margin-bottom: 10px; font-size: 12px; color: var(--p);">
+            <i class="fa-solid fa-house-user"></i> ที่อยู่ตามทะเบียนบ้านของนักเรียน
+          </div>
+          <div class="fgrid">
+            <div class="fg">
+              <label>บ้านเลขที่/หมู่</label>
+              <input id="f-address-no" class="premium-input" placeholder="เช่น 99/9 หมู่ 1">
+            </div>
+            <div class="fg">
+              <label>ถนน</label>
+              <input id="f-address-road" class="premium-input" placeholder="เช่น สุขุมวิท (ถ้ามี)">
+            </div>
+            <div class="fg">
+              <label>ตำบล</label>
+              <input id="f-address-subdistrict" class="premium-input" placeholder="เช่น โสธร">
+            </div>
+            <div class="fg">
+              <label>อำเภอ</label>
+              <input id="f-address-district" class="premium-input" placeholder="เช่น เมืองฉะเชิงเทรา">
+            </div>
+            <div class="fg">
+              <label>รหัสไปรษณีย์</label>
+              <input id="f-address-zipcode" class="premium-input" placeholder="เช่น 24000">
             </div>
           </div>
         </div>

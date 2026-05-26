@@ -1,228 +1,352 @@
 /**
- * 🎓ระบบเชื่อมต่อฐานข้อมูล Google Sheets อัจฉริยะแบบเรียลไทม์ (Real-time Cloud Database Backend)
- * สำหรับติดตั้งหลัง Google Sheets แผนข้อมูลนักเรียนแผนกช่างกลโรงงานและเทคนิคอุตสาหกรรม
- * 
- * วิธีการติดตั้ง:
- * 1. ใน Google Sheets ไปที่เมนู "ส่วนขยาย" (Extensions) > "Apps Script"
- * 2. ลบโค้ดเดิมในหน้าต่างออกทั้งหมด แล้ววางโค้ดชุดนี้ลงไป
- * 3. กดปุ่มบันทึก (Save) รูปแผ่นดิสก์
- * 4. คลิกปุ่มสีฟ้าขวาบน "การทำให้ใช้งานได้" (Deploy) > "การทำให้ใช้งานได้ใหม่" (New deployment)
- * 5. เลือกประเภทการทำงานเป็น "เว็บแอป" (Web app)
- * 6. ในช่อง "ผู้มีสิทธิ์เข้าถึง" (Who has access) ให้เปลี่ยนเป็น "ทุกคน" (Anyone) [สำคัญมาก เพื่อให้หน้าเว็บส่งข้อมูลเข้าได้]
- * 7. คลิกปุ่ม "การทำให้ใช้งานได้" (Deploy) แล้วกดอนุญาตสิทธิ์การเข้าถึงผ่านบัญชี Google ของท่าน
- * 8. คัดลอกลิงก์ "URL ของเว็บแอป" ที่ได้มา นำไปกรอกใส่ในหน้าตั้งค่าของเว็บไซต์เพื่อเปิดใช้ระบบคลาวด์ออนไลน์ครับ!
+ * 🎓 Google Apps Script Web App API for Student Database (v11.0)
+ * ระบบหลังบ้านอัจฉริยะ ซิงค์ข้อมูลสดอัตโนมัติ 100% ข้ามอุปกรณ์
+ * ทำหน้าที่:
+ *  1. อ่านข้อมูลนักเรียนทั้งหมดจากชีตหลัก พร้อมดึงและผสานรูปภาพจากชีตส่งรูปถ่ายแบบเรียลไทม์ (Smart Matching)
+ *  2. บันทึกและอัปเดตข้อมูลทุกอย่าง (การแก้ไขประวัติ, พฤติกรรมเสี่ยง) กลับลงกูเกิลชีตอัตโนมัติทันทีเมื่อครูแก้ไขบนหน้าเว็บ
+ *  3. รองรับการลบข้อมูล
  */
 
-// สำหรับส่งข้อมูลนักเรียนทั้งหมดกลับไปให้หน้าเว็บเพื่อนำไปแสดงผล (Read)
+// ── ⚙️ ตั้งค่าลิงก์ชีตรูปภาพนักเรียน ──
+// ไฟล์รูปภาพเด็กนักเรียน (ที่ส่งแยก) เพื่อนำมารวมข้อมูลแบบเรียลไทม์
+const PHOTO_SPREADSHEET_ID = "16ly2qP4dXzQBPQo3gKJTQY9-Pxp9bMGtgAOMwSamPgA"; 
+
 function doGet(e) {
   try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
-    var data = sheet.getDataRange().getValues();
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheets()[0]; // ชีตหลักแผนกวิชา
+    const data = sheet.getDataRange().getValues();
     
     if (data.length <= 1) {
       return ContentService.createTextOutput(JSON.stringify([]))
-        .setMimeType(ContentService.MimeType.JSON)
-        .setHeader('Access-Control-Allow-Origin', '*');
+        .setMimeType(ContentService.MimeType.JSON);
     }
     
-    var headers = data[0];
-    var result = [];
+    const headers = data[0].map(h => String(h || '').trim());
+    const students = [];
     
-    for (var i = 1; i < data.length; i++) {
-      var row = data[i];
-      var obj = {};
-      var hasData = false;
+    // 1. ดึงประวัติหลักทั้งหมด
+    for (let r = 1; r < data.length; r++) {
+      const row = data[r];
+      if (!row || row.length === 0 || !row[1]) continue; // ข้ามถ้ารหัสประจำตัวว่าง
       
-      for (var j = 0; j < headers.length; j++) {
-        var hName = headers[j].toString().trim();
-        if (hName === "") continue;
+      const student = {};
+      headers.forEach((h, idx) => {
+        student[h] = row[idx] !== undefined ? String(row[idx]).trim() : "";
+      });
+      
+      // กำหนดฟิลด์เริ่มต้นเพื่อแสดงรูปภาพ
+      student["รูปถ่าย"] = ""; 
+      students.push(student);
+    }
+    
+    // 2. ดึงข้อมูลรูปภาพจากชีตที่สองแบบเรียลไทม์
+    let matchedCount = 0;
+    try {
+      const photoSs = SpreadsheetApp.openById(PHOTO_SPREADSHEET_ID);
+      const photoSheet = photoSs.getSheets()[0];
+      const photoData = photoSheet.getDataRange().getValues();
+      
+      if (photoData.length > 1) {
+        const photoHeaders = photoData[0].map(h => String(h || '').trim().toLowerCase());
         
-        var val = row[j];
-        // แปลงค่าเวลา Google ให้เป็น String ปกติ
-        if (val instanceof Date) {
-          val = val.toLocaleString('th-TH');
+        let photoIdColIdx = -1;
+        let photoNameColIdx = -1;
+        let photoLinkColIdx = -1;
+        
+        photoHeaders.forEach((h, idx) => {
+          if (h.includes("รหัส") || h.includes("id")) photoIdColIdx = idx;
+          if (h.includes("ชื่อ") || h.includes("นามสกุล")) photoNameColIdx = idx;
+        });
+        
+        // ค้นหาคอลัมน์ลิงก์รูปภาพ (ช่องที่ลิงก์เป็น Google Drive)
+        for (let r = 1; r < Math.min(6, photoData.length); r++) {
+          const row = photoData[r];
+          row.forEach((cell, idx) => {
+            const val = String(cell || '').trim();
+            if (val.includes("drive.google.com") || val.includes("lh3.googleusercontent.com") || val.startsWith("http")) {
+              photoLinkColIdx = idx;
+            }
+          });
+          if (photoLinkColIdx !== -1) break;
         }
-        obj[hName] = val;
-        if (val !== "") hasData = true;
+        
+        if (photoLinkColIdx === -1) photoLinkColIdx = photoHeaders.length - 2; // สำรองคอลัมน์ท้ายๆ
+        
+        // วนลูปรูปภาพเพื่อมาจับคู่กับนักเรียนหลักแบบครอบคลุม (Smart Matching Engine)
+        for (let pr = 1; pr < photoData.length; pr++) {
+          const pRow = photoData[pr];
+          if (!pRow || pRow.length <= 1) continue;
+          
+          const rawPhotoId = photoIdColIdx !== -1 ? String(pRow[photoIdColIdx] || '').trim() : '';
+          const rawPhotoName = photoNameColIdx !== -1 ? String(pRow[photoNameColIdx] || '').trim().replace(/^(นาย|นางสาว|เด็กชาย|เด็กหญิง|นาง|ด\.ช\.|ด\.ญ\.)\s*/, '').replace(/\s+/g, '') : '';
+          const rawPhotoUrl = photoLinkColIdx !== -1 ? String(pRow[photoLinkColIdx] || '').trim() : '';
+          
+          if (!rawPhotoUrl) continue;
+          const directUrl = normalizeDriveUrl(rawPhotoUrl);
+          
+          students.forEach(student => {
+            let isMatch = false;
+            const stuId = String(student["รหัสประจำตัวนักเรียนนักศึกษา"] || student["รหัสนักเรียน"] || student["id"] || '').trim();
+            
+            // 2.1 จับคู่ผ่านรหัสประจำตัว (ตรงกัน หรือลงท้ายด้วย 3 หลัก)
+            if (rawPhotoId && stuId) {
+              if (stuId === rawPhotoId) {
+                isMatch = true;
+              } else if (rawPhotoId.length >= 3 && stuId.endsWith(rawPhotoId)) {
+                isMatch = true;
+              } else if (stuId.length >= 3 && rawPhotoId.endsWith(stuId)) {
+                isMatch = true;
+              }
+            }
+            
+            // 2.2 จับคู่ผ่านชื่อ-นามสกุลยืดหยุ่นสะกดเป๊ะ
+            const rawStuName = String(student["ชื่อ-นามสกุล"] || student["ชื่อจริง"] || "").trim();
+            const stuCleanName = rawStuName.replace(/^(นาย|นางสาว|เด็กชาย|เด็กหญิง|นาง|ด\.ช\.|ด\.ญ\.)\s*/, '').replace(/\s+/g, '');
+            
+            if (!isMatch && rawPhotoName) {
+              if (stuCleanName.includes(rawPhotoName) || rawPhotoName.includes(stuCleanName)) {
+                isMatch = true;
+              }
+            }
+            
+            // 2.3 จับคู่ผ่านความคล้ายคลึงของข้อความ (สะกดผิดพลาด Levenshtein Similarity 75%+)
+            if (!isMatch && rawPhotoName && stuCleanName) {
+              const dist = getLevenshteinDistance(stuCleanName, rawPhotoName);
+              const maxLength = Math.max(stuCleanName.length, rawPhotoName.length);
+              const similarity = (maxLength - dist) / maxLength;
+              if (similarity >= 0.75) {
+                isMatch = true;
+              }
+            }
+            
+            // 2.4 จับคู่ชื่อจริงอย่างเดียวร่วมกับระดับชั้นตรงกัน
+            if (!isMatch && rawPhotoName && stuCleanName) {
+              const cleanPhotoFname = rawPhotoName.substring(0, 3);
+              const cleanStuFname = stuCleanName.substring(0, 3);
+              if (cleanPhotoFname === cleanStuFname) {
+                const pLvl = String(pRow[3] || '').toLowerCase();
+                const sLvl = String(student["ระดับชั้น"] || '').toLowerCase();
+                const pLvlClean = pLvl.includes('ปวช') ? 'ปวช' : (pLvl.includes('ปวส') ? 'ปวส' : '');
+                const sLvlClean = sLvl.includes('ปวช') ? 'ปวช' : (sLvl.includes('ปวส') ? 'ปวส' : '');
+                if (!pLvlClean || !sLvlClean || pLvlClean === sLvlClean) {
+                  isMatch = true;
+                }
+              }
+            }
+            
+            if (isMatch) {
+              student["รูปถ่าย"] = directUrl;
+              matchedCount++;
+            }
+          });
+        }
       }
-      
-      if (hasData) {
-        result.push(obj);
-      }
+    } catch (e) {
+      Logger.log("Failed to sync photo spreadsheet: " + e.toString());
     }
     
-    return ContentService.createTextOutput(JSON.stringify(result))
+    // แปลงผลลัพธ์ส่งออกเป็น JSON
+    return ContentService.createTextOutput(JSON.stringify(students))
       .setMimeType(ContentService.MimeType.JSON)
-      .setHeader('Access-Control-Allow-Origin', '*');
+      .setHeader('Access-Control-Allow-Origin', '*'); // ป้องกัน CORS บล็อก
       
-  } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() }))
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
       .setMimeType(ContentService.MimeType.JSON)
       .setHeader('Access-Control-Allow-Origin', '*');
   }
 }
 
-// สำหรับรับข้อมูลการแก้ไขนักเรียนจากหน้าเว็บมาทำการอัปเดตลง Sheets (Write & Update)
 function doPost(e) {
   try {
-    var params = JSON.parse(e.postData.contents);
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
-    var data = sheet.getDataRange().getValues();
-    var headers = data[0];
+    const postData = JSON.parse(e.postData.contents);
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheets()[0];
+    const data = sheet.getDataRange().getValues();
+    const headers = data[0].map(h => String(h || '').trim());
     
-    // 1. ค้นหาคอลัมน์รหัสประจำตัวนักเรียน
-    var idColIdx = -1;
-    var idHeaderName = "";
-    
-    for (var j = 0; j < headers.length; j++) {
-      var h = headers[j].toString().trim().toLowerCase();
-      if (h === "รหัสประจำตัวนักเรียน" || h === "รหัสนักเรียน" || h === "รหัสประจำตัว" || h === "รหัส" || h === "id") {
-        idColIdx = j;
-        idHeaderName = headers[j];
-        break;
-      }
-    }
-    
-    // หากไม่พบหัวคอลัมน์รหัสเลย ให้ถือเป็นคอลัมน์ที่ 3 (ดั้งเดิมของคุณครูคือคอลัมน์ 3)
-    if (idColIdx === -1) {
-      idColIdx = 2; 
-      idHeaderName = headers[2] || "รหัสประจำตัวนักเรียน";
-    }
-    
-    var studentId = params.id.toString().trim();
-    var targetRowIdx = -1;
-    
-    // 2. ค้นหาแถวของนักเรียนตาม ID (รองรับรหัสสั้น/ยาวตรงกัน)
-    for (var i = 1; i < data.length; i++) {
-      var cellVal = data[i][idColIdx].toString().trim();
-      if (cellVal === studentId || 
-          (studentId.length >= 3 && cellVal.endsWith(studentId)) || 
-          (cellVal.length >= 3 && studentId.endsWith(cellVal))) {
-        targetRowIdx = i + 1; // 1-indexed สำหรับ Apps Script
-        break;
-      }
-    }
-    
-    // พิเศษ: หากเป็นการเรียกเพื่อลบข้อมูลออนไลน์ (Delete Event)
-    if (params.action === "delete") {
-      if (targetRowIdx !== -1) {
-        sheet.deleteRow(targetRowIdx);
-        return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "ลบประวัตินักเรียนจากกูเกิลชีตเรียบร้อย!" }))
-          .setMimeType(ContentService.MimeType.JSON)
-          .setHeader('Access-Control-Allow-Origin', '*');
-      }
-      return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "ไม่พบข้อมูลนักเรียนคนนี้ในชีต ถือว่าลบแล้ว" }))
+    const studentId = String(postData.id || '').trim();
+    if (!studentId) {
+      return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Missing student ID" }))
         .setMimeType(ContentService.MimeType.JSON)
         .setHeader('Access-Control-Allow-Origin', '*');
     }
     
-    // 3. หากเป็นนักเรียนคนใหม่ (ยังไม่มีประวัติในชีต) ให้กดต่อท้ายแถวใหม่ให้ทันที!
-    if (targetRowIdx === -1) {
-      var newRow = [];
-      for (var k = 0; k < headers.length; k++) {
-        if (k === 0) newRow.push(new Date().toLocaleString('th-TH')); // ประทับเวลา
-        else if (k === idColIdx) newRow.push(studentId); // รหัส
-        else newRow.push("");
-      }
-      sheet.appendRow(newRow);
-      
-      // ดึงข้อมูลแถวใหม่เพื่ออัปเดตดัชนี
-      data = sheet.getDataRange().getValues();
-      targetRowIdx = data.length;
+    // ค้นหาคอลัมน์สำคัญ
+    const idColIdx = headers.findIndex(h => h.includes("รหัสประจำตัวนักเรียนนักศึกษา") || h.includes("รหัสนักเรียน") || h === "id");
+    
+    if (idColIdx === -1) {
+      return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "ID Column not found in Sheet" }))
+        .setMimeType(ContentService.MimeType.JSON)
+        .setHeader('Access-Control-Allow-Origin', '*');
     }
     
-    // 4. บันทึกข้อมูลคอลัมน์ต่าง ๆ (และขยายตารางเพิ่มหัวคอลัมน์ให้อัตโนมัติหากไม่มี!)
-    for (var key in params) {
-      if (key === "id") continue;
-      
-      var colIdx = -1;
-      
-      // ค้นหาคอลัมน์ที่ตรงกับ key หรือสะกดใกล้เคียงตามพจนานุกรมของเรา
-      var MAPPING_KEYS = {
-        fname: ["ชื่อนาม-นามสกุล", "ชื่อ-นามสกุล", "ชื่อจริง", "ชื่อ"],
-        lname: ["ชื่อนาม-นามสกุล", "ชื่อ-นามสกุล", "นามสกุล", "สกุล"],
-        nickname: ["ชื่อเล่น"],
-        level: ["ระดับชั้นปี", "ระดับชั้น", "ระดับ"],
-        year: ["ชั้นปี"],
-        room: ["กลุ่มเรียน", "ห้อง"],
-        phone: ["เบอร์โทรศัพท์มือถือ ของนักเรียน", "เบอร์โทรนักเรียน", "เบอร์โทร"],
-        social: ["ข้อมูลการติดต่ออื่นๆ", "โซเชียล", "line", "facebook"],
-        photo: ["รูป", "รูปถ่าย", "รูปภาพ", "photo"],
-        internship_place: ["สถานที่ฝึกงาน", "ฝึกงาน"],
-        internship_phone: ["เบอร์โทรสถานที่ฝึกงาน"],
-        risk_level: ["ระดับความเสี่ยงภาพรวม", "ระดับความเสี่ยง", "ความเสี่ยง"],
-        risk_note: ["หมายเหตุ / แผนช่วยเหลือ", "หมายเหตุ", "แผนช่วยเหลือ"]
-      };
-      
-      // ค้นหาคอลัมน์จริงใน Google Sheets
-      for (var c = 0; c < headers.length; c++) {
-        var hName = headers[c].toString().trim();
-        var hLower = hName.toLowerCase();
-        
-        // ลองเทียบตรง ๆ หรือเทียบตามพจนานุกรม
-        if (hName === key || hLower === key.toLowerCase()) {
-          colIdx = c;
+    // ตรวจสอบแอ็กชันลบประวัติ
+    if (postData.action === "delete") {
+      let foundRow = -1;
+      for (let r = 1; r < data.length; r++) {
+        if (String(data[r][idColIdx]).trim() === studentId) {
+          foundRow = r + 1; // +1 สำหรับแถวในชีต 1-indexed
           break;
         }
-        if (MAPPING_KEYS[key]) {
-          var matched = MAPPING_KEYS[key].some(function(opt) {
-            return hLower.includes(opt.toLowerCase()) || opt.toLowerCase().includes(hLower);
-          });
-          if (matched) {
-            colIdx = c;
-            break;
-          }
-        }
       }
       
-      // เกราะป้องกันคอลัมน์ใหม่! หากไม่มีหัวคอลัมน์นี้ในชีตเลย ให้สร้างหัวคอลัมน์ใหม่ต่อท้ายชีตให้อัตโนมัติ!
-      if (colIdx === -1) {
-        // อิงตามชื่อคีย์ดั้งเดิมเพื่อสร้างหัวตารางใหม่สวยงาม
-        var newHeaderName = key;
-        var labels = {
-          nickname: "ชื่อเล่น", phone: "เบอร์โทรนักเรียน", social: "โซเชียล",
-          parent: "ชื่อผู้ปกครอง", parentphone: "เบอร์โทรผู้ปกครอง", parentphone2: "เบอร์ฉุกเฉิน",
-          prevschool: "สถานศึกษาเดิม", shirt: "ไซส์เสื้อ", health: "โรคประจำตัว",
-          transport: "การเดินทาง", allowance: "เงินมาเรียนต่อวัน", smoke: "พฤติกรรมเสี่ยง",
-          internship_place: "สถานที่ฝึกงาน", internship_phone: "เบอร์โทรสถานที่ฝึกงาน",
-          risk_level: "ระดับความเสี่ยงภาพรวม", risk_academic: "เสี่ยงด้านการเรียน",
-          risk_behavior: "เสี่ยงด้านพฤติกรรม", risk_family: "เสี่ยงด้านครอบครัว",
-          risk_economic: "เสี่ยงด้านเศรษฐกิจ", risk_note: "หมายเหตุช่วยเหลือ"
-        };
-        if (labels[key]) newHeaderName = labels[key];
-        
-        sheet.getRange(1, headers.length + 1).setValue(newHeaderName);
-        headers.push(newHeaderName);
-        colIdx = headers.length - 1;
+      if (foundRow !== -1) {
+        sheet.deleteRow(foundRow);
+        return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Deleted successfully" }))
+          .setMimeType(ContentService.MimeType.JSON)
+          .setHeader('Access-Control-Allow-Origin', '*');
+      } else {
+        return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Student not found" }))
+          .setMimeType(ContentService.MimeType.JSON)
+          .setHeader('Access-Control-Allow-Origin', '*');
       }
-      
-      // พิเศษ: หากเป็นคอลัมน์ที่ทับซ้อนกัน เช่น ชื่อ-นามสกุล รวมกัน (fname และ lname ชี้ไปคอลัมน์ร่วมกัน)
-      if (key === "fname" || key === "lname") {
-        var colName = headers[colIdx].toString();
-        if (colName.includes("นามสกุล") || colName.includes("-")) {
-          // คอลัมน์ร่วม: จัดการผสานชื่อและนามสกุลก่อนบันทึกกลับลงชีต
-          var currentVal = sheet.getRange(targetRowIdx, colIdx + 1).getValue().toString().trim();
-          var parts = currentVal.split(/\s+/);
-          
-          var fVal = key === "fname" ? params.fname : (parts[0] || "");
-          var lVal = key === "lname" ? params.lname : (parts.slice(1).join(" ") || "");
-          
-          sheet.getRange(targetRowIdx, colIdx + 1).setValue(fVal + " " + lVal);
-          continue;
-        }
-      }
-      
-      // บันทึกค่าลงในช่องของเซลล์นักเรียนคนนั้นในชีต
-      sheet.getRange(targetRowIdx, colIdx + 1).setValue(params[key]);
     }
     
-    return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "บันทึกและซิงค์ข้อมูลเรียบร้อย!" }))
+    // พจนานุกรมคอลัมน์ในชีตภาษาไทย แปรรวมข้อมูลส่งจากฟิลด์เว็บหลังบ้าน
+    const MAP_FIELDS_REVERSE = {
+      "รหัสประจำตัวนักเรียนนักศึกษา": "id", "รหัสนักเรียน": "id", "id": "id",
+      "ระดับชั้น": "level",
+      "กลุ่มเรียน": "room",
+      "ชื่อ-นามสกุล": "fullNameConcat",
+      "ชื่อเล่น": "nickname",
+      "รูปถ่าย": "photo",
+      "เบอร์โทรศัพท์มือถือ ของนักเรียน": "phone",
+      "ข้อมูลการติดต่ออื่นๆ IG หรือ Facebook ": "social",
+      "ชื่อ-นามสกุล ผู้ปกครอง ": "parent",
+      "เบอร์โทรศัพท์มือถือ ของผู้ปกครอง": "parentphone",
+      "เบอร์โทรศัพท์มือถือ ของผู้ปกครอง (กรณีฉุกเฉิน)": "parentphone2",
+      "สถานศึกษาเดิมที่นักเรียนจบมา": "prevschool",
+      "ไซส์เสื้อกิจกรรม": "shirt",
+      "ข้อมูลสุขภาพ/โรคประจำตัว": "health",
+      "นักเรียนเดินทางมาวิทยาลัยอย่างไร": "transport",
+      "เงินได้รับมาเรียนต่อวัน": "allowance",
+      "พฤติกรรมเสี่ยงดื่ม/สูบ": "smoke",
+      "สถานที่ฝึกงาน / สหกิจศึกษา": "internship_place",
+      "เบอร์โทรสถานที่ฝึกงาน": "internship_phone",
+      
+      // 9 ฟิลด์เพิ่มเติม (v11)
+      "เพศ": "gender",
+      "บ้านเลขที่": "address_no",
+      "ถนน": "address_road",
+      "ตำบล": "address_subdistrict",
+      "อำเภอ": "address_district",
+      "รหัสไปรษณีย์": "address_zipcode",
+      "นักเรียนมีความต้องกาารทุนการศึกษาไหมในอนาคต": "needs_scholarship",
+      "ความต้องการทุนการศึกษา": "needs_scholarship",
+      "อาชีพของผู้ปกครอง": "parent_job",
+      "รายได้โดยเฉลี่ยของครอบครัว": "parent_income",
+      
+      "ระดับความเสี่ยงภาพรวม": "risk_level",
+      "ความเสี่ยงด้านการเรียน": "risk_academic",
+      "ความเสี่ยงด้านพฤติกรรม": "risk_behavior",
+      "ความเสี่ยงด้านครอบครัว": "risk_family",
+      "ความเสี่ยงด้านเศรษฐกิจ": "risk_economic",
+      "หมายเหตุ / แผนช่วยเหลือ": "risk_note"
+    };
+    
+    // ค้นหาแถวของนักเรียนตาม ID
+    let studentRowIndex = -1;
+    for (let r = 1; r < data.length; r++) {
+      if (String(data[r][idColIdx]).trim() === studentId) {
+        studentRowIndex = r + 1; // +1 เพราะ 1-indexed
+        break;
+      }
+    }
+    
+    // รวบรวมข้อมูลสำหรับเขียนลงเซลล์
+    const rowValues = [];
+    
+    if (studentRowIndex !== -1) {
+      // 📝 กรณีแก้ไข: อัปเดตเฉพาะคอลัมน์ที่มีข้อมูลส่งมาจากเว็บ
+      headers.forEach((header, colIdx) => {
+        const fieldKey = MAP_FIELDS_REVERSE[header];
+        if (fieldKey === "fullNameConcat") {
+          // ผสมชื่อและนามสกุลสำหรับเขียนลงคอลัมน์ชื่อเต็ม
+          const prefix = postData.level.includes("ปวช") ? "นาย " : "นาย "; // ปรับเพศเบื้องต้น
+          const fn = postData.fname || "";
+          const ln = postData.lname || "";
+          sheet.getCell(studentRowIndex, colIdx + 1).setValue(`${fn} ${ln}`.trim());
+        } else if (fieldKey && postData[fieldKey] !== undefined) {
+          sheet.getCell(studentRowIndex, colIdx + 1).setValue(String(postData[fieldKey]).trim());
+        }
+      });
+    } else {
+      // 🆕 กรณีเพิ่มนักเรียนใหม่: สร้างแถวใหม่ท้ายตาราง
+      const newRowData = new Array(headers.length).fill("");
+      
+      headers.forEach((header, colIdx) => {
+        const fieldKey = MAP_FIELDS_REVERSE[header];
+        if (fieldKey === "fullNameConcat") {
+          const fn = postData.fname || "";
+          const ln = postData.lname || "";
+          newRowData[colIdx] = `${fn} ${ln}`.trim();
+        } else if (fieldKey && postData[fieldKey] !== undefined) {
+          newRowData[colIdx] = String(postData[fieldKey]).trim();
+        }
+      });
+      
+      sheet.appendRow(newRowData);
+    }
+    
+    return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Saved successfully" }))
       .setMimeType(ContentService.MimeType.JSON)
       .setHeader('Access-Control-Allow-Origin', '*');
       
-  } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() }))
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
       .setMimeType(ContentService.MimeType.JSON)
       .setHeader('Access-Control-Allow-Origin', '*');
   }
+}
+
+// ── Robust Google Drive Link Extractor ──
+function normalizeDriveUrl(url) {
+  if (!url) return '';
+  url = url.trim();
+  if (url.includes('lh3.googleusercontent.com/d/')) return url;
+  
+  const isIdOnly = /^[a-zA-Z0-9_-]{25,45}$/.test(url);
+  if (isIdOnly) return "https://lh3.googleusercontent.com/d/" + url;
+
+  const regD = /\/file\/d\/([a-zA-Z0-9_-]{25,45})/;
+  const regId = /[?&]id=([a-zA-Z0-9_-]{25,45})/;
+  const regU = /\/uc\?id=([a-zA-Z0-9_-]{25,45})/;
+  const regPreview = /\/file\/d\/([a-zA-Z0-9_-]{25,45})\/preview/;
+
+  const matchD = url.match(regD);
+  const matchId = url.match(regId);
+  const matchU = url.match(regU);
+  const matchPreview = url.match(regPreview);
+
+  const fileId = (matchD && matchD[1]) || 
+                 (matchId && matchId[1]) || 
+                 (matchU && matchU[1]) || 
+                 (matchPreview && matchPreview[1]);
+
+  if (fileId) return "https://lh3.googleusercontent.com/d/" + fileId;
+  return url;
+}
+
+// ── Text Similarity Distance Utility (Levenshtein) ──
+function getLevenshteinDistance(s1, s2) {
+  if (!s1) return s2 ? s2.length : 0;
+  if (!s2) return s1.length : 0;
+  
+  const track = Array(s2.length + 1).fill(null).map(() => Array(s1.length + 1).fill(null));
+  for (let i = 0; i <= s1.length; i += 1) track[0][i] = i;
+  for (let j = 0; j <= s2.length; j += 1) track[j][0] = j;
+  
+  for (let j = 1; j <= s2.length; j += 1) {
+    for (let i = 1; i <= s1.length; i += 1) {
+      const indicator = s1[i - 1] === s2[j - 1] ? 0 : 1;
+      track[j][i] = Math.min(
+        track[j][i - 1] + 1, // deletion
+        track[j - 1][i] + 1, // insertion
+        track[j - 1][i - 1] + indicator // substitution
+      );
+    }
+  }
+  return track[s2.length][s1.length];
 }
