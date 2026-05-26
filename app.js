@@ -2520,3 +2520,212 @@ async function sha256(message) {
   const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   return hashHex;
 }
+
+// ── FAST MOBILE-DASHBOARD SYNCRONIZATION ENGINE ──
+
+// One-click background synchronization for mobile dashboard button
+async function syncGoogleSheetsFast() {
+  showToast('📥 กำลังดาวน์โหลดประวัตินักเรียนทั้งหมดจาก Google Sheets...', 'ok');
+  
+  const sheetsUrl = 'https://docs.google.com/spreadsheets/d/16ly2qP4dXzQBPQo3gKJTQY9-Pxp9bMGtgAOMwSamPgA/edit?usp=sharing';
+  const csvUrl = `https://docs.google.com/spreadsheets/d/16ly2qP4dXzQBPQo3gKJTQY9-Pxp9bMGtgAOMwSamPgA/export?format=csv`;
+  
+  Papa.parse(csvUrl, {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: function(results) {
+      if (results.data && results.data.length > 0) {
+        importData = results.data;
+        importHeaders = Object.keys(importData[0]);
+        
+        // Auto map headers using predefined smart dictionary
+        const THAI_MAP = {
+          id: ['รหัสประจำตัวนักเรียนนักศึกษา', 'รหัสประจำตัว', 'รหัสนักเรียน', 'รหัส'],
+          fname: ['ชื่อ-นามสกุล', 'ชื่อจริง', 'ชื่อ', 'ชื่อผู้เรียน'],
+          lname: ['ชื่อ-นามสกุล', 'นามสกุล', 'สกุล'],
+          nickname: ['ชื่อเล่น'],
+          level: ['ระดับชั้น', 'ระดับการศึกษา', 'ระดับ'],
+          year: ['ชั้นปี', 'ชั้นปีที่', 'ปี'],
+          room: ['กลุ่มเรียน', 'กลุ่มเรียน / ห้อง', 'ห้อง', 'กลุ่ม'],
+          phone: ['เบอร์โทรศัพท์มือถือ ของนักเรียน', 'เบอร์โทรนักเรียน', 'เบอร์โทรศัพท์นักเรียน', 'เบอร์โทร', 'โทรศัพท์'],
+          social: ['ข้อมูลการติดต่ออื่นๆ IG หรือ Facebook', 'ช่องทางโซเชียล', 'social', 'ig', 'facebook', 'line'],
+          parent: ['ชื่อ-นามสกุล ผู้ปกครอง', 'ชื่อผู้ปกครอง', 'ผู้ปกครอง'],
+          parentphone: ['เบอร์โทรผู้ปกครอง', 'เบอร์โทรศัพท์ผู้ปกครอง'],
+          parentphone2: ['เบอร์ฉุกเฉิน'],
+          prevschool: ['สถานศึกษาเดิม'],
+          shirt: ['ไซส์เสื้อกิจกรรม'],
+          health: ['ข้อมูลสุขภาพ/โรคประจำตัว'],
+          transport: ['การเดินทางมาเรียน'],
+          allowance: ['เงินได้รับมาเรียนต่อวัน'],
+          smoke: ['พฤติกรรมเสี่ยงดื่ม/สูบ'],
+          internship_place: ['สถานที่ฝึกงาน / สหกิจศึกษา'],
+          internship_phone: ['เบอร์โทรสถานที่ฝึกงาน'],
+          risk_level: ['ระดับความเสี่ยงภาพรวม'],
+          risk_academic: ['ความเสี่ยงด้านการเรียน'],
+          risk_behavior: ['ความเสี่ยงด้านพฤติกรรม'],
+          risk_family: ['ความเสี่ยงด้านครอบครัว'],
+          risk_economic: ['ความเสี่ยงด้านเศรษฐกิจ'],
+          risk_note: ['หมายเหตุ / แผนช่วยเหลือ']
+        };
+        
+        columnMap = {};
+        FIELDS.forEach(f => {
+          const match = importHeaders.find(h => {
+            const cleanH = h.trim().toLowerCase();
+            return (THAI_MAP[f.k] || []).some(opt => cleanH.includes(opt.toLowerCase()));
+          });
+          if (match) {
+            columnMap[f.k] = match;
+          }
+        });
+        
+        // Match photo column if not mapped
+        if (!columnMap['photo']) {
+          const photoMatch = importHeaders.find(h => h.includes('รูป') || h.includes('ภาพ') || h.includes('photo'));
+          if (photoMatch) columnMap['photo'] = photoMatch;
+        }
+        
+        let addedCount = 0;
+        let updatedCount = 0;
+        
+        importData.forEach(row => {
+          const student = {};
+          FIELDS.forEach(f => {
+            const mappedHeader = columnMap[f.k];
+            student[f.k] = mappedHeader ? (row[mappedHeader] || '').trim() : '';
+          });
+          
+          if (!student.id) return;
+          
+          // Fallback parsing for year & level from BE Student IDs
+          if (!student.level) {
+            student.level = String(student.id).startsWith('6') ? 'ปวช.' : 'ปวส.';
+          }
+          if (!student.year) {
+            const idStr = String(student.id);
+            if (idStr.startsWith('69')) student.year = '1';
+            else if (idStr.startsWith('68')) student.year = '2';
+            else if (idStr.startsWith('67')) student.year = '3';
+            else student.year = '1';
+          }
+          if (!student.status) student.status = 'กำลังศึกษา';
+          if (!student.risk_level) student.risk_level = 'ต่ำ';
+          
+          const existingIndex = DB.findIndex(x => String(x.id) === String(student.id));
+          if (existingIndex !== -1) {
+            // Retain old photo link if new one isn't loaded
+            const prevPhoto = DB[existingIndex].photo;
+            if (!student.photo && prevPhoto) student.photo = prevPhoto;
+            DB[existingIndex] = student;
+            updatedCount++;
+          } else {
+            DB.push(student);
+            addedCount++;
+          }
+        });
+        
+        saveDatabase();
+        
+        // 2. Chain photo sync immediately in background
+        showToast('📸 ดึงข้อมูลประวัติเรียบร้อย กำลังซิงค์รูปภาพเข้ากับรายชื่อ...', 'ok');
+        syncPhotosAutomaticallyFromSheetsUrl(sheetsUrl);
+      } else {
+        showToast('❌ โครงสร้างใน Google Sheets ว่างเปล่า', 'err');
+      }
+    },
+    error: function() {
+      showToast('❌ ไม่สามารถเข้าถึงหรือลิงก์ไม่สาธารณะพอ', 'err');
+    }
+  });
+}
+
+// Background smart photo sync for quick sync button
+function syncPhotosAutomaticallyFromSheetsUrl(url) {
+  let csvUrl = url;
+  if (url.includes('docs.google.com/spreadsheets') && !url.includes('export?format=csv')) {
+    const m = url.match(/\/d\/([\w-]+)/);
+    if (m) {
+      csvUrl = `https://docs.google.com/spreadsheets/d/${m[1]}/export?format=csv`;
+    }
+  }
+  
+  Papa.parse(csvUrl, {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: function(results) {
+      if (!results.data || results.data.length === 0) return;
+      
+      const headers = Object.keys(results.data[0]);
+      let photoCol = headers.find(h => {
+        const cleanH = h.trim();
+        return cleanH === 'รูป' || cleanH === 'รูปถ่าย' || cleanH === 'รูปภาพ' || cleanH === 'photo' || cleanH === 'picture';
+      });
+      
+      // Auto-detect photo link column if headers are double duplicated
+      if (!photoCol) {
+        let firstRow = results.data[0];
+        photoCol = headers.find(h => {
+          const val = String(firstRow[h] || '').trim();
+          return val.includes('drive.google.com') || val.includes('lh3.googleusercontent.com');
+        });
+      }
+      
+      let nameCol = headers.find(h => h.includes('ชื่อ') || h.includes('นามสกุล') || h.includes('ชื่อ-นามสกุล'));
+      let idCol = headers.find(h => h.includes('รหัส') || h.includes('id') || h.includes('เลขประจำตัว'));
+      
+      if (!photoCol) {
+        showToast('⚠️ ดึงข้อมูลเสร็จสิ้น แต่ไม่พบคอลัมน์รูปภาพนักเรียน', 'ok');
+        return;
+      }
+      
+      let matchedCount = 0;
+      results.data.forEach(row => {
+        const rowPhoto = String(row[photoCol] || '').trim();
+        if (!rowPhoto) return;
+        
+        let directPhotoLink = rowPhoto;
+        if (rowPhoto.includes('drive.google.com')) {
+          const driveIdMatch = rowPhoto.match(/id=([\w-]+)/) || rowPhoto.match(/\/d\/([\w-]+)/);
+          if (driveIdMatch) {
+            directPhotoLink = `https://lh3.googleusercontent.com/d/${driveIdMatch[1]}`;
+          }
+        }
+        
+        const rowId = idCol ? String(row[idCol] || '').trim() : '';
+        const rowName = nameCol ? String(row[nameCol] || '').trim() : '';
+        
+        const cleanName = rowName.replace(/^(นาย|นางสาว|เด็กชาย|เด็กหญิง|นาง)\s*/, '').replace(/\s+/g, '');
+        
+        DB.forEach(student => {
+          let isMatch = false;
+          if (rowId && String(student.id) === rowId) {
+            isMatch = true;
+          } else if (cleanName) {
+            const stuCleanName = (student.fname + student.lname).replace(/^(นาย|นางสาว|เด็กชาย|เด็กหญิง|นาง)\s*/, '').replace(/\s+/g, '');
+            if (stuCleanName.includes(cleanName) || cleanName.includes(stuCleanName)) {
+              isMatch = true;
+            }
+          }
+          
+          if (isMatch) {
+            student.photo = directPhotoLink;
+            matchedCount++;
+          }
+        });
+      });
+      
+      saveDatabase();
+      updateDashboard();
+      updateHeaderCount();
+      
+      // Refresh current page views
+      const activePage = document.querySelector('.page.active').id;
+      if (activePage === 'page-students') renderStudents();
+      else if (activePage === 'page-search') doQuickSearch();
+      
+      showToast(`🎉 อัปเดตประวัติสำเร็จ! พร้อมจัดเก็บและซิงค์รูปภาพ ${matchedCount} คนเรียบร้อย`, 'ok');
+    }
+  });
+}

@@ -132,6 +132,21 @@
 
       <!-- ── PAGE: DASHBOARD ── -->
       <div id="page-dashboard" class="page active">
+        <!-- Mobile Quick Sync Banner (Hidden on Desktop via CSS) -->
+        <div class="mobile-sync-banner animate-fade-in">
+          <div class="sync-banner-info">
+            <div class="sync-banner-title">
+              <i class="fa-solid fa-arrows-rotate"></i> ซิงค์ข้อมูลด่วนกับ Google Sheets
+            </div>
+            <div class="sync-banner-desc">
+              อัปเดตประวัติ รายชื่อ และรูปภาพของนักเรียนล่าสุดเข้าสู่อุปกรณ์นี้ทันที
+            </div>
+          </div>
+          <button class="btn btn-p" onclick="syncGoogleSheetsFast()">
+            <i class="fa-solid fa-cloud-arrow-down"></i> กดซิงค์ด่วน
+          </button>
+        </div>
+
         <!-- Stat Grid -->
         <div class="stat-grid" id="stat-grid"></div>
 
