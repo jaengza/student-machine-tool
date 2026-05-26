@@ -17,6 +17,38 @@
 </head>
 <body class="theme-dark"> <!-- Defaulting to premium dark theme for that WOW look, switcher provided -->
 
+  <!-- ── GLASSMORPHIC LOGIN OVERLAY ── -->
+  <div id="login-overlay">
+    <div class="login-card">
+      <div class="login-icon-box">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <h3 class="login-title">ระบบฐานข้อมูลนักเรียน</h3>
+      <p class="login-subtitle">แผนกช่างกลโรงงาน & เทคนิคอุตสาหกรรม<br>วิทยาลัยเทคนิคฉะเชิงเทรา</p>
+      
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="login-input-group">
+          <label class="login-input-label" for="login-password">รหัสผ่านเข้าใช้งานระบบ</label>
+          <div class="login-input-wrapper">
+            <i class="fa-solid fa-lock lock-icon"></i>
+            <input type="password" id="login-password" placeholder="ระบุรหัสผ่านเข้าใช้งาน..." required>
+            <button type="button" class="login-eye-btn" onclick="toggleLoginPasswordVisible()" title="แสดง/ซ่อนรหัสผ่าน">
+              <i id="login-eye-icon" class="fa-solid fa-eye-slash"></i>
+            </button>
+          </div>
+        </div>
+        
+        <button type="submit" class="login-btn">
+          <i class="fa-solid fa-right-to-bracket"></i> ยืนยันรหัสผ่านเพื่อเข้าใช้งาน
+        </button>
+      </form>
+      
+      <div id="login-error" class="login-error-msg">
+        <i class="fa-solid fa-triangle-exclamation"></i> รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง
+      </div>
+    </div>
+  </div>
+
   <!-- Overlay for Mobile Sidebar -->
   <div id="mob-overlay" class="overlay" onclick="closeSidebar()"></div>
 
@@ -63,6 +95,9 @@
       <div class="sb-section">ตั้งค่า & บำรุงรักษา</div>
       <button class="sb-item" onclick="goPage('settings')">
         <i class="fa-solid fa-gears ico"></i> ตั้งค่าระบบ
+      </button>
+      <button class="sb-item sb-logout-item" onclick="handleLogout()">
+        <i class="fa-solid fa-right-from-bracket ico"></i> ออกจากระบบ
       </button>
     </nav>
     

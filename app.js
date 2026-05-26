@@ -51,14 +51,14 @@ const FIELDS = [
   { k: 'risk_note', l: 'หมายเหตุ / แผนช่วยเหลือ', req: false }
 ];
 
+const AUTH_HASH = 'f980353761341e9dc8f7b83ef504ac9eb0935200afc6698a0bda0ec4e538fa22'; // SHA-256 for 'cstc2026'
+let isAuthorized = false;
+
 // ── INITIALIZATION ──
 document.addEventListener('DOMContentLoaded', () => {
-  loadDatabase();
-  initializeCharts();
-  updateDashboard();
-  updateHeaderCount();
+  checkAuth();
   
-  // Set up CSV Drag and Drop Hover effects
+  // Set up CSV Drag and Drop Hover effects (only attaches listener)
   const dropBox = document.querySelector('.csv-upload-box');
   if (dropBox) {
     dropBox.addEventListener('dragover', (e) => {
@@ -83,12 +83,44 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Load DB
+// Check if user is logged in
+function checkAuth() {
+  const auth = sessionStorage.getItem('cstc_auth');
+  const overlay = document.getElementById('login-overlay');
+  
+  if (auth === 'true') {
+    isAuthorized = true;
+    if (overlay) {
+      overlay.classList.add('hidden');
+    }
+    initApp();
+  } else {
+    isAuthorized = false;
+    if (overlay) {
+      overlay.classList.remove('hidden');
+    }
+    // Block DB content in memory strictly
+    DB = [];
+    updateHeaderCount();
+  }
+}
+
+// Complete application startup after login is successful
+function initApp() {
+  loadDatabase();
+  initializeCharts();
+  updateDashboard();
+  updateHeaderCount();
+}
+
+// Load DB with strict authorization checks
 function loadDatabase() {
+  if (!isAuthorized) {
+    DB = [];
+    return;
+  }
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    DB = raw ? JSON.parse(raw) : getMockData();
-    
     DB = raw ? JSON.parse(raw) : getMockData();
     if (!raw) {
       saveDatabase();
@@ -2403,4 +2435,88 @@ function editFromProfile() {
   setTimeout(() => {
     openEditModal(sId);
   }, 200);
+}
+
+// ── SECURITY & PASSWORD PROTECTION LOGIC ──
+
+// Toggle visible text inside login password input
+function toggleLoginPasswordVisible() {
+  const passInput = document.getElementById('login-password');
+  const eyeIcon = document.getElementById('login-eye-icon');
+  if (passInput && eyeIcon) {
+    if (passInput.type === 'password') {
+      passInput.type = 'text';
+      eyeIcon.className = 'fa-solid fa-eye';
+    } else {
+      passInput.type = 'password';
+      eyeIcon.className = 'fa-solid fa-eye-slash';
+    }
+  }
+}
+
+// Process login attempt with SHA-256 validation
+async function handleLogin(e) {
+  if (e) e.preventDefault();
+  
+  const passwordInput = document.getElementById('login-password');
+  const errorMsg = document.getElementById('login-error');
+  const card = document.querySelector('.login-card');
+  
+  if (!passwordInput) return;
+  
+  const enteredPass = passwordInput.value.trim();
+  const hashed = await sha256(enteredPass);
+  
+  if (hashed === AUTH_HASH) {
+    // Save authentication state to session storage (closed when tab is closed)
+    sessionStorage.setItem('cstc_auth', 'true');
+    isAuthorized = true;
+    
+    // Animate and hide login screen
+    const overlay = document.getElementById('login-overlay');
+    if (overlay) {
+      overlay.classList.add('hidden');
+    }
+    
+    // Reset login inputs
+    passwordInput.value = '';
+    if (errorMsg) errorMsg.classList.remove('visible');
+    
+    // Initialize full app data and render stats
+    initApp();
+    showToast('🔓 เข้าสู่ระบบเรียบร้อย ยินดีต้อนรับครับ', 'ok');
+  } else {
+    // Show premium error styling and card shaking effect
+    if (errorMsg) errorMsg.classList.add('visible');
+    if (card) {
+      card.classList.add('shake');
+      setTimeout(() => {
+        card.classList.remove('shake');
+      }, 450);
+    }
+    passwordInput.value = '';
+    passwordInput.focus();
+  }
+}
+
+// Log out and completely reload environment to wipe out sensitive memory
+function handleLogout() {
+  sessionStorage.removeItem('cstc_auth');
+  isAuthorized = false;
+  DB = [];
+  
+  showToast('🔒 ออกจากระบบสำเร็จ กำลังรีเซ็ตหน่วยความจำ...', 'ok');
+  
+  setTimeout(() => {
+    window.location.reload();
+  }, 800);
+}
+
+// Utility to calculate SHA-256 hex string using browser-native subtle crypto
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex;
 }
