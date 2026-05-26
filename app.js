@@ -115,10 +115,27 @@ function checkAuth() {
 
 // Complete application startup after login is successful
 async function initApp() {
+  // 1. ลองดึงจากคลาวด์ Apps Script ก่อน (ถ้ามี URL)
   const cloudActive = await loadDatabaseOnline();
+  
   if (!cloudActive) {
-    loadDatabase(); // fallback to LocalStorage
+    // 2. ถ้าไม่มี Apps Script URL → โหลดจาก LocalStorage
+    loadDatabase();
+    
+    // 3. ถ้า Local ว่างหรือมีแค่ข้อมูลตัวอย่าง → ซิงค์จาก Google Sheets อัตโนมัติทันที!
+    const localRaw = localStorage.getItem(STORAGE_KEY);
+    const isEmpty = !localRaw || DB.length === 0 || DB.length <= 11;
+    
+    if (isEmpty) {
+      // แสดงแถบแจ้งเตือนการซิงค์อัตโนมัติ
+      showToast('🔄 ไม่พบข้อมูลในเครื่อง กำลังซิงค์ข้อมูลนักเรียนจาก Google Sheets อัตโนมัติ...', 'ok');
+      // รอ UI โหลดก่อนแล้วค่อย sync
+      setTimeout(async () => {
+        await syncGoogleSheetsFast();
+      }, 800);
+    }
   }
+  
   initializeCharts();
   updateDashboard();
   updateHeaderCount();
