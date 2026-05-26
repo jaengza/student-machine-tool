@@ -146,7 +146,7 @@ async function initApp() {
   // Refresh views
   const activePage = document.querySelector('.page.active') ? document.querySelector('.page.active').id : 'page-dashboard';
   if (activePage === 'page-students') renderStudents();
-  else if (activePage === 'page-search') doQuickSearch();
+  else if (activePage === 'page-search') quickSearch();
 }
 
 // Load DB with strict authorization checks
@@ -3040,7 +3040,7 @@ async function syncDatabaseBackground() {
         
         const activePage = document.querySelector('.page.active') ? document.querySelector('.page.active').id : 'page-dashboard';
         if (activePage === 'page-students') renderStudents();
-        else if (activePage === 'page-search') doQuickSearch();
+        else if (activePage === 'page-search') quickSearch();
         
         showToast('🔄 อัปเดตฐานข้อมูลนักเรียนเป็นปัจจุบันจาก Google Sheets แล้ว!', 'ok');
       } else {
@@ -3494,7 +3494,7 @@ async function syncGoogleSheetsFast() {
                 parsedStudents.forEach(student => {
                   let isMatch = false;
                   
-                  // จับคู่ผ่านรหัสนักเรียน (ตรงกันหรือลงท้ายด้วย 3 ตัว)
+                  // 1. จับคู่ผ่านรหัสนักเรียน (ตรงกันหรือลงท้ายด้วย 3 ตัว)
                   if (rawPhotoId && student.id) {
                     const cleanPId = rawPhotoId.trim();
                     const cleanSId = String(student.id).trim();
@@ -3508,16 +3508,61 @@ async function syncGoogleSheetsFast() {
                     }
                   }
                   
-                  // จับคู่ผ่านชื่อ-นามสกุลยืดหยุ่นสำรอง
+                  // 2. จับคู่ผ่านชื่อ-นามสกุลแบบเป๊ะ (ตัดคำนำหน้าและช่องว่าง)
                   if (!isMatch && rawPhotoName) {
-                    const stuCleanName = (String(student.fname || '') + String(student.lname || '')).replace(/^(นาย|นางสาว|เด็กชาย|เด็กหญิง|นาง)\s*/, '').replace(/\s+/g, '');
+                    const stuCleanName = (String(student.fname || '') + String(student.lname || '')).replace(/^(นาย|นางสาว|เด็กชาย|เด็กหญิง|นาง|ด\.ช\.|ด\.ญ\.)\s*/, '').replace(/\s+/g, '');
                     if (stuCleanName.includes(rawPhotoName) || rawPhotoName.includes(stuCleanName)) {
                       isMatch = true;
+                    }
+                  }
+
+                  // 3. จับคู่ผ่านความคล้ายคลึงของชื่อ (Levenshtein Distance) ป้องกันเด็กสะกดชื่อ/นามสกุลผิดพลาด (เช่น พุ่นิคม vs พุ่มนิคม)
+                  if (!isMatch && rawPhotoName && student.fname) {
+                    const stuCleanName = (String(student.fname || '') + String(student.lname || '')).replace(/^(นาย|นางสาว|เด็กชาย|เด็กหญิง|นาง|ด\.ช\.|ด\.ญ\.)\s*/, '').replace(/\s+/g, '');
+                    const dist = getLevenshteinDistance(stuCleanName, rawPhotoName);
+                    const maxLength = Math.max(stuCleanName.length, rawPhotoName.length);
+                    const similarity = (maxLength - dist) / maxLength;
+                    if (similarity >= 0.75) { // คล้ายกันเกิน 75% ถือเป็นคนเดียวกัน
+                      isMatch = true;
+                    }
+                  }
+
+                  // 4. จับคู่ผ่านชื่อจริงอย่างเดียว (หากมีความยาวอย่างน้อย 3 ตัว) และระดับชั้นตรงกัน (ป้องกันการซ้ำห้อง)
+                  if (!isMatch && rawPhotoName && student.fname) {
+                    const cleanSFname = String(student.fname).trim().replace(/^(นาย|นางสาว|เด็กชาย|เด็กหญิง|นาง|ด\.ช\.|ด\.ญ\.)\s*/, '').replace(/\s+/g, '');
+                    const cleanPhotoFname = rawPhotoName.substring(0, cleanSFname.length);
+                    if (cleanSFname.length >= 3 && cleanSFname === cleanPhotoFname) {
+                      const pLvl = String(pRow[3] || '').toLowerCase();
+                      const sLvl = String(student.level || '').toLowerCase();
+                      const pLvlClean = pLvl.includes('ปวช') ? 'ปวช' : (pLvl.includes('ปวส') ? 'ปวส' : '');
+                      const sLvlClean = sLvl.includes('ปวช') ? 'ปวช' : (sLvl.includes('ปวส') ? 'ปวส' : '');
+                      
+                      if (!pLvlClean || !sLvlClean || pLvlClean === sLvlClean) {
+                        isMatch = true;
+                      }
                     }
                   }
                   
                   if (isMatch) {
                     student.photo = directUrl;
+                    
+                    // 🌟 AUTOMATIC DATA REPAIR: ซ่อมแซมรหัสประจำตัวของนักเรียนที่ว่างเปล่าในระบบหลัก
+                    if (!student.id && rawPhotoId) {
+                      let repairedId = rawPhotoId.trim();
+                      if (repairedId.length === 3) {
+                        const lvl = String(student.level || '').trim();
+                        if (lvl.includes('ปวช')) {
+                          student.id = `69201020${repairedId}`;
+                        } else if (lvl.includes('ปวส')) {
+                          student.id = `69301110${repairedId}`;
+                        } else {
+                          student.id = repairedId;
+                        }
+                      } else {
+                        student.id = repairedId;
+                      }
+                    }
+                    
                     matchedPhotosCount++;
                   }
                 });
@@ -3590,4 +3635,26 @@ async function syncGoogleSheetsFast() {
       showToast('❌ ดาวน์โหลดรายชื่อหลักล้มเหลว กรุณาตรวจสอบการแชร์ไฟล์ชีตหลักเป็นสาธารณะ', 'err');
     }
   });
+}
+
+// ── HELPER UTILITY FOR TEXT SIMILARITY MATCHING (v10.0) ──
+function getLevenshteinDistance(s1, s2) {
+  if (!s1) return s2 ? s2.length : 0;
+  if (!s2) return s1.length : 0;
+  
+  const track = Array(s2.length + 1).fill(null).map(() => Array(s1.length + 1).fill(null));
+  for (let i = 0; i <= s1.length; i += 1) track[0][i] = i;
+  for (let j = 0; j <= s2.length; j += 1) track[j][0] = j;
+  
+  for (let j = 1; j <= s2.length; j += 1) {
+    for (let i = 1; i <= s1.length; i += 1) {
+      const indicator = s1[i - 1] === s2[j - 1] ? 0 : 1;
+      track[j][i] = Math.min(
+        track[j][i - 1] + 1, // deletion
+        track[j - 1][i] + 1, // insertion
+        track[j - 1][i - 1] + indicator // substitution
+      );
+    }
+  }
+  return track[s2.length][s1.length];
 }
