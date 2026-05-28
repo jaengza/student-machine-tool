@@ -118,6 +118,10 @@
         <span id="hdr-count" class="hdr-count-pill">โหลดข้อมูล...</span>
       </div>
       <div class="hdr-actions">
+        <!-- Sync Status Indicator -->
+        <span id="sync-status" class="sync-status-pill offline" title="สถานะเชื่อมต่อคลาวด์ Supabase">
+          <i class="fa-solid fa-cloud-arrow-up"></i> <span>ตรวจสอบคลาวด์</span>
+        </span>
         <!-- Light/Dark Mode Switcher -->
         <button class="hdr-btn theme-switch-btn" onclick="toggleTheme()" title="สลับโหมดสี">
           <i id="theme-icon" class="fa-solid fa-sun"></i>
@@ -322,112 +326,96 @@
           <!-- Cloud Sync Card -->
           <div class="tbox padded-box">
             <div class="form-section-title" style="color: var(--p);">
-              <i class="fa-solid fa-cloud-arrow-down"></i> เชื่อมต่อผ่าน Google Sheets หรือ ลิงก์ CSV
+              <i class="fa-solid fa-cloud-arrow-down"></i> ศูนย์จัดการฐานข้อมูลคลาวด์ Supabase Real-time
             </div>
+            <p style="color: var(--c5); font-size: 13px; margin: 10px 0 20px; line-height: 1.6;">
+              ระบบฐานข้อมูลได้รับการอัปเกรดเป็น **Supabase Cloud (PostgreSQL)** เรียบร้อยแล้ว ซึ่งช่วยให้คุณครูสามารถประเมินความเสี่ยง บันทึก และแก้ไขข้อมูลนักเรียนข้ามอุปกรณ์ (คอมพิวเตอร์และโทรศัพท์มือถือ) ได้อย่างสะดวกรวดเร็วและอัปเดตตรงกันทันที 100%
+            </p>
             
-            <div class="fg" style="margin: 16px 0;">
-              <label class="form-label font-accent">ลิงก์ CSV สาธารณะ (Publish to Web)</label>
-              <input id="sheets-url" type="url" class="premium-input" value="https://docs.google.com/spreadsheets/d/16ly2qP4dXzQBPQo3gKJTQY9-Pxp9bMGtgAOMwSamPgA/edit?usp=sharing" placeholder="https://docs.google.com/spreadsheets/d/.../export?format=csv">
-            </div>
-
-            <div class="btn-group">
-              <button class="btn btn-p" onclick="importSheets()">
-                <i class="fa-solid fa-arrows-rotate"></i> ดึงข้อมูลและนำเข้า
-              </button>
-              <button class="btn btn-s" onclick="showHeaders()">
-                <i class="fa-solid fa-list-check"></i> ดูหัวคอลัมน์
-              </button>
-              <button class="btn btn-s" onclick="showImportHelp()">
-                <i class="fa-solid fa-circle-question"></i> คู่มือการลิงก์ Google Sheets
-              </button>
-            </div>
-
-            <!-- Mapping Area -->
-            <div id="import-preview" class="mapping-container" style="display:none; margin-top: 20px;">
-              <div class="form-section-title" style="font-size: 13px; color: var(--g); border: none; padding: 0; margin-bottom: 12px;">
-                <i class="fa-solid fa-shuffle"></i> จับคู่คอลัมน์ (Column Mapping Preview)
+            <div class="cloud-status-box" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--r8); padding: 16px; font-size: 13px; margin-bottom: 20px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span>สถานะเชื่อมต่อเซิร์ฟเวอร์:</span>
+                <span id="cloud-center-status" class="badge b-gray">
+                  <i class="fa-solid fa-cloud"></i> ตรวจสอบสถานะ...
+                </span>
               </div>
-              <div id="mapping-area" class="mapping-scroll scroll-styled"></div>
-              
-              <div class="btn-group" style="margin-top: 15px;">
-                <button class="btn btn-g" onclick="applyImport()">
-                  <i class="fa-solid fa-check"></i> ยืนยันการนำเข้าข้อมูล
-                </button>
-                <button class="btn btn-s" onclick="cancelImport()">ยกเลิก</button>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span>โครงการฐานข้อมูลหลัก:</span>
+                <strong style="color: var(--p);">iapcotozckbhpcmyzoqd</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span>จำนวนรายชื่อนักเรียนบนคลาวด์:</span>
+                <strong style="color: var(--g);" id="cloud-student-count">กำลังดึงข้อมูล...</strong>
               </div>
             </div>
-          </div>
 
-          <!-- Photo Sync Card -->
-          <div class="tbox padded-box animate-fade-in" style="margin-top: 20px;">
-            <div class="form-section-title" style="color: var(--pu);">
-              <i class="fa-solid fa-image"></i> ดึงรูปภาพนักเรียนจาก Google Sheets
-            </div>
-            <p style="color: var(--c5); font-size: 12.5px; margin-bottom: 12px; line-height: 1.5;">ดึงรูปภาพจาก Google Drive ลิงก์ที่นักเรียนส่งมาในชีต แล้วจับคู่เข้ากับประวัติในฐานข้อมูลระบบโดยอัตโนมัติตามชื่อและรหัสประจำตัวผู้เรียน</p>
-            
-            <div class="fg" style="margin: 14px 0;">
-              <label class="form-label font-accent">ลิงก์ Google Sheets ของไฟล์รูปภาพ</label>
-              <input id="photo-sheets-url" type="url" class="premium-input" value="https://docs.google.com/spreadsheets/d/16ly2qP4dXzQBPQo3gKJTQY9-Pxp9bMGtgAOMwSamPgA/edit?usp=sharing" placeholder="วางลิงก์ Google Sheets รูปภาพ...">
-            </div>
-
-            <div class="btn-group" style="margin-bottom: 14px;">
-              <button class="btn btn-p" onclick="syncPhotosFromSheets()" style="background: linear-gradient(135deg, var(--pu) 0%, var(--p) 100%); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);">
-                <i class="fa-solid fa-arrows-spin"></i> เริ่มต้นประมวลผลและซิงค์รูปภาพ
+            <div class="btn-group" style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button class="btn btn-p" onclick="initApp()">
+                <i class="fa-solid fa-arrows-rotate"></i> รีเฟรชดึงข้อมูลคลาวด์ล่าสุด
               </button>
-            </div>
-            
-            <div class="fg" style="border-top: 1px solid var(--border-color); padding-top: 14px;">
-              <label class="form-label font-accent" style="color: var(--pu);"><i class="fa-solid fa-file-csv"></i> หรือ เลือกไฟล์ CSV รูปภาพจากคอมพิวเตอร์ของคุณ (ป้องกัน CORS บล็อก)</label>
-              <input type="file" id="photo-csv-file" accept=".csv" onchange="syncPhotosFromLocalCsv()" class="premium-input" style="padding: 6px; font-size: 12px; background: rgba(0,0,0,0.15);">
+              <button class="btn btn-s" onclick="testCloudConnection()">
+                <i class="fa-solid fa-circle-nodes"></i> ทดสอบความเร็วการซิงค์
+              </button>
             </div>
           </div>
 
           <!-- Direct File Upload & Export Card -->
           <div class="tbox padded-box">
             <div class="form-section-title" style="color: var(--g);">
-              <i class="fa-solid fa-file-excel"></i> นำเข้าผ่านไฟล์สำรองเครื่อง
+              <i class="fa-solid fa-file-excel"></i> สำรองและนำเข้าข้อมูลฉุกเฉิน
             </div>
+            <p style="color: var(--c5); font-size: 12.5px; margin-bottom: 16px; line-height: 1.5;">
+              ใช้สำหรับนำเข้าข้อมูลรายชื่อจากตาราง CSV ในช่วงเริ่มต้น หรือเพื่อสำรองข้อมูลนักเรียนเก็บไว้ในเครื่องคอมพิวเตอร์ของคุณเพื่อความปลอดภัยทางข้อมูลสูงสุด
+            </p>
             
-            <div class="csv-upload-box" onclick="document.getElementById('csv-file').click()">
-              <i class="fa-solid fa-file-csv font-accent"></i>
-              <p>ลากและวางไฟล์ CSV หรือ <strong>คลิกเลือกไฟล์</strong> เพื่อนำเข้าทันที</p>
-              <span class="upload-sub">รองรับการเข้าข้อมูลแบบจำนวนมาก</span>
+            <div class="csv-upload-box" onclick="document.getElementById('csv-file').click()" style="border: 2px dashed var(--border-color); border-radius: var(--r12); padding: 24px; text-align: center; cursor: pointer; transition: var(--transition); background: rgba(255, 255, 255, 0.01);">
+              <i class="fa-solid fa-file-csv font-accent" style="font-size: 36px; margin-bottom: 10px; color: var(--g);"></i>
+              <p style="font-weight: 600; margin-bottom: 4px;">ลากและวางไฟล์ CSV หรือ <strong>คลิกเลือกไฟล์</strong></p>
+              <span class="upload-sub" style="font-size: 11px; color: var(--c5);">เพื่อนำข้อมูลประวัตินักเรียนจำนวนมากเข้าสู่ฐานข้อมูล</span>
             </div>
             <input type="file" id="csv-file" accept=".csv" onchange="importCsvFile()" style="display:none">
             
-            <div class="info-note" style="margin-top: 16px;">
-              <i class="fa-solid fa-circle-info font-accent"></i>
-              <span>**หมายเหตุ**: ระบบจะทำการสแกนหัวตารางเพื่อทำการแมปโดยอัตโนมัติ หากมีโครงสร้างที่ตรงกัน ระบบจะเพิ่มข้อมูลให้ทันที</span>
+            <div class="info-note" style="margin-top: 16px; font-size: 12px; color: var(--c4); display: flex; gap: 8px; align-items: flex-start;">
+              <i class="fa-solid fa-circle-info font-accent" style="color: var(--y); margin-top: 2px;"></i>
+              <span>**คำแนะนำ**: การนำเข้า CSV ระบบจะทำความเข้าใจโครงสร้างหัวตารางโดยอัตโนมัติ และข้อมูลจะถูกเขียนขึ้นฐานข้อมูล Supabase เมื่อกดบันทึกยืนยันข้อมูล</span>
             </div>
           </div>
+
         </div>
       </div>
 
       <!-- ── PAGE: SETTINGS ── -->
       <div id="page-settings" class="page">
-        <!-- Cloud Synchronization Settings (Premium API Setup) -->
+        <!-- Cloud Synchronization Settings (Supabase Cloud Setup) -->
         <div class="tbox padded-box animate-fade-in" style="max-width: 700px; margin: 0 auto 24px;">
           <div class="form-section-title" style="color: var(--p);">
-            <i class="fa-solid fa-cloud-arrow-up"></i> ระบบฐานข้อมูลออนไลน์ซิงค์สด (Cloud Sync API)
+            <i class="fa-solid fa-database"></i> ระบบฐานข้อมูลคลาวด์ซิงค์สด (Supabase Cloud Sync)
           </div>
           <p style="color: var(--c5); margin-bottom: 16px; line-height: 1.5; font-size: 13px;">
-            เชื่อมต่อกับ Google Sheets หลังบ้านเพื่อส่งข้อมูลแก้ไขและแชร์ประวัตินักเรียนข้ามเครื่องแบบสด ๆ ทันที (คอมพิวเตอร์และโทรศัพท์มือถือ) โดยไม่มีค่าดูแลรักษาระบบและปลอดภัยสูงสุด
+            เชื่อมต่อกับฐานข้อมูลความปลอดภัยสูงของ **Supabase (PostgreSQL)** เพื่อซิงค์ข้อมูลแก้ไขรายชื่อนักเรียนและประเมินความเสี่ยงระหว่างอุปกรณ์แบบเรียลไทม์ (PC และสมาร์ทโฟน) มั่นคงและไม่มีวันข้อมูลสูญหาย
           </p>
           
-          <div class="fg" style="margin-bottom: 15px;">
-            <label class="form-label font-accent">URL ของ Google Web App API (ลิงก์ Apps Script เผยแพร่)</label>
-            <input id="cloud-api-url" type="url" class="premium-input" placeholder="วางลิงก์ https://script.google.com/macros/s/.../exec ..." oninput="saveCloudConfig()">
+          <div class="fgrid fgrid2" style="margin-bottom: 15px; gap: 12px; display: grid; grid-template-columns: 1fr 1fr;">
+            <div class="fg">
+              <label class="form-label font-accent">Supabase Project URL</label>
+              <input id="cloud-api-url" type="url" class="premium-input" value="https://iapcotozckbhpcmyzoqd.supabase.co" readonly style="opacity: 0.8; cursor: not-allowed; background: rgba(0, 0, 0, 0.1);">
+            </div>
+            <div class="fg">
+              <label class="form-label font-accent">Supabase Anon Key</label>
+              <input type="text" class="premium-input" value="sb_publishable_Ylh3TU3WMMxcyGB7C6a-jA_mTZ0QavA" readonly style="opacity: 0.8; cursor: not-allowed; background: rgba(0, 0, 0, 0.1);">
+            </div>
           </div>
           
           <div class="cloud-status-box" id="cloud-status" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--r8); padding: 12px 16px; font-size: 12.5px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
             <span id="cloud-status-text" style="color: var(--c5); font-weight: 500;">
-              ⚪ โหมดปัจจุบัน: <strong>ความจำเฉพาะเครื่อง (LocalStorage Mode)</strong>
+              ⚪ โหมดปัจจุบัน: <strong>กำลังติดต่อฐานข้อมูล Supabase...</strong>
             </span>
             <button class="btn btn-s btn-sm" onclick="testCloudConnection()" id="cloud-test-btn" style="padding: 6px 12px; font-size: 11px;">
-              <i class="fa-solid fa-circle-nodes"></i> ทดสอบการซิงค์สด
+              <i class="fa-solid fa-arrows-rotate"></i> บังคับรีเฟรชซิงค์สด
             </button>
           </div>
         </div>
+
 
         <!-- Diagnostics & Activity Logging Card (v12.0) -->
         <div class="tbox padded-box animate-fade-in" style="max-width: 700px; margin: 0 auto 24px;">
@@ -943,7 +931,7 @@
   </div>
 
   <!-- Main JavaScript File -->
-  <script src="app.js?v=20260528_21"></script>
+  <script src="app.js?v=20260528_22"></script>
 </body>
 </html>
 

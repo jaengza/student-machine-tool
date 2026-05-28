@@ -6,7 +6,9 @@
 // ── DATA STATE & LOCAL STORAGE KEY ──
 const STORAGE_KEY = 'dept_stu_v3';
 const CLOUD_KEY = 'cstc_cloud_api';
-let CLOUD_API_URL = '';
+const SUPABASE_URL = 'https://iapcotozckbhpcmyzoqd.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_Ylh3TU3WMMxcyGB7C6a-jA_mTZ0QavA';
+let CLOUD_API_URL = SUPABASE_URL;
 let DB = [];
 let editId = null;
 let currentPage = 1;
@@ -100,11 +102,10 @@ document.addEventListener('DOMContentLoaded', () => {
 // Check if user is logged in
 function checkAuth() {
   // Load cloud URL configuration
-  CLOUD_API_URL = localStorage.getItem(CLOUD_KEY) || '';
+  CLOUD_API_URL = SUPABASE_URL;
   const apiInput = document.getElementById('cloud-api-url');
   if (apiInput) apiInput.value = CLOUD_API_URL;
-  updateCloudStatusUI();
-
+  
   const auth = sessionStorage.getItem('cstc_auth');
   const overlay = document.getElementById('login-overlay');
   
@@ -127,25 +128,15 @@ function checkAuth() {
 
 // Complete application startup after login is successful
 async function initApp() {
-  // 1. ลองดึงจากคลาวด์ Apps Script ก่อน (ถ้ามี URL)
+  // 1. ลองดึงรายชื่อและสถานะสดจาก Supabase คลาวด์
   const cloudActive = await loadDatabaseOnline();
   
   if (!cloudActive) {
-    // 2. ถ้าไม่มี Apps Script URL → โหลดจาก LocalStorage
+    // 2. หากไม่สำเร็จ (ออฟไลน์) โหลดจาก LocalStorage สำรองภายในเครื่อง
     loadDatabase();
-    
-    // 3. ถ้า Local ว่างหรือมีแค่ข้อมูลตัวอย่าง → ซิงค์จาก Google Sheets อัตโนมัติทันที!
-    const localRaw = localStorage.getItem(STORAGE_KEY);
-    const isEmpty = !localRaw || DB.length === 0 || DB.length <= 11;
-    
-    if (isEmpty) {
-      // แสดงแถบแจ้งเตือนการซิงค์อัตโนมัติ
-      showToast('🔄 ไม่พบข้อมูลในเครื่อง กำลังซิงค์ข้อมูลนักเรียนจาก Google Sheets อัตโนมัติ...', 'ok');
-      // รอ UI โหลดก่อนแล้วค่อย sync
-      setTimeout(async () => {
-        await syncGoogleSheetsFast();
-      }, 800);
-    }
+    updateSyncStatus('offline');
+  } else {
+    updateSyncStatus('online');
   }
   
   initializeCharts();
@@ -5598,247 +5589,152 @@ function handleLogout() {
 // ── REAL-TIME CLOUD DATABASE STORAGE INTEGRATIONS ──
 
 // Load database from cloud (Google Sheets Apps Script API)
+// Load database from Supabase Cloud
 async function loadDatabaseOnline() {
-  if (!CLOUD_API_URL || !CLOUD_API_URL.startsWith('http')) return false;
-  
   try {
-    showToast('🌐 กำลังเชื่อมต่อซิงค์ประวัติสดกับ Google Sheets...', 'ok');
-    const response = await fetch(CLOUD_API_URL);
+    updateSyncStatus('syncing');
+    
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/students?select=*&order=room,fname`, {
+      method: 'GET',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
     const cloudData = await response.json();
     
     if (cloudData && Array.isArray(cloudData)) {
-      // พจนานุกรมแปลงหัวคอลัมน์ภาษาไทยจาก Sheets กลับเป็นฟิลด์ระบบ
-      const THAI_MAP_REVERSE = {
-        "รหัสประจำตัวนักเรียน": "id", "รหัสนักเรียน": "id", "รหัสประจำตัว": "id", "รหัส": "id", "id": "id",
-        "ชื่อจริง": "fname", "ชื่อ": "fname", "ชื่อนาม-นามสกุล": "fname", "ชื่อ-นามสกุล": "fname",
-        "นามสกุล": "lname", "สกุล": "lname",
-        "ชื่อเล่น": "nickname", "รูป": "photo", "รูปถ่าย": "photo", "รูปภาพ": "photo", "photo": "photo",
-        "เพศ": "gender",
-        "ระดับชั้น": "level", "ระดับ": "level", "ระดับชั้นปี": "level",
-        "ชั้นปี": "year", "กลุ่มเรียน": "room", "ห้อง": "room", "เบอร์โทรนักเรียน": "phone", "เบอร์โทร": "phone",
-        "โซเชียล": "social", "line": "social", "facebook": "social",
-        "ชื่อผู้ปกครอง": "parent", "เบอร์โทรผู้ปกครอง": "parentphone", "เบอร์ฉุกเฉิน": "parentphone2",
-        "สถานศึกษาเดิม": "prevschool", "ไซส์เสื้อ": "shirt", "โรคประจำตัว": "health",
-        "การเดินทาง": "transport", "เงินมาเรียนต่อวัน": "allowance", "พฤติกรรมเสี่ยง": "smoke",
-        "สถานที่ฝึกงาน": "internship_place", "เบอร์โทรสถานที่ฝึกงาน": "internship_phone",
-        
-        "บ้านเลขที่": "address_no", "ถนน": "address_road", "ตำบล": "address_subdistrict",
-        "อำเภอ": "address_district", "รหัสไปรษณีย์": "address_zipcode",
-        "นักเรียนมีความต้องกาารทุนการศึกษาไหมในอนาคต": "needs_scholarship", "ความต้องการทุนการศึกษา": "needs_scholarship",
-        "อาชีพของผู้ปกครอง": "parent_job", "รายได้โดยเฉลี่ยของครอบครัว": "parent_income",
-
-        "ระดับความเสี่ยงภาพรวม": "risk_level", "เสี่ยงด้านการเรียน": "risk_academic",
-        "เสี่ยงด้านพฤติกรรม": "risk_behavior", "เสี่ยงด้านครอบครัว": "risk_family",
-        "เสี่ยงด้านเศรษฐกิจ": "risk_economic", "หมายเหตุช่วยเหลือ": "risk_note"
-      };
-      
-      let parsedDB = [];
-      cloudData.forEach(row => {
+      // ดึงข้อมูลตรงๆ จากโครงสร้าง Supabase
+      const parsedDB = cloudData.map(row => {
         const student = {};
-        let fnameVal = '';
-        let lnameVal = '';
-        let fullName = '';
-        
-        // ค้นหาคอลัมน์ชื่อจริง
-        for (var key in row) {
-          var cleanK = key.trim();
-          if (cleanK === "ชื่อนาม-นามสกุล" || cleanK === "ชื่อ-นามสกุล") {
-            fullName = String(row[key] || '').trim();
-            break;
-          }
-        }
-        
-        if (fullName !== '') {
-          // ล้างคำนำหน้า
-          const cleanFullName = fullName.replace(/^(นาย|นางสาว|เด็กชาย|เด็กหญิง|นาง|ด\.ช\.|ด\.ญ\.)\s*/, '').trim();
-          const parts = cleanFullName.split(/\s+/);
-          if (parts.length >= 2) {
-            fnameVal = parts[0];
-            lnameVal = parts.slice(1).join(' ');
-          } else {
-            fnameVal = cleanFullName;
-            lnameVal = '';
-          }
-        }
-        
-        // กำหนดค่าเริ่มต้นทุกฟิลด์ป้องกัน undefined
         FIELDS.forEach(f => {
-          student[f.k] = '';
+          student[f.k] = row[f.k] !== undefined && row[f.k] !== null ? String(row[f.k]).trim() : '';
         });
         
-        // แมปข้อมูลจากคอลัมน์ของชีต
-        for (var sheetKey in row) {
-          var cleanSK = sheetKey.trim();
-          var mappedField = THAI_MAP_REVERSE[cleanSK];
-          if (mappedField) {
-            student[mappedField] = String(row[sheetKey] || '').trim();
-          }
+        if (student.photo) {
+          student.photo = normalizeDriveUrl(student.photo);
         }
         
-        if (fnameVal !== '') student.fname = fnameVal;
-        if (lnameVal !== '') student.lname = lnameVal;
+        // ฟันธงฟิลด์พื้นฐาน
+        if (!student.level) student.level = student.id.startsWith('6') ? 'ปวช.' : 'ปวส.';
+        if (!student.year) student.year = '1';
+        if (!student.status) student.status = 'กำลังศึกษา';
         
-        if (student.id) {
-          student.id = String(student.id).trim();
-          
-          // คัดกรองและสแกน Fallbacks สำหรับระดับและชั้นปี
-          if (!student.level) student.level = student.id.startsWith('6') ? 'ปวช.' : 'ปวส.';
-          if (!student.year) {
-            let parsedYear = '1';
-            const idVal = student.id;
-            if (idVal.length === 10 || idVal.length === 11) {
-              const prefixStr = idVal.substring(0, 2);
-              const prefixVal = parseInt(prefixStr, 10);
-              if (!isNaN(prefixVal) && prefixVal >= 60 && prefixVal <= 69) {
-                const calcYear = 69 - prefixVal + 1;
-                if (calcYear >= 1 && calcYear <= 3) parsedYear = String(calcYear);
-              }
-            }
-            student.year = parsedYear;
-          }
-          
-          // ลบกลุ่มเรียนถ้าห้องเรียนถูกทับด้วยลิงก์รูป
-          if (student.room && (student.room.includes('drive.google.com') || student.room.includes('lh3.googleusercontent.com') || student.room.includes('http'))) {
-            if (!student.photo) student.photo = student.room;
-            student.room = '';
-          }
-          
-          if (student.photo) {
-            student.photo = normalizeDriveUrl(student.photo);
-          }
-          
-          // [v12.6 Cloud Photo Fallback] ป้องกันรูปภาพหายหากข้อมูลรูปภาพใน Google Sheets หลักเป็นค่าว่างเปล่า
-          if (!student.photo || student.photo.trim() === '') {
-            const currentStu = typeof DB !== 'undefined' ? DB.find(s => String(s.id).trim() === String(student.id).trim()) : null;
-            if (currentStu && currentStu.photo && currentStu.photo.trim() !== '') {
-              student.photo = currentStu.photo;
-            } else {
-              const mockList = typeof getMockData === 'function' ? getMockData() : [];
-              const mockStu = mockList.find(m => String(m.id).trim() === String(student.id).trim());
-              if (mockStu && mockStu.photo && mockStu.photo.trim() !== '') {
-                student.photo = mockStu.photo;
-              }
-            }
-          }
-          
-          parsedDB.push(student);
-        }
+        return student;
       });
       
       if (parsedDB.length > 0) {
         DB = parsedDB;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
-        // [v12.8 Cloud Fallback Photo Check] ฉีดรูปถ่ายประวัติลง LocalStorage เผื่อคลาวด์ออนไลน์ไม่มีรูป
+        
         if (typeof applyHardPhotoInjection === 'function') {
           applyHardPhotoInjection();
-        } // เซฟสำรองในเครื่องเผื่อออฟไลน์
-        showToast('🟢 ดึงประวัติเชื่อมโยงสดสำเร็จ!', 'ok');
+        }
+        
+        updateSyncStatus('online');
         logSystemActivity("SYNC_BACKGROUND", "", `ดึงประวัติสดสำเร็จ โหลดข้อมูลนักเรียน ${parsedDB.length} คน`);
         return true;
       }
     }
   } catch (err) {
-    console.error('Cloud Sync failed, falling back to Local Storage', err);
-    showToast('⚠️ เชื่อมต่อออนไลน์ไม่ได้ กำลังใช้ข้อมูลประวัติสำรองในเครื่องแทน', 'err');
+    console.error('Supabase load failed:', err);
     logSystemActivity("SYNC_BACKGROUND_FAIL", "", `ดึงประวัติสดล้มเหลว: ${err.message || err}`);
   }
   return false;
 }
 
-// Send single student update request to Google Sheets Cloud Web App API (CORS-friendly POST)
+// Send single student update request to Supabase (UPSERT)
 async function saveToCloud(student) {
-  if (!CLOUD_API_URL || !CLOUD_API_URL.startsWith('http')) return;
-  
   const editIdVal = document.getElementById('f-edit-id').value;
-  
-  const payload = {
-    id: student.id,
-    old_id: editIdVal || student.id, // [v12.9 อัปเดตรหัสคลาวด์] ส่งไอดีเดิมไปด้วยหากมีการเปลี่ยนรหัสประจำตัว
-    fname: student.fname,
-    lname: student.lname,
-    nickname: student.nickname,
-    photo: student.photo,
-    level: student.level,
-    year: student.year,
-    room: student.room,
-    status: student.status,
-    phone: student.phone,
-    social: student.social,
-    parent: student.parent,
-    parentphone: student.parentphone,
-    parentphone2: student.parentphone2,
-    prevschool: student.prevschool,
-    shirt: student.shirt,
-    health: student.health,
-    transport: student.transport,
-    allowance: student.allowance,
-    smoke: student.smoke,
-    internship_place: student.internship_place,
-    internship_phone: student.internship_phone,
-    risk_level: student.risk_level,
-    risk_academic: student.risk_academic,
-    risk_behavior: student.risk_behavior,
-    risk_family: student.risk_family,
-    risk_economic: student.risk_economic,
-    risk_note: student.risk_note
-  };
+  const oldId = editIdVal || student.id;
   
   try {
-    showToast('📤 กำลังส่งข้อมูลประวัติขึ้น Google Sheets...', 'ok');
+    updateSyncStatus('syncing');
     
-    // mode: 'no-cors' ช่วยเลี่ยง CORS บล็อกของกูเกิลได้อย่างสมบูรณ์แบบ 
-    await fetch(CLOUD_API_URL, {
+    // [v12.9 อัปเดตรหัสคลาวด์] กรณีรหัสเปลี่ยนไป (Primary Key เปลี่ยน)
+    // ลบระเบียนเดิมออกก่อนป้องกันข้อมูลขยะค้างในระบบ
+    if (oldId && String(oldId) !== String(student.id)) {
+      await fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${oldId}`, {
+        method: 'DELETE',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
+        }
+      });
+      logSystemActivity("DELETE_OLD_ID", oldId, `ลบระเบียนรหัสเดิมเนื่องจากมีการแก้ไขรหัสเป็น ${student.id}`);
+    }
+    
+    // สร้าง payload
+    const payload = {};
+    FIELDS.forEach(f => {
+      payload[f.k] = student[f.k];
+    });
+    payload.updated_at = new Date().toISOString();
+    
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/students`, {
       method: 'POST',
-      mode: 'no-cors', 
       headers: {
-        'Content-Type': 'application/json'
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates,return=representation'
       },
       body: JSON.stringify(payload)
     });
     
-    showToast('🟢 บันทึกและซิงค์คลาวด์ออนไลน์สำเร็จ!', 'ok');
-    logSystemActivity("SAVE_STUDENT", student.id, `บันทึกประวัตินักเรียนคุณ ${student.fname} ${student.lname} ขึ้นคลาวด์`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    showToast('🟢 บันทึกและซิงค์ข้อมูล Supabase สำเร็จ!', 'ok');
+    updateSyncStatus('online');
+    logSystemActivity("SAVE_STUDENT", student.id, `บันทึกประวัตินักเรียนคุณ ${student.fname} ขึ้น Supabase`);
   } catch (err) {
-    console.error('Failed to sync to cloud', err);
-    showToast('⚠️ ไม่สามารถส่งขึ้นคลาวด์ได้ทันที ข้อมูลจะเซฟไว้ในเครื่องนี้ก่อน', 'err');
+    console.error('Failed to sync to Supabase:', err);
+    showToast('⚠️ ออฟไลน์: ข้อมูลได้รับการบันทึกในเครื่องเรียบร้อยแล้ว', 'err');
+    updateSyncStatus('offline');
     logSystemActivity("SAVE_STUDENT_FAIL", student.id, `ส่งขึ้นคลาวด์ล้มเหลว: ${err.message || err}`);
   }
 }
 
-// Send delete student request to Google Sheets Cloud Web App API
+// Send delete student request to Supabase
 async function deleteFromCloud(studentId) {
-  if (!CLOUD_API_URL || !CLOUD_API_URL.startsWith('http')) return;
-  
-  const payload = {
-    id: studentId,
-    action: "delete"
-  };
-  
   try {
-    showToast('🗑️ กำลังส่งคำสั่งลบประวัติไปที่ Google Sheets...', 'ok');
-    await fetch(CLOUD_API_URL, {
-      method: 'POST',
-      mode: 'no-cors', 
+    updateSyncStatus('syncing');
+    
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${studentId}`, {
+      method: 'DELETE',
       headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
     });
-    showToast('🟢 ลบประวัติบนคลาวด์ออนไลน์สำเร็จ!', 'ok');
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    showToast('🗑️ ลบประวัตินักเรียนออกจาก Supabase สำเร็จ!', 'ok');
+    updateSyncStatus('online');
     logSystemActivity("DELETE_STUDENT", studentId, "ส่งคำสั่งลบประวัตินักเรียนไปบนคลาวด์สำเร็จ");
   } catch (err) {
-    console.error('Failed to delete from cloud', err);
-    showToast('⚠️ ไม่สามารถสั่งลบออนไลน์ได้ทันที ข้อมูลอาจยังค้างอยู่ในกูเกิลชีต', 'err');
+    console.error('Failed to delete from Supabase:', err);
+    showToast('⚠️ ไม่สามารถสั่งลบออนไลน์ได้ ข้อมูลจะอัปเดตเมื่อเชื่อมต่อเน็ตอีกครั้ง', 'err');
+    updateSyncStatus('offline');
     logSystemActivity("DELETE_STUDENT_FAIL", studentId, `สั่งลบบนคลาวด์ล้มเหลว: ${err.message || err}`);
   }
 }
 
-// Background Cloud Synchronization Engine (Silent Auto-Sync)
+// Silent Background Cloud Synchronization Engine (Silent Auto-Sync)
 async function syncDatabaseBackground() {
-  if (!CLOUD_API_URL || !CLOUD_API_URL.startsWith('http')) return;
-  if (!isAuthorized) return; // Only sync if logged in
+  if (!isAuthorized) return;
   
-  // เกราะกันฟอร์มสะดุด (Active Form Guard): ห้ามดึงข้อมูลใหม่มาทับ หากคุณครูกำลังพิมพ์คีย์ข้อมูลอยู่!
   const addModal = document.getElementById('add-modal');
   const riskModal = document.getElementById('risk-modal');
   if ((addModal && addModal.classList.contains('active')) || (riskModal && riskModal.classList.contains('active'))) {
@@ -5847,125 +5743,43 @@ async function syncDatabaseBackground() {
   }
   
   try {
-    console.log('Running silent background cloud database sync...');
-    const response = await fetch(CLOUD_API_URL);
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/students?select=*`, {
+      method: 'GET',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    });
+    
+    if (!response.ok) throw new Error('Network response was not ok');
+    
     const cloudData = await response.json();
     
     if (cloudData && Array.isArray(cloudData)) {
-      const THAI_MAP_REVERSE = {
-        "รหัสประจำตัวนักเรียน": "id", "รหัสนักเรียน": "id", "รหัสประจำตัว": "id", "รหัส": "id", "id": "id",
-        "ชื่อจริง": "fname", "ชื่อ": "fname", "ชื่อนาม-นามสกุล": "fname", "ชื่อ-นามสกุล": "fname",
-        "นามสกุล": "lname", "สกุล": "lname",
-        "ชื่อเล่น": "nickname", "รูป": "photo", "รูปถ่าย": "photo", "รูปภาพ": "photo", "photo": "photo",
-        "เพศ": "gender",
-        "ระดับชั้น": "level", "ระดับ": "level", "ระดับชั้นปี": "level",
-        "ชั้นปี": "year", "กลุ่มเรียน": "room", "ห้อง": "room", "เบอร์โทรนักเรียน": "phone", "เบอร์โทร": "phone",
-        "โซเชียล": "social", "line": "social", "facebook": "social",
-        "ชื่อผู้ปกครอง": "parent", "เบอร์โทรผู้ปกครอง": "parentphone", "เบอร์ฉุกเฉิน": "parentphone2",
-        "สถานศึกษาเดิม": "prevschool", "ไซส์เสื้อ": "shirt", "โรคประจำตัว": "health",
-        "การเดินทาง": "transport", "เงินมาเรียนต่อวัน": "allowance", "พฤติกรรมเสี่ยง": "smoke",
-        "สถานที่ฝึกงาน": "internship_place", "เบอร์โทรสถานที่ฝึกงาน": "internship_phone",
-        
-        "บ้านเลขที่": "address_no", "ถนน": "address_road", "ตำบล": "address_subdistrict",
-        "อำเภอ": "address_district", "รหัสไปรษณีย์": "address_zipcode",
-        "นักเรียนมีความต้องกาารทุนการศึกษาไหมในอนาคต": "needs_scholarship", "ความต้องการทุนการศึกษา": "needs_scholarship",
-        "อาชีพของผู้ปกครอง": "parent_job", "รายได้โดยเฉลี่ยของครอบครัว": "parent_income",
-
-        "ระดับความเสี่ยงภาพรวม": "risk_level", "เสี่ยงด้านการเรียน": "risk_academic",
-        "เสี่ยงด้านพฤติกรรม": "risk_behavior", "เสี่ยงด้านครอบครัว": "risk_family",
-        "เสี่ยงด้านเศรษฐกิจ": "risk_economic", "หมายเหตุช่วยเหลือ": "risk_note"
-      };
-      
-      let parsedDB = [];
-      cloudData.forEach(row => {
+      const parsedDB = cloudData.map(row => {
         const student = {};
-        let fnameVal = '';
-        let lnameVal = '';
-        let fullName = '';
-        
-        for (var key in row) {
-          var cleanK = key.trim();
-          if (cleanK === "ชื่อนาม-นามสกุล" || cleanK === "ชื่อ-นามสกุล") {
-            fullName = String(row[key] || '').trim();
-            break;
-          }
-        }
-        
-        if (fullName !== '') {
-          const cleanFullName = fullName.replace(/^(นาย|นางสาว|เด็กชาย|เด็กหญิง|นาง|ด\.ช\.|ด\.ญ\.)\s*/, '').trim();
-          const parts = cleanFullName.split(/\s+/);
-          if (parts.length >= 2) {
-            fnameVal = parts[0];
-            lnameVal = parts.slice(1).join(' ');
-          } else {
-            fnameVal = cleanFullName;
-            lnameVal = '';
-          }
-        }
-        
         FIELDS.forEach(f => {
-          student[f.k] = '';
+          student[f.k] = row[f.k] !== undefined && row[f.k] !== null ? String(row[f.k]).trim() : '';
         });
         
-        for (var sheetKey in row) {
-          var cleanSK = sheetKey.trim();
-          var mappedField = THAI_MAP_REVERSE[cleanSK];
-          if (mappedField) {
-            student[mappedField] = String(row[sheetKey] || '').trim();
-          }
+        if (student.photo) {
+          student.photo = normalizeDriveUrl(student.photo);
         }
         
-        if (fnameVal !== '') student.fname = fnameVal;
-        if (lnameVal !== '') student.lname = lnameVal;
+        if (!student.level) student.level = student.id.startsWith('6') ? 'ปวช.' : 'ปวส.';
+        if (!student.year) student.year = '1';
+        if (!student.status) student.status = 'กำลังศึกษา';
         
-        if (student.id) {
-          student.id = String(student.id).trim();
-          if (!student.level) student.level = student.id.startsWith('6') ? 'ปวช.' : 'ปวส.';
-          if (!student.year) {
-            let parsedYear = '1';
-            const idVal = student.id;
-            if (idVal.length === 10 || idVal.length === 11) {
-              const prefixStr = idVal.substring(0, 2);
-              const prefixVal = parseInt(prefixStr, 10);
-              if (!isNaN(prefixVal) && prefixVal >= 60 && prefixVal <= 69) {
-                const calcYear = 69 - prefixVal + 1;
-                if (calcYear >= 1 && calcYear <= 3) parsedYear = String(calcYear);
-              }
-            }
-            student.year = parsedYear;
-          }
-          if (student.room && (student.room.includes('drive.google.com') || student.room.includes('lh3.googleusercontent.com') || student.room.includes('http'))) {
-            if (!student.photo) student.photo = student.room;
-            student.room = '';
-          }
-          if (student.photo) {
-            student.photo = normalizeDriveUrl(student.photo);
-          }
-          
-          // [v12.6 Cloud Photo Fallback] ป้องกันรูปภาพหายหากข้อมูลรูปภาพใน Google Sheets หลักเป็นค่าว่างเปล่า
-          if (!student.photo || student.photo.trim() === '') {
-            const currentStu = typeof DB !== 'undefined' ? DB.find(s => String(s.id).trim() === String(student.id).trim()) : null;
-            if (currentStu && currentStu.photo && currentStu.photo.trim() !== '') {
-              student.photo = currentStu.photo;
-            } else {
-              const mockList = typeof getMockData === 'function' ? getMockData() : [];
-              const mockStu = mockList.find(m => String(m.id).trim() === String(student.id).trim());
-              if (mockStu && mockStu.photo && mockStu.photo.trim() !== '') {
-                student.photo = mockStu.photo;
-              }
-            }
-          }
-          parsedDB.push(student);
-        }
+        return student;
       });
       
       const isDifferent = JSON.stringify(DB) !== JSON.stringify(parsedDB);
       
       if (isDifferent && parsedDB.length > 0) {
-        console.log('Background Sync: Changes detected on Google Sheets. Updating Local Database...');
+        console.log('Background Sync: Changes detected on Supabase. Updating Local Database...');
         DB = parsedDB;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
-        // [v12.8 Cloud Fallback Photo Check] ฉีดรูปถ่ายประวัติลง LocalStorage เผื่อคลาวด์ออนไลน์ไม่มีรูป
+        
         if (typeof applyHardPhotoInjection === 'function') {
           applyHardPhotoInjection();
         }
@@ -5978,104 +5792,145 @@ async function syncDatabaseBackground() {
         if (activePage === 'page-students') renderStudents();
         else if (activePage === 'page-search') quickSearch();
         
-        showToast('🔄 อัปเดตฐานข้อมูลนักเรียนเป็นปัจจุบันจาก Google Sheets แล้ว!', 'ok');
+        showToast('🔄 อัปเดตรายชื่อนักเรียนเป็นปัจจุบันจากคลาวด์แล้ว!', 'ok');
+        updateSyncStatus('online');
       } else {
-        console.log('Background Sync: Database is already up to date.');
+        updateSyncStatus('online');
       }
     }
   } catch (err) {
     console.error('Silent Background Sync failed:', err);
+    updateSyncStatus('offline');
   }
 }
 
 // Start Always-Up-To-Date Synchronization Engine (Focus + Polling)
 function startAlwaysUpToDateEngine() {
-  if (!CLOUD_API_URL || !CLOUD_API_URL.startsWith('http')) return;
-  
-  // 1. ซิงค์สดเบื้องหลังทันทีที่คุณครูสลับหน้าต่างกลับมาที่หน้านี้ (Window Focus Event)
   window.removeEventListener('focus', syncDatabaseBackground);
   window.addEventListener('focus', syncDatabaseBackground);
   
-  // 2. ตั้งเวลาซิงค์อัตโนมัติเบื้องหลังทุกๆ 60 วินาที (Polling Event)
   if (window.backgroundSyncInterval) {
     clearInterval(window.backgroundSyncInterval);
   }
   window.backgroundSyncInterval = setInterval(syncDatabaseBackground, 60000);
   
-  console.log('🚀 Real-time Always Up-to-Date Engine (v8.0) started successfully!');
+  console.log('🚀 Real-time Supabase Cloud Engine started successfully!');
 }
 
-// Save cloud settings configuration
+// Save cloud settings (Unused in Supabase mode since it is pre-configured, kept for backward compatibility)
 function saveCloudConfig() {
-  const urlInput = document.getElementById('cloud-api-url');
-  if (urlInput) {
-    CLOUD_API_URL = urlInput.value.trim();
-    localStorage.setItem(CLOUD_KEY, CLOUD_API_URL);
-    updateCloudStatusUI();
-  }
+  localStorage.setItem(CLOUD_KEY, SUPABASE_URL);
+  updateSyncStatus('online');
 }
 
-// Update status text on Settings panel
-function updateCloudStatusUI() {
-  const statusText = document.getElementById('cloud-status-text');
-  const cloudUrl = localStorage.getItem(CLOUD_KEY) || '';
+// Update status text on Settings panel & Data Hub Center
+function updateSyncStatus(status) {
+  const syncStatusEl = document.getElementById('sync-status');
+  const centerStatusEl = document.getElementById('cloud-center-status');
+  const statusTextEl = document.getElementById('cloud-status-text');
+  const countEl = document.getElementById('cloud-student-count');
   
-  if (statusText) {
-    if (cloudUrl && cloudUrl.startsWith('http')) {
-      statusText.innerHTML = '🟢 โหมดปัจจุบัน: <strong>คลาวด์ออนไลน์ซิงค์สด (Google Sheets Cloud Mode)</strong>';
-      statusText.style.color = '#34d399'; // Emerald สีเขียว
-    } else {
-      statusText.innerHTML = '⚪ โหมดปัจจุบัน: <strong>ความจำเฉพาะเครื่อง (LocalStorage Mode)</strong>';
-      statusText.style.color = 'var(--c5)';
+  if (countEl && DB) {
+    countEl.textContent = `${DB.length} คน`;
+  }
+  
+  if (status === 'online') {
+    if (syncStatusEl) {
+      syncStatusEl.className = 'sync-status-pill online';
+      syncStatusEl.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> <span>ซิงค์สด</span>';
+      syncStatusEl.title = 'เชื่อมต่อฐานข้อมูลคลาวด์ Supabase สำเร็จ ข้อมูลจะได้รับการซิงค์แบบเรียลไทม์';
+    }
+    
+    if (centerStatusEl) {
+      centerStatusEl.className = 'badge b-green';
+      centerStatusEl.innerHTML = '<i class="fa-solid fa-cloud"></i> เชื่อมต่อแล้ว';
+    }
+    
+    if (statusTextEl) {
+      statusTextEl.innerHTML = '🟢 เชื่อมต่อ: <strong>ฐานข้อมูลคลาวด์ Supabase (ซิงค์สดออนไลน์)</strong>';
+      statusTextEl.style.color = '#34d399';
+    }
+  } else if (status === 'syncing') {
+    if (syncStatusEl) {
+      syncStatusEl.className = 'sync-status-pill syncing';
+      syncStatusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>กำลังซิงค์...</span>';
+    }
+    
+    if (centerStatusEl) {
+      centerStatusEl.className = 'badge b-yellow';
+      centerStatusEl.innerHTML = '<i class="fa-solid fa-arrows-spin fa-spin"></i> กำลังซิงค์...';
+    }
+    
+    if (statusTextEl) {
+      statusTextEl.innerHTML = '🟡 กำลังประมวลผล: <strong>กำลังติดต่อฐานข้อมูล Supabase...</strong>';
+      statusTextEl.style.color = '#fbbf24';
+    }
+  } else { // offline
+    if (syncStatusEl) {
+      syncStatusEl.className = 'sync-status-pill offline';
+      syncStatusEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> <span>ออฟไลน์</span>';
+      syncStatusEl.title = 'ไม่พบการเชื่อมต่อกับ Supabase ระบบใช้ฐานข้อมูลสำรองภายในเครื่อง';
+    }
+    
+    if (centerStatusEl) {
+      centerStatusEl.className = 'badge b-red';
+      centerStatusEl.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> ออฟไลน์';
+    }
+    
+    if (statusTextEl) {
+      statusTextEl.innerHTML = '🔴 ผิดพลาด: <strong>ออฟไลน์ (ใช้ LocalStorage สำรองภายในเครื่อง)</strong>';
+      statusTextEl.style.color = '#f87171';
     }
   }
+}
+
+// Update status text on Settings panel (Compatibility)
+function updateCloudStatusUI() {
+  const isOnline = document.getElementById('sync-status') && document.getElementById('sync-status').classList.contains('online');
+  updateSyncStatus(isOnline ? 'online' : 'offline');
 }
 
 // Test cloud API connection manually
 async function testCloudConnection() {
-  const urlInput = document.getElementById('cloud-api-url');
-  if (!urlInput) return;
-  
-  const testUrl = urlInput.value.trim();
-  if (!testUrl || !testUrl.startsWith('http')) {
-    showToast('⚠️ กรุณากรอกลิงก์ Web App API ที่ถูกต้องก่อนทดสอบ', 'err');
-    return;
-  }
-  
   const testBtn = document.getElementById('cloud-test-btn');
   if (testBtn) {
-    testBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังทดสอบ...';
+    testBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังตรวจสอบ...';
     testBtn.disabled = true;
   }
   
-  showToast('🔍 กำลังทดสอบเชื่อมต่อและดึงตารางข้อมูล...', 'ok');
+  showToast('🔍 กำลังทดสอบการเชื่อมต่อกับ Supabase Cloud...', 'ok');
+  updateSyncStatus('syncing');
   
   try {
-    const response = await fetch(testUrl);
-    const data = await response.json();
+    const startTime = Date.now();
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/students?select=id`, {
+      method: 'GET',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    });
     
-    if (data && Array.isArray(data)) {
-      showToast("🟢 เชื่อมต่อคลาวด์สำเร็จ! พบประวัตินักเรียน " + data.length + " รายการในชีต", "ok");
-      logSystemActivity("CLOUD_TEST_SUCCESS", "", `ทดสอบเชื่อมต่อคลาวด์สำเร็จ พบประวัติ ${data.length} รายการ`);
-      
-      // Auto save and activate
-      CLOUD_API_URL = testUrl;
-      localStorage.setItem(CLOUD_KEY, testUrl);
-      updateCloudStatusUI();
-      
-      // Sync DB
-      initApp();
-    } else {
-      showToast('⚠️ ผลลัพธ์ชีตว่างเปล่า หรือเกิดข้อผิดพลาดในการดึงข้อมูล', 'err');
-      logSystemActivity("CLOUD_TEST_FAIL", "", "ผลลัพธ์ชีตว่างเปล่า หรือดึงข้อมูลขัดข้อง");
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
     }
+    
+    const data = await response.json();
+    const duration = Date.now() - startTime;
+    
+    showToast(`🟢 เชื่อมต่อ Supabase สำเร็จ! (ความเร็ว: ${duration}ms) พบนักเรียน ${data.length} คน`, "ok");
+    logSystemActivity("CLOUD_TEST_SUCCESS", "", `ทดสอบเชื่อมต่อ Supabase สำเร็จ ในเวลา ${duration}ms พบ ${data.length} รายการ`);
+    
+    updateSyncStatus('online');
+    initApp();
   } catch (err) {
     console.error(err);
-    showToast('❌ เชื่อมต่อล้มเหลว ลิงก์ไม่ถูกต้อง หรือยังไม่ได้เปิดแชร์สาธารณะ (Anyone)', 'err');
-    logSystemActivity("CLOUD_TEST_FAIL", "", `เชื่อมต่อล้มเหลว: ${err.message || err}`);
+    showToast('❌ การทดสอบล้มเหลว: ไม่สามารถติดต่อฐานข้อมูลได้ หรือยังไม่ได้สร้างตาราง students', 'err');
+    updateSyncStatus('offline');
+    logSystemActivity("CLOUD_TEST_FAIL", "", `ทดสอบเชื่อมต่อ Supabase ล้มเหลว: ${err.message || err}`);
   } finally {
     if (testBtn) {
-      testBtn.innerHTML = '<i class="fa-solid fa-circle-nodes"></i> ทดสอบการซิงค์สด';
+      testBtn.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> บังคับรีเฟรชซิงค์สด';
       testBtn.disabled = false;
     }
   }
