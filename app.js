@@ -1308,13 +1308,9 @@ function openEditModal(studentId) {
 
   document.getElementById('f-edit-id').value = studentId;
   
-  const idInput = document.getElementById('f-id');
+    const idInput = document.getElementById('f-id');
   idInput.value = s.id;
-  if (!s.id || s.id.toString().trim() === '') {
-    idInput.removeAttribute('readonly');
-  } else {
-    idInput.setAttribute('readonly', 'true');
-  }
+  idInput.removeAttribute('readonly'); // [v12.9 ปลดล็อกเสรี] ให้คุณครูแก้ไขรหัสประจำตัวนักเรียนได้ทุกกรณีเสมอ
 
   // Load other inputs
   document.getElementById('f-fname').value = s.fname || '';
@@ -5745,8 +5741,11 @@ async function loadDatabaseOnline() {
 async function saveToCloud(student) {
   if (!CLOUD_API_URL || !CLOUD_API_URL.startsWith('http')) return;
   
+  const editIdVal = document.getElementById('f-edit-id').value;
+  
   const payload = {
     id: student.id,
+    old_id: editIdVal || student.id, // [v12.9 อัปเดตรหัสคลาวด์] ส่งไอดีเดิมไปด้วยหากมีการเปลี่ยนรหัสประจำตัว
     fname: student.fname,
     lname: student.lname,
     nickname: student.nickname,
