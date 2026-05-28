@@ -178,10 +178,16 @@ function loadDatabase() {
     // Force remove all ปวส. records from memory
     DB = DB.filter(x => x.level !== 'ปวส.');
 
-    // Normalize room names from กช. to กลุ่ม
+    // Normalize room names from กช. to กลุ่ม and assign temporary ID for missing IDs to prevent click collision bugs
+    let tempCounter = 1;
     DB.forEach(s => {
       if (s.room && s.room.includes('กช.')) {
         s.room = s.room.replace('กช.', 'กลุ่ม');
+      }
+      
+      // Assign temporary ID if ID is missing or empty to allow editing and viewing
+      if (!s.id || s.id.toString().trim() === '') {
+        s.id = 'TEMP_' + (s.fname || 'student') + '_' + tempCounter++;
       }
     });
     
@@ -6827,4 +6833,5 @@ function triggerTestError() {
     throw new Error("Test diagnostic error triggered by technical admin user.");
   }, 300);
 }
+
 
