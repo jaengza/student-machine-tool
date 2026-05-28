@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    🎓 CORE APPLICATION LOGIC (app.js)
    ระบบฐานข้อมูลนักเรียนและการประเมินความเสี่ยง (Premium Version)
    ========================================================================== */
@@ -165,40 +165,35 @@ async function initApp() {
   else if (activePage === 'page-search') quickSearch();
 }
 
-// Load DB with strict authorization checks
-// ฟังก์ชันแทรกรูปภาพจาก Mock Data แบบบังคับ (Hard Injection) เมื่อตรวจพบประวัติในเครื่องขาดหายไป (v12.8)
+// ฟังก์ชันแทรกรูปภาพจาก Mock Data แบบบังคับ (Hard Injection) เมื่อตรวจพบประวัติในเครื่องขาดหายไป (v13.1 เชิงรุกรายบุคคล)
 function applyHardPhotoInjection() {
   if (!DB || DB.length === 0) return;
-  const emptyPhotoCount = DB.filter(s => s.level === 'ปวช.' && s.year === '1' && (!s.photo || s.photo.trim() === '')).length;
   
-  // หากมีคนไม่มีรูปเกิน 5 คน ให้ฉีดรูปจาก Mock Data ลงความจำเครื่องทันที
-  if (emptyPhotoCount > 5) {
-    const mockList = typeof getMockData === 'function' ? getMockData() : [];
-    let updatedCount = 0;
-    
-    DB.forEach(s => {
-      const mockS = mockList.find(m => String(m.id).trim() === String(s.id).trim());
-      if (mockS && mockS.photo && (!s.photo || s.photo.trim() === '')) {
-        // อัปเดตรูปภาพนักเรียน
-        s.photo = normalizeDriveUrl(mockS.photo);
-        // ทำความสะอาดสะกดชื่อที่ผิดพลาดไปด้วย
-        if (mockS.fname) s.fname = mockS.fname;
-        if (mockS.lname) s.lname = mockS.lname;
-        updatedCount++;
-      }
-    });
-    
-    if (updatedCount > 0) {
-      saveDatabase();
-      console.log(`⚡ [Hard-Photo-Injection] กู้คืนรูปภาพนักเรียนที่ว่างเปล่าสำเร็จ: ${updatedCount} คน`);
-      
-      // อัปเดต UI รายชื่อและหน้าค้นหา
-      buildRoomFilter();
-      updateDashboard();
-      const activePage = document.querySelector('.page.active') ? document.querySelector('.page.active').id : 'page-dashboard';
-      if (activePage === 'page-students') renderStudents();
-      else if (activePage === 'page-search') quickSearch();
+  const mockList = typeof getMockData === 'function' ? getMockData() : [];
+  let updatedCount = 0;
+  
+  DB.forEach(s => {
+    const mockS = mockList.find(m => String(m.id).trim() === String(s.id).trim());
+    if (mockS && mockS.photo && (!s.photo || s.photo.trim() === '')) {
+      // อัปเดตรูปภาพนักเรียน
+      s.photo = normalizeDriveUrl(mockS.photo);
+      // ทำความสะอาดสะกดชื่อที่ผิดพลาดไปด้วย
+      if (mockS.fname) s.fname = mockS.fname;
+      if (mockS.lname) s.lname = mockS.lname;
+      updatedCount++;
     }
+  });
+  
+  if (updatedCount > 0) {
+    saveDatabase();
+    console.log(`⚡ [Hard-Photo-Injection] กู้คืนรูปภาพนักเรียนที่ว่างเปล่าเชิงรุกสำเร็จ: ${updatedCount} คน`);
+    
+    // อัปเดต UI รายชื่อและหน้าค้นหา
+    buildRoomFilter();
+    updateDashboard();
+    const activePage = document.querySelector('.page.active') ? document.querySelector('.page.active').id : 'page-dashboard';
+    if (activePage === 'page-students') renderStudents();
+    else if (activePage === 'page-search') quickSearch();
   }
 }
 
@@ -1380,8 +1375,21 @@ function saveStudent(e) {
   const fnameVal = document.getElementById('f-fname').value.trim();
   const lnameVal = document.getElementById('f-lname').value.trim();
 
-  if (!idVal || !fnameVal || !lnameVal) {
-    showToast('⚠️ กรุณากรอกรหัสประจำตัว ชื่อ และนามสกุลนักเรียน', 'err');
+  if (!idVal || !fnameVal) { // [v13.1 ยกระดับ JavaScript Validation ป้องกัน Chrome บล็อกโมดอลแท็บซ่อน]
+    showToast('⚠️ กรุณากรอกรหัสประจำตัว และชื่อจริงของนักเรียน', 'err');
+    
+    // คืนค่าสลับกลับไปที่แท็บแรก (ข้อมูลพื้นฐาน) อัตโนมัติ เพื่อให้ผู้ใช้มองเห็นช่องกรอกข้อมูล
+    const firstTabButton = document.querySelector('.tab-btn');
+    if (firstTabButton) {
+      firstTabButton.click();
+    }
+    
+    // โฟกัสไปยังฟิลด์ที่เว้นว่างไว้ทันทีเพื่อให้ครูพิมพ์ต่อได้ง่าย
+    if (!idVal) {
+      document.getElementById('f-id').focus();
+    } else if (!fnameVal) {
+      document.getElementById('f-fname').focus();
+    }
     return;
   }
 
@@ -4243,8 +4251,8 @@ function getMockData() {
     },
     {
       "id": "69201020057",
-      "fname": "ศุภกรพรมทอง",
-      "lname": "",
+      "fname": "ศุภกร",
+      "lname": "พรมทอง",
       "nickname": "บิ๊กซี",
       "level": "ปวช.",
       "year": "1",
