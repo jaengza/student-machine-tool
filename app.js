@@ -174,6 +174,10 @@ function loadDatabase() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     DB = raw ? JSON.parse(raw) : getMockData();
+    
+    // Force remove all ปวส. records from memory
+    DB = DB.filter(x => x.level !== 'ปวส.');
+    
     if (!raw) {
       saveDatabase();
     }
