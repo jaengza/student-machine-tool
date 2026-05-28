@@ -166,6 +166,42 @@ async function initApp() {
 }
 
 // Load DB with strict authorization checks
+// ฟังก์ชันแทรกรูปภาพจาก Mock Data แบบบังคับ (Hard Injection) เมื่อตรวจพบประวัติในเครื่องขาดหายไป (v12.8)
+function applyHardPhotoInjection() {
+  if (!DB || DB.length === 0) return;
+  const emptyPhotoCount = DB.filter(s => s.level === 'ปวช.' && s.year === '1' && (!s.photo || s.photo.trim() === '')).length;
+  
+  // หากมีคนไม่มีรูปเกิน 5 คน ให้ฉีดรูปจาก Mock Data ลงความจำเครื่องทันที
+  if (emptyPhotoCount > 5) {
+    const mockList = typeof getMockData === 'function' ? getMockData() : [];
+    let updatedCount = 0;
+    
+    DB.forEach(s => {
+      const mockS = mockList.find(m => String(m.id).trim() === String(s.id).trim());
+      if (mockS && mockS.photo && (!s.photo || s.photo.trim() === '')) {
+        // อัปเดตรูปภาพนักเรียน
+        s.photo = normalizeDriveUrl(mockS.photo);
+        // ทำความสะอาดสะกดชื่อที่ผิดพลาดไปด้วย
+        if (mockS.fname) s.fname = mockS.fname;
+        if (mockS.lname) s.lname = mockS.lname;
+        updatedCount++;
+      }
+    });
+    
+    if (updatedCount > 0) {
+      saveDatabase();
+      console.log(`⚡ [Hard-Photo-Injection] กู้คืนรูปภาพนักเรียนที่ว่างเปล่าสำเร็จ: ${updatedCount} คน`);
+      
+      // อัปเดต UI รายชื่อและหน้าค้นหา
+      buildRoomFilter();
+      updateDashboard();
+      const activePage = document.querySelector('.page.active') ? document.querySelector('.page.active').id : 'page-dashboard';
+      if (activePage === 'page-students') renderStudents();
+      else if (activePage === 'page-search') quickSearch();
+    }
+  }
+}
+
 function loadDatabase() {
   if (!isAuthorized) {
     DB = [];
@@ -478,41 +514,44 @@ function pageIdActive() {
 // ── Robust Google Drive Link Extractor ──
 function normalizeDriveUrl(url) {
   if (!url) return '';
-  url = url.trim();
+  url = strDriveUrlClean(url);
 
-  // If it's a direct Google UserContent hosting link, return as is
-  if (url.includes('lh3.googleusercontent.com/d/')) {
-    return url;
-  }
-
-  // Detect if only File ID was pasted
-  const isIdOnly = /^[a-zA-Z0-9_-]{25,45}$/.test(url);
-  if (isIdOnly) {
-    return `https://lh3.googleusercontent.com/d/${url}`;
-  }
-
-  // Standard regular expressions to grab Drive IDs
+  // Standard regular expressions to grab Drive IDs (including from lh3 links)
   const regD = /\/file\/d\/([a-zA-Z0-9_-]{25,45})/;
   const regId = /[?&]id=([a-zA-Z0-9_-]{25,45})/;
   const regU = /\/uc\?id=([a-zA-Z0-9_-]{25,45})/;
   const regPreview = /\/file\/d\/([a-zA-Z0-9_-]{25,45})\/preview/;
+  const regLh3 = /lh3\.googleusercontent\.com\/d\/([a-zA-Z0-9_-]{25,45})/;
 
   const matchD = url.match(regD);
   const matchId = url.match(regId);
   const matchU = url.match(regU);
   const matchPreview = url.match(regPreview);
+  const matchLh3 = url.match(regLh3);
 
   const fileId = (matchD && matchD[1]) || 
                  (matchId && matchId[1]) || 
                  (matchU && matchU[1]) || 
-                 (matchPreview && matchPreview[1]);
+                 (matchPreview && matchPreview[1]) ||
+                 (matchLh3 && matchLh3[1]);
 
   if (fileId) {
-    // Return high speed public usercontent link
-    return `https://lh3.googleusercontent.com/d/${fileId}`;
+    return `https://drive.google.com/thumbnail?sz=w500&id=${fileId}`;
   }
 
-  return url; // fallback to original input if none matched
+  // Detect if only File ID was pasted
+  const isIdOnly = /^[a-zA-Z0-9_-]{25,45}$/.test(url);
+  if (isIdOnly) {
+    return `https://drive.google.com/thumbnail?sz=w500&id=${url}`;
+  }
+
+  return url;
+}
+
+// ฟังก์ชันทำความสะอาดข้อความประเภทสตริงและจัดการลิงก์ดิ่ง
+function strDriveUrlClean(str) {
+  if (!str) return '';
+  return String(str).trim();
 }
 
 // ── NAME AND NICKNAME PARSERS ──
@@ -5684,7 +5723,11 @@ async function loadDatabaseOnline() {
       
       if (parsedDB.length > 0) {
         DB = parsedDB;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(DB)); // เซฟสำรองในเครื่องเผื่อออฟไลน์
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+        // [v12.8 Cloud Fallback Photo Check] ฉีดรูปถ่ายประวัติลง LocalStorage เผื่อคลาวด์ออนไลน์ไม่มีรูป
+        if (typeof applyHardPhotoInjection === 'function') {
+          applyHardPhotoInjection();
+        } // เซฟสำรองในเครื่องเผื่อออฟไลน์
         showToast('🟢 ดึงประวัติเชื่อมโยงสดสำเร็จ!', 'ok');
         logSystemActivity("SYNC_BACKGROUND", "", `ดึงประวัติสดสำเร็จ โหลดข้อมูลนักเรียน ${parsedDB.length} คน`);
         return true;
@@ -5915,6 +5958,10 @@ async function syncDatabaseBackground() {
         console.log('Background Sync: Changes detected on Google Sheets. Updating Local Database...');
         DB = parsedDB;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+        // [v12.8 Cloud Fallback Photo Check] ฉีดรูปถ่ายประวัติลง LocalStorage เผื่อคลาวด์ออนไลน์ไม่มีรูป
+        if (typeof applyHardPhotoInjection === 'function') {
+          applyHardPhotoInjection();
+        }
         
         buildRoomFilter();
         updateDashboard();
