@@ -2513,8 +2513,22 @@ function applyImport() {
 
       // Clean up Drive photo URL on import
       if (student.photo) {
-        student.photo = normalizeDriveUrl(student.photo);
-      }
+            student.photo = normalizeDriveUrl(student.photo);
+          }
+          
+          // [v12.6 Cloud Photo Fallback] ป้องกันรูปภาพหายหากข้อมูลรูปภาพใน Google Sheets หลักเป็นค่าว่างเปล่า
+          if (!student.photo || student.photo.trim() === '') {
+            const currentStu = typeof DB !== 'undefined' ? DB.find(s => String(s.id).trim() === String(student.id).trim()) : null;
+            if (currentStu && currentStu.photo && currentStu.photo.trim() !== '') {
+              student.photo = currentStu.photo;
+            } else {
+              const mockList = typeof getMockData === 'function' ? getMockData() : [];
+              const mockStu = mockList.find(m => String(m.id).trim() === String(student.id).trim());
+              if (mockStu && mockStu.photo && mockStu.photo.trim() !== '') {
+                student.photo = mockStu.photo;
+              }
+            }
+          }
 
       const existingIndex = DB.findIndex(x => x.id === idVal);
       if (existingIndex !== -1) {
@@ -5650,6 +5664,20 @@ async function loadDatabaseOnline() {
             student.photo = normalizeDriveUrl(student.photo);
           }
           
+          // [v12.6 Cloud Photo Fallback] ป้องกันรูปภาพหายหากข้อมูลรูปภาพใน Google Sheets หลักเป็นค่าว่างเปล่า
+          if (!student.photo || student.photo.trim() === '') {
+            const currentStu = typeof DB !== 'undefined' ? DB.find(s => String(s.id).trim() === String(student.id).trim()) : null;
+            if (currentStu && currentStu.photo && currentStu.photo.trim() !== '') {
+              student.photo = currentStu.photo;
+            } else {
+              const mockList = typeof getMockData === 'function' ? getMockData() : [];
+              const mockStu = mockList.find(m => String(m.id).trim() === String(student.id).trim());
+              if (mockStu && mockStu.photo && mockStu.photo.trim() !== '') {
+                student.photo = mockStu.photo;
+              }
+            }
+          }
+          
           parsedDB.push(student);
         }
       });
@@ -5860,7 +5888,23 @@ async function syncDatabaseBackground() {
             if (!student.photo) student.photo = student.room;
             student.room = '';
           }
-          if (student.photo) student.photo = normalizeDriveUrl(student.photo);
+          if (student.photo) {
+            student.photo = normalizeDriveUrl(student.photo);
+          }
+          
+          // [v12.6 Cloud Photo Fallback] ป้องกันรูปภาพหายหากข้อมูลรูปภาพใน Google Sheets หลักเป็นค่าว่างเปล่า
+          if (!student.photo || student.photo.trim() === '') {
+            const currentStu = typeof DB !== 'undefined' ? DB.find(s => String(s.id).trim() === String(student.id).trim()) : null;
+            if (currentStu && currentStu.photo && currentStu.photo.trim() !== '') {
+              student.photo = currentStu.photo;
+            } else {
+              const mockList = typeof getMockData === 'function' ? getMockData() : [];
+              const mockStu = mockList.find(m => String(m.id).trim() === String(student.id).trim());
+              if (mockStu && mockStu.photo && mockStu.photo.trim() !== '') {
+                student.photo = mockStu.photo;
+              }
+            }
+          }
           parsedDB.push(student);
         }
       });
