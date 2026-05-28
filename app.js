@@ -1265,7 +1265,11 @@ function openEditModal(studentId) {
   
   const idInput = document.getElementById('f-id');
   idInput.value = s.id;
-  idInput.setAttribute('readonly', 'true'); // Prevents changing primary ID
+  if (!s.id || s.id.toString().trim() === '') {
+    idInput.removeAttribute('readonly');
+  } else {
+    idInput.setAttribute('readonly', 'true');
+  }
 
   // Load other inputs
   document.getElementById('f-fname').value = s.fname || '';
@@ -6823,3 +6827,4 @@ function triggerTestError() {
     throw new Error("Test diagnostic error triggered by technical admin user.");
   }, 300);
 }
+
