@@ -796,12 +796,9 @@ function updateDashboard() {
   const rHigh = DB.filter(s => s.status === 'กำลังศึกษา' && s.risk_level === 'สูง').length;
   const rMed = DB.filter(s => s.status === 'กำลังศึกษา' && s.risk_level === 'ปานกลาง').length;
 
-  // คำนวณพฤติกรรมเสี่ยงสารเสพติด / สูบ / ดื่ม ตามที่คุณครูขอ
+  // คำนวณพฤติกรรมเสี่ยงสารเสพติด / สูบ / ดื่ม ตามที่คุณครูขอ (ใช้ฟังก์ชันตรวจสอบอัจฉริยะเพื่อป้องกันข้อผิดพลาด)
   const rSubstance = DB.filter(s => 
-    s.status === 'กำลังศึกษา' && (
-      (s.smoke && (s.smoke.includes('บุหรี่') || s.smoke.includes('เหล้า') || s.smoke.includes('เบีย') || s.smoke.includes('กระท่อม') || s.smoke.includes('กัญชา') || s.smoke.includes('ยา') || s.smoke.includes('สูบ') || s.smoke.includes('ดื่ม') || s.smoke.includes('เสพ') || s.smoke.includes('น้ำท่อม'))) ||
-      (s.risk_behavior && (s.risk_behavior.includes('บุหรี่') || s.risk_behavior.includes('ยา') || s.risk_behavior.includes('สารเสพติด') || s.risk_behavior.includes('ดื่ม') || s.risk_behavior.includes('เหล้า')))
-    )
+    s.status === 'กำลังศึกษา' && checkSubstanceRisk(s.smoke, s.risk_behavior)
   ).length;
 
   // คำนวณการขับขี่รถมอเตอร์ไซค์มาเรียน ตามที่คุณครูขอ
@@ -1053,9 +1050,8 @@ function renderStudents() {
     const matchRm = !fRoom || s.room === fRoom;
     const matchSt = !fStatus || s.status === fStatus;
 
-    // กรองสารเสพติด / สูบ / ดื่ม (ตามคำขอคุณครู)
-    const isSubstanceRisk = (s.smoke && (s.smoke.includes('บุหรี่') || s.smoke.includes('เหล้า') || s.smoke.includes('เบีย') || s.smoke.includes('กระท่อม') || s.smoke.includes('กัญชา') || s.smoke.includes('ยา') || s.smoke.includes('สูบ') || s.smoke.includes('ดื่ม') || s.smoke.includes('เสพ') || s.smoke.includes('น้ำท่อม'))) ||
-                           (s.risk_behavior && (s.risk_behavior.includes('บุหรี่') || s.risk_behavior.includes('ยา') || s.risk_behavior.includes('สารเสพติด') || s.risk_behavior.includes('ดื่ม') || s.risk_behavior.includes('เหล้า')));
+    // กรองสารเสพติด / สูบ / ดื่ม (ตามคำขอคุณครู - ใช้ฟังก์ชันตรวจสอบอัจฉริยะป้องกันข้อผิดพลาด)
+    const isSubstanceRisk = checkSubstanceRisk(s.smoke, s.risk_behavior);
     const matchSubstance = !fSubstance || (fSubstance === 'risk' ? isSubstanceRisk : !isSubstanceRisk);
 
     // กรองขับขี่มอเตอร์ไซค์มาวิทยาลัย
@@ -6920,6 +6916,40 @@ function triggerTestError() {
     // Throws intentional crash to test system diagnostics catcher (Window Error Listener)
     throw new Error("Test diagnostic error triggered by technical admin user.");
   }, 300);
+}
+
+// ฟังก์ชันตรวจวิเคราะห์พฤติกรรมเสี่ยงสารเสพติดอัจฉริยะ ป้องกัน False Positive และ TypeError (v14.3 Upgrade)
+function checkSubstanceRisk(smokeVal, behaviorVal) {
+  const smoke = String(smokeVal || '').trim();
+  const behavior = String(behaviorVal || '').trim();
+  
+  if (!smoke && !behavior) return false;
+  
+  // คำที่ระบุชัดเจนว่าไม่มีความเสี่ยง
+  const normalTerms = ['ไม่มี', 'ไม่สูบ', 'ไม่เสพ', 'ไม่ดื่ม', 'ปกติ', 'เลิกแล้ว', 'ไม่มีประวัติ', 'ปฏิเสธ', 'ไม่พบ', 'ปลอดภัย'];
+  
+  // คำที่เป็นประเด็นความเสี่ยง
+  const riskTerms = ['บุหรี่', 'เหล้า', 'เบีย', 'กระท่อม', 'กัญชา', 'ยา', 'สูบ', 'ดื่ม', 'เสพ', 'น้ำท่อม', 'แอลกอฮอล์', 'สารเสพติด'];
+  
+  let smokeRisk = false;
+  if (smoke) {
+    const hasRisk = riskTerms.some(t => smoke.includes(t));
+    const hasNormal = normalTerms.some(t => smoke.includes(t));
+    if (hasRisk && !hasNormal) {
+      smokeRisk = true;
+    }
+  }
+  
+  let behaviorRisk = false;
+  if (behavior) {
+    const hasRisk = riskTerms.some(t => behavior.includes(t));
+    const hasNormal = normalTerms.some(t => behavior.includes(t));
+    if (hasRisk && !hasNormal) {
+      behaviorRisk = true;
+    }
+  }
+  
+  return smokeRisk || behaviorRisk;
 }
 
 // ── HELPER NAVIGATION FUNCTIONS (v14.1) ──
