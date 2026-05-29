@@ -13,7 +13,7 @@
   <!-- Chart.js for Beautiful Analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Custom Styling -->
-  <link rel="stylesheet" href="style.css?v=20260529_02">
+  <link rel="stylesheet" href="style.css?v=20260529_03">
 </head>
 <body class="theme-dark"> <!-- Defaulting to premium dark theme for that WOW look, switcher provided -->
 
@@ -246,10 +246,16 @@
                 <option value="risk">🚬 เสี่ยงดื่ม/สูบ/สารเสพติด</option>
                 <option value="normal">✅ ปลอดสารเสพติด</option>
               </select>
-              <select id="filter-transport" class="filter" onchange="renderStudents()" style="border-color: rgba(16, 185, 129, 0.3);">
+               <select id="filter-transport" class="filter" onchange="renderStudents()" style="border-color: rgba(16, 185, 129, 0.3);">
                 <option value="">การเดินทาง (ทั้งหมด)</option>
                 <option value="motorcycle">🏍️ ขับขี่มอเตอร์ไซค์</option>
                 <option value="other">🚌 รถรับส่ง/โดยสาร/อื่นๆ</option>
+              </select>
+              <!-- ตัวกรองปัญหาการเงินตามคำขอคุณครู (v14.3 Upgrade) -->
+              <select id="filter-financial" class="filter" onchange="renderStudents()" style="border-color: rgba(245, 158, 11, 0.3);">
+                <option value="">ฐานะทางการเงิน (ทั้งหมด)</option>
+                <option value="risk">💰 ต้องการทุน / ปัญหาการเงิน</option>
+                <option value="normal">✅ ฐานะการเงินปกติ / ไม่ขอทุน</option>
               </select>
             </div>
           </div>
@@ -942,7 +948,7 @@
   </div>
 
   <!-- Main JavaScript File -->
-  <script src="app.js?v=20260529_02"></script>
+  <script src="app.js?v=20260529_03"></script>
 </body>
 </html>
 

@@ -810,12 +810,22 @@ function updateDashboard() {
     s.transport && (s.transport.includes('มอเตอร์') || s.transport.includes('มอไซค์') || s.transport.includes('มอเตอร์ไซค์') || s.transport.includes('มอเตอร์ไชล์') || s.transport.includes('มอไซ') || s.transport.includes('มอไซด์'))
   ).length;
 
+  // คำนวณนักเรียนที่มีปัญหาการเงิน / ต้องการทุน ตามที่คุณครูขอ (v14.3 Upgrade)
+  const rFinancial = DB.filter(s => 
+    s.status === 'กำลังศึกษา' && (
+      (s.needs_scholarship === 'ต้องการ') ||
+      (s.risk_economic && (s.risk_economic.includes('ยากจน') || s.risk_economic.includes('ขาดแคลน') || s.risk_economic.includes('ทำงานพิเศษ') || s.risk_economic.includes('เสี่ยง'))) ||
+      (s.parent_income && s.parent_income.includes('ต่ำกว่า 10000')) ||
+      (s.allowance && !isNaN(Number(s.allowance)) && Number(s.allowance) > 0 && Number(s.allowance) <= 100)
+    )
+  ).length;
+
   // Stat Grid Inner HTML
   const statGrid = document.getElementById('stat-grid');
   if (statGrid) {
     statGrid.innerHTML = `
       <div class="stat-card clickable" onclick="filterByStatus('')" title="คลิกดูรายชื่อนักเรียนทั้งหมด">
-        <div class="lbl">นักเรียนทั้งหมดในระบบ</div>
+        <div class="lbl" style="color: var(--p);"><i class="fa-solid fa-users"></i> นักเรียนทั้งหมดในระบบ</div>
         <div class="val font-accent">${total}</div>
         <div class="sub"><i class="fa-solid fa-users"></i> รวมประวัติสะสม (คลิกดู)</div>
       </div>
@@ -855,6 +865,11 @@ function updateDashboard() {
         <div class="lbl" style="color: #34d399;"><i class="fa-solid fa-motorcycle"></i> การใช้จักรยานยนต์</div>
         <div class="val" style="color: #6ee7b7;">${rMotorcycle}</div>
         <div class="sub" style="color: #6ee7b7;"><i class="fa-solid fa-circle-info"></i> ขับขี่มอเตอร์ไซค์มาเรียน (คลิกดู)</div>
+      </div>
+      <div class="stat-card clickable" onclick="filterByFinancial('risk')" style="border-color: rgba(245, 158, 11, 0.35); background: rgba(245, 158, 11, 0.03);" title="คลิกดูรายชื่อเด็กต้องการทุนการศึกษา/มีปัญหาการเงิน">
+        <div class="lbl" style="color: #f59e0b;"><i class="fa-solid fa-hand-holding-dollar"></i> ปัญหาการเงิน & ขอทุน</div>
+        <div class="val" style="color: #fbbf24;">${rFinancial}</div>
+        <div class="sub" style="color: #fbbf24;"><i class="fa-solid fa-circle-info"></i> ต้องการทุน / การเงินวิกฤต (คลิกดู)</div>
       </div>
     `;
   }
@@ -1017,6 +1032,7 @@ function renderStudents() {
   const fStatus = document.getElementById('filter-status').value;
   const fSubstance = document.getElementById('filter-substance') ? document.getElementById('filter-substance').value : '';
   const fTransport = document.getElementById('filter-transport') ? document.getElementById('filter-transport').value : '';
+  const fFinancial = document.getElementById('filter-financial') ? document.getElementById('filter-financial').value : '';
 
   // Filter query
   let filtered = DB.filter(s => {
@@ -1046,6 +1062,14 @@ function renderStudents() {
     const isMotorcycle = s.transport && (s.transport.includes('มอเตอร์') || s.transport.includes('มอไซค์') || s.transport.includes('มอเตอร์ไซค์') || s.transport.includes('มอเตอร์ไชล์') || s.transport.includes('มอไซ') || s.transport.includes('มอไซด์'));
     const matchTransport = !fTransport || (fTransport === 'motorcycle' ? isMotorcycle : !isMotorcycle);
 
+    // กรองประเด็นปัญหาการเงินและการขอทุน (v14.3 Upgrade)
+    const isFinancialRisk = (s.needs_scholarship === 'ต้องการ') ||
+                            (s.risk_economic && (s.risk_economic.includes('ยากจน') || s.risk_economic.includes('ขาดแคลน') || s.risk_economic.includes('ทำงานพิเศษ') || s.risk_economic.includes('เสี่ยง'))) ||
+                            (s.parent_income && s.parent_income.includes('ต่ำกว่า 10000')) ||
+                            (s.allowance && !isNaN(Number(s.allowance)) && Number(s.allowance) > 0 && Number(s.allowance) <= 100);
+    const matchFinancial = !fFinancial || (fFinancial === 'risk' ? isFinancialRisk : !isFinancialRisk);
+
+    return matchQuery && matchLvl && matchYr && matchRm && matchSt && matchSubstance && matchTransport && matchFinancial;
   });
 
   // เรียงลำดับนักเรียนตาม กลุ่มเรียน และ รหัสประจำตัวนักเรียน จากน้อยไปมาก (ตามคำขอคุณครู)
@@ -1626,6 +1650,40 @@ function viewProfile(studentId) {
   
   const driveImg = normalizeDriveUrl(s.photo);
   const hasImg = driveImg ? true : false;
+
+  // ตรวจประเมินปัญหาทางการเงินและการขอทุนเพื่อคัดวิเคราะห์ความช่วยเหลือ (v14.3 Upgrade)
+  const isFinancialRisk = (s.needs_scholarship === 'ต้องการ') ||
+                          (s.risk_economic && (s.risk_economic.includes('ยากจน') || s.risk_economic.includes('ขาดแคลน') || s.risk_economic.includes('ทำงานพิเศษ') || s.risk_economic.includes('เสี่ยง'))) ||
+                          (s.parent_income && s.parent_income.includes('ต่ำกว่า 10000')) ||
+                          (s.allowance && !isNaN(Number(s.allowance)) && Number(s.allowance) > 0 && Number(s.allowance) <= 100);
+
+  let financialAlertHTML = '';
+  if (isFinancialRisk) {
+    const reasons = [];
+    if (s.needs_scholarship === 'ต้องการ') reasons.push('✍️ <strong>ยื่นความประสงค์ต้องการทุนการศึกษา</strong> ในระดับแผนกวิชา');
+    if (s.risk_economic && s.risk_economic !== 'ปกติ') reasons.push(`⚠️ <strong>ผลการประเมินจากครูประจำชั้น</strong>: ด้านเศรษฐกิจการเงินมีภาวะ "${s.risk_economic}"`);
+    if (s.parent_income && s.parent_income.includes('ต่ำกว่า 10000')) reasons.push(`📉 <strong>รายได้เฉลี่ยครอบครัววิกฤต</strong>: ต่ำกว่า 10,000 บาทต่อเดือน (${s.parent_income})`);
+    if (s.allowance && !isNaN(Number(s.allowance)) && Number(s.allowance) > 0 && Number(s.allowance) <= 100) reasons.push(`🪙 <strong>ค่าใช้จ่ายเดินทางมาเรียนจำกัด</strong>: ได้รับเงินมาเรียนเพียงวันละ ${s.allowance} บาท`);
+    
+    financialAlertHTML = `
+      <div class="financial-hardship-alert animate-fade-in" style="margin: 15px 0; background: rgba(245, 158, 11, 0.08); border: 1.5px solid rgba(245, 158, 11, 0.35); border-radius: 12px; padding: 16px; color: #fbbf24; font-size: 13.5px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15);">
+        <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14.5px; margin-bottom: 8px; color: #f59e0b;">
+          <i class="fa-solid fa-hand-holding-dollar" style="font-size: 20px;"></i>
+          <span>💰 กล่องวิเคราะห์ความเดือดร้อนทางการเงินฉุกเฉิน (Financial Hardship Alert Box)</span>
+        </div>
+        <p style="color: var(--c8); line-height: 1.6; margin-bottom: 8px;">
+          นักเรียนคนนี้ผ่านเกณฑ์ประเมินความเดือดร้อนทางบ้าน และสมควรได้รับการพิจารณารับทุนการศึกษาเร่งด่วน เนื่องจากประเด็นขัดสนดังต่อไปนี้:
+        </p>
+        <ul style="margin: 0 0 12px 20px; padding: 0; line-height: 1.6; color: var(--c9);">
+          ${reasons.map(r => `<li style="margin-bottom: 5px;">${r}</li>`).join('')}
+        </ul>
+        <div style="background: rgba(0, 0, 0, 0.2); border-left: 3px solid #f59e0b; padding: 8px 12px; border-radius: 4px; font-size: 12px; color: var(--c7); line-height: 1.5;">
+          <strong style="color: #fbbf24;"><i class="fa-solid fa-lightbulb"></i> ข้อเสนอแนะช่วยเหลือ:</strong> 
+          แนะนำให้คุณครูประจำชั้นทำการคัดกรองส่งชื่อเข้ารับ <strong>ทุนการศึกษาประเภทขัดสนพิเศษ</strong> ของแผนกวิชาช่างกล/เทคนิคอุตสาหกรรม และดำเนินการบันทึกภาพถ่ายสภาพบ้านของนักเรียนเพื่อใช้ประกอบเป็นเอกสารขอทุนการศึกษารอบถัดไป
+        </div>
+      </div>
+    `;
+  }
   
   let headerPhotoHTML = '';
   if (hasImg) {
@@ -1660,6 +1718,8 @@ function viewProfile(studentId) {
         </div>
       </div>
     </div>
+
+    ${financialAlertHTML}
 
     <!-- Dual Column Sections -->
     <div class="profile-grid-sections">
@@ -6874,6 +6934,7 @@ function filterByStatus(status) {
   // รีเซ็ตตัวกรองพิเศษอื่นๆ เพื่อไม่ให้ขัดแย้งกัน
   if (document.getElementById('filter-substance')) document.getElementById('filter-substance').value = '';
   if (document.getElementById('filter-transport')) document.getElementById('filter-transport').value = '';
+  if (document.getElementById('filter-financial')) document.getElementById('filter-financial').value = '';
   
   goPage('students');
   renderStudents();
@@ -6889,6 +6950,7 @@ function filterBySubstance(type) {
   // รีเซ็ตตัวกรองขัดแย้งอื่นๆ
   if (document.getElementById('filter-status')) document.getElementById('filter-status').value = 'กำลังศึกษา'; // กรองเฉพาะที่ยังศึกษาอยู่
   if (document.getElementById('filter-transport')) document.getElementById('filter-transport').value = '';
+  if (document.getElementById('filter-financial')) document.getElementById('filter-financial').value = '';
   
   goPage('students');
   renderStudents();
@@ -6904,6 +6966,23 @@ function filterByTransport(type) {
   // รีเซ็ตตัวกรองขัดแย้งอื่นๆ
   if (document.getElementById('filter-status')) document.getElementById('filter-status').value = 'กำลังศึกษา'; // กรองเฉพาะที่ยังศึกษาอยู่
   if (document.getElementById('filter-substance')) document.getElementById('filter-substance').value = '';
+  if (document.getElementById('filter-financial')) document.getElementById('filter-financial').value = '';
+  
+  goPage('students');
+  renderStudents();
+}
+
+// กรองปัญหาทางการเงินการขอทุน แล้วเปิดหน้ารายชื่อนักเรียนอัตโนมัติ (v14.3 Upgrade)
+function filterByFinancial(type) {
+  const financialFilter = document.getElementById('filter-financial');
+  if (financialFilter) {
+    financialFilter.value = type;
+  }
+  
+  // รีเซ็ตตัวกรองขัดแย้งอื่นๆ
+  if (document.getElementById('filter-status')) document.getElementById('filter-status').value = 'กำลังศึกษา'; // กรองเฉพาะที่ยังศึกษาอยู่
+  if (document.getElementById('filter-substance')) document.getElementById('filter-substance').value = '';
+  if (document.getElementById('filter-transport')) document.getElementById('filter-transport').value = '';
   
   goPage('students');
   renderStudents();
