@@ -6941,21 +6941,19 @@ function checkSubstanceRisk(smokeVal, behaviorVal) {
   return smokeRisk || behaviorRisk;
 }
 
-// ฟังก์ชันตรวจวิเคราะห์ความเดือดร้อนทางการเงินและยื่นขอทุนการเรียนอัจฉริยะ (v14.3 Upgrade - กรองเฉพาะคนระบุค่ากินต่อวัน)
+// ฟังก์ชันตรวจวิเคราะห์ความเดือดร้อนทางการเงินและยื่นขอทุนการเรียนอัจฉริยะ (v14.3 Upgrade - กรองเฉพาะคนระบุค่ากินต่อวันและต้องการทุนเท่านั้น)
 function checkFinancialRisk(s) {
   if (!s) return false;
   
-  // กรองเฉพาะนักเรียนที่ให้ข้อมูลเงินได้รับต่อวันมากินวิทยาลัยเท่านั้น
+  // 1. กรองเฉพาะนักเรียนที่ให้ข้อมูลเงินได้รับต่อวันมากินวิทยาลัยเท่านั้น (allowance > 0)
   const hasAllowance = s.allowance && !isNaN(Number(s.allowance)) && Number(s.allowance) > 0;
   if (!hasAllowance) return false;
   
-  // ตรวจจับเงื่อนไขยากจน/ขอทุนร่วมด้วย
+  // 2. และต้องระบุความต้องการทุนการศึกษาเป็น "ต้องการ" เท่านั้น! (needs_scholarship === 'ต้องการ')
   const needsScholarship = s.needs_scholarship === 'ต้องการ';
-  const riskEconomic = s.risk_economic && (s.risk_economic.includes('ยากจน') || s.risk_economic.includes('ขาดแคลน') || s.risk_economic.includes('ทำงานพิเศษ') || s.risk_economic.includes('เสี่ยง'));
-  const lowIncome = s.parent_income && s.parent_income.includes('ต่ำกว่า 10000');
-  const lowAllowance = Number(s.allowance) <= 100;
+  if (!needsScholarship) return false;
   
-  return needsScholarship || riskEconomic || lowIncome || lowAllowance;
+  return true;
 }
 
 // ── HELPER NAVIGATION FUNCTIONS (v14.1) ──
