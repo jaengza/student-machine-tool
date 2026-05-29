@@ -1046,7 +1046,24 @@ function renderStudents() {
     const isMotorcycle = s.transport && (s.transport.includes('มอเตอร์') || s.transport.includes('มอไซค์') || s.transport.includes('มอเตอร์ไซค์') || s.transport.includes('มอเตอร์ไชล์') || s.transport.includes('มอไซ') || s.transport.includes('มอไซด์'));
     const matchTransport = !fTransport || (fTransport === 'motorcycle' ? isMotorcycle : !isMotorcycle);
 
-    return matchQuery && matchLvl && matchYr && matchRm && matchSt && matchSubstance && matchTransport;
+  });
+
+  // เรียงลำดับนักเรียนตาม กลุ่มเรียน และ รหัสประจำตัวนักเรียน จากน้อยไปมาก (ตามคำขอคุณครู)
+  filtered.sort((a, b) => {
+    // 1. ระดับชั้น (ปวช. มาก่อน ปวส.)
+    if ((a.level || '') !== (b.level || '')) {
+      return (a.level || '') === 'ปวช.' ? -1 : 1;
+    }
+    // 2. ชั้นปี (ปี 1, ปี 2, ปี 3)
+    if (String(a.year || '') !== String(b.year || '')) {
+      return String(a.year || '').localeCompare(String(b.year || ''), 'th', { numeric: true });
+    }
+    // 3. กลุ่มเรียน / ห้องเรียน (กลุ่ม 1, กลุ่ม 2...)
+    if (String(a.room || '') !== String(b.room || '')) {
+      return String(a.room || '').localeCompare(String(b.room || ''), 'th', { numeric: true });
+    }
+    // 4. รหัสประจำตัวนักเรียน (เรียงจากน้อยไปมากเป็นหลักสำคัญที่สุด)
+    return String(a.id || '').localeCompare(String(b.id || ''), 'th', { numeric: true });
   });
 
   const total = filtered.length;
