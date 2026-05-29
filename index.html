@@ -13,7 +13,7 @@
   <!-- Chart.js for Beautiful Analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Custom Styling -->
-  <link rel="stylesheet" href="style.css?v=20260526_10">
+  <link rel="stylesheet" href="style.css?v=20260529_01">
 </head>
 <body class="theme-dark"> <!-- Defaulting to premium dark theme for that WOW look, switcher provided -->
 
@@ -239,6 +239,17 @@
                 <option value="กำลังศึกษา">🟢 กำลังศึกษา</option>
                 <option value="สำเร็จการศึกษา">🔵 สำเร็จการศึกษา</option>
                 <option value="พ้นสภาพ">🔴 พ้นสภาพ</option>
+              </select>
+              <!-- ตัวกรองความเสี่ยงพิเศษตามคำขอคุณครู -->
+              <select id="filter-substance" class="filter" onchange="renderStudents()" style="border-color: rgba(139, 92, 246, 0.3);">
+                <option value="">สารเสพติด (ทั้งหมด)</option>
+                <option value="risk">🚬 เสี่ยงดื่ม/สูบ/สารเสพติด</option>
+                <option value="normal">✅ ปลอดสารเสพติด</option>
+              </select>
+              <select id="filter-transport" class="filter" onchange="renderStudents()" style="border-color: rgba(16, 185, 129, 0.3);">
+                <option value="">การเดินทาง (ทั้งหมด)</option>
+                <option value="motorcycle">🏍️ ขับขี่มอเตอร์ไซค์</option>
+                <option value="other">🚌 รถรับส่ง/โดยสาร/อื่นๆ</option>
               </select>
             </div>
           </div>
@@ -931,7 +942,7 @@
   </div>
 
   <!-- Main JavaScript File -->
-  <script src="app.js?v=20260528_22"></script>
+  <script src="app.js?v=20260529_01"></script>
 </body>
 </html>
 

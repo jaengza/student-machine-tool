@@ -796,39 +796,65 @@ function updateDashboard() {
   const rHigh = DB.filter(s => s.status === 'กำลังศึกษา' && s.risk_level === 'สูง').length;
   const rMed = DB.filter(s => s.status === 'กำลังศึกษา' && s.risk_level === 'ปานกลาง').length;
 
+  // คำนวณพฤติกรรมเสี่ยงสารเสพติด / สูบ / ดื่ม ตามที่คุณครูขอ
+  const rSubstance = DB.filter(s => 
+    s.status === 'กำลังศึกษา' && (
+      (s.smoke && (s.smoke.includes('บุหรี่') || s.smoke.includes('เหล้า') || s.smoke.includes('เบีย') || s.smoke.includes('กระท่อม') || s.smoke.includes('กัญชา') || s.smoke.includes('ยา') || s.smoke.includes('สูบ') || s.smoke.includes('ดื่ม') || s.smoke.includes('เสพ') || s.smoke.includes('น้ำท่อม'))) ||
+      (s.risk_behavior && (s.risk_behavior.includes('บุหรี่') || s.risk_behavior.includes('ยา') || s.risk_behavior.includes('สารเสพติด') || s.risk_behavior.includes('ดื่ม') || s.risk_behavior.includes('เหล้า')))
+    )
+  ).length;
+
+  // คำนวณการขับขี่รถมอเตอร์ไซค์มาเรียน ตามที่คุณครูขอ
+  const rMotorcycle = DB.filter(s => 
+    s.status === 'กำลังศึกษา' && 
+    s.transport && (s.transport.includes('มอเตอร์') || s.transport.includes('มอไซค์') || s.transport.includes('มอเตอร์ไซค์') || s.transport.includes('มอเตอร์ไชล์') || s.transport.includes('มอไซ') || s.transport.includes('มอไซด์'))
+  ).length;
+
   // Stat Grid Inner HTML
   const statGrid = document.getElementById('stat-grid');
   if (statGrid) {
     statGrid.innerHTML = `
-      <div class="stat-card">
+      <div class="stat-card clickable" onclick="filterByStatus('')" title="คลิกดูรายชื่อนักเรียนทั้งหมด">
         <div class="lbl">นักเรียนทั้งหมดในระบบ</div>
         <div class="val font-accent">${total}</div>
-        <div class="sub"><i class="fa-solid fa-users"></i> รวมประวัติสะสม</div>
+        <div class="sub"><i class="fa-solid fa-users"></i> รวมประวัติสะสม (คลิกดู)</div>
       </div>
-      <div class="stat-card stat-card-active">
+      <div class="stat-card stat-card-active clickable" onclick="filterByStatus('กำลังศึกษา')" title="คลิกดูรายชื่อเฉพาะนักเรียนกำลังศึกษา">
         <div class="lbl">กำลังศึกษาปัจจุบัน</div>
         <div class="val" style="color: var(--g);">${active}</div>
-        <div class="sub" style="color: var(--g);"><i class="fa-solid fa-graduation-cap"></i> ทะเบียนกำลังศึกษา</div>
+        <div class="sub" style="color: var(--g);"><i class="fa-solid fa-graduation-cap"></i> ทะเบียนกำลังศึกษา (คลิกดู)</div>
       </div>
-      <div class="stat-card stat-card-grad">
+      <div class="stat-card stat-card-grad clickable" onclick="filterByStatus('สำเร็จการศึกษา')" title="คลิกดูรายชื่อเฉพาะผู้สำเร็จการศึกษา">
         <div class="lbl">สำเร็จการศึกษา</div>
         <div class="val">${grad}</div>
-        <div class="sub"><i class="fa-solid fa-award"></i> บัณฑิตแผนกวิชา</div>
+        <div class="sub"><i class="fa-solid fa-award"></i> บัณฑิตแผนกวิชา (คลิกดู)</div>
       </div>
-      <div class="stat-card stat-card-resigned">
+      <div class="stat-card stat-card-resigned clickable" onclick="filterByStatus('พ้นสภาพ')" title="คลิกดูรายชื่อเฉพาะนักเรียนที่พ้นสภาพ">
         <div class="lbl">พ้นสภาพ / ออกกลางคัน</div>
         <div class="val" style="color: var(--r);">${resigned}</div>
-        <div class="sub" style="color: var(--r);"><i class="fa-solid fa-user-slash"></i> ย้าย / ตกออก / พ้นสภาพ</div>
+        <div class="sub" style="color: var(--r);"><i class="fa-solid fa-user-slash"></i> ย้าย / ตกออก / พ้นสภาพ (คลิกดู)</div>
       </div>
-      <div class="stat-card stat-card-high clickable" onclick="openRiskModal('สูง')">
+      <div class="stat-card stat-card-high clickable" onclick="openRiskModal('สูง')" title="คลิกดูรายชื่อเฝ้าระวังความเสี่ยงสูง">
         <div class="lbl">🔴 เสี่ยงสูงมาก (เฝ้าระวัง)</div>
         <div class="val" style="color: var(--r);">${rHigh}</div>
         <div class="sub"><i class="fa-solid fa-circle-exclamation"></i> รายชื่อเด็กเสี่ยงสูง (คลิกดู)</div>
       </div>
-      <div class="stat-card stat-card-med clickable" onclick="openRiskModal('ปานกลาง')">
+      <div class="stat-card stat-card-med clickable" onclick="openRiskModal('ปานกลาง')" title="คลิกดูรายชื่อความเสี่ยงปานกลาง">
         <div class="lbl">🟡 เสี่ยงปานกลาง</div>
         <div class="val" style="color: var(--y);">${rMed}</div>
         <div class="sub"><i class="fa-solid fa-triangle-exclamation"></i> มีปัจจัยความเสี่ยง (คลิกดู)</div>
+      </div>
+      
+      <!-- Watchlist Cards เพิ่มพิเศษแบบพรีเมียมตามคำขอคุณครู -->
+      <div class="stat-card clickable" onclick="filterBySubstance('risk')" style="border-color: rgba(139, 92, 246, 0.35); background: rgba(139, 92, 246, 0.03);" title="คลิกดูรายชื่อเด็กเสี่ยงดื่ม/สูบ/สารเสพติด">
+        <div class="lbl" style="color: #a78bfa;"><i class="fa-solid fa-smoking"></i> อบายมุข & สารเสพติด</div>
+        <div class="val" style="color: #c084fc;">${rSubstance}</div>
+        <div class="sub" style="color: #c084fc;"><i class="fa-solid fa-triangle-exclamation"></i> เสี่ยงดื่ม/สูบ/สารเสพติด (คลิกดู)</div>
+      </div>
+      <div class="stat-card clickable" onclick="filterByTransport('motorcycle')" style="border-color: rgba(16, 185, 129, 0.35); background: rgba(16, 185, 129, 0.03);" title="คลิกดูรายชื่อเด็กขับมอเตอร์ไซค์มาเรียน">
+        <div class="lbl" style="color: #34d399;"><i class="fa-solid fa-motorcycle"></i> การใช้จักรยานยนต์</div>
+        <div class="val" style="color: #6ee7b7;">${rMotorcycle}</div>
+        <div class="sub" style="color: #6ee7b7;"><i class="fa-solid fa-circle-info"></i> ขับขี่มอเตอร์ไซค์มาเรียน (คลิกดู)</div>
       </div>
     `;
   }
@@ -989,6 +1015,8 @@ function renderStudents() {
   const fYear = document.getElementById('filter-year').value;
   const fRoom = document.getElementById('filter-room').value;
   const fStatus = document.getElementById('filter-status').value;
+  const fSubstance = document.getElementById('filter-substance') ? document.getElementById('filter-substance').value : '';
+  const fTransport = document.getElementById('filter-transport') ? document.getElementById('filter-transport').value : '';
 
   // Filter query
   let filtered = DB.filter(s => {
@@ -1009,7 +1037,16 @@ function renderStudents() {
     const matchRm = !fRoom || s.room === fRoom;
     const matchSt = !fStatus || s.status === fStatus;
 
-    return matchQuery && matchLvl && matchYr && matchRm && matchSt;
+    // กรองสารเสพติด / สูบ / ดื่ม (ตามคำขอคุณครู)
+    const isSubstanceRisk = (s.smoke && (s.smoke.includes('บุหรี่') || s.smoke.includes('เหล้า') || s.smoke.includes('เบีย') || s.smoke.includes('กระท่อม') || s.smoke.includes('กัญชา') || s.smoke.includes('ยา') || s.smoke.includes('สูบ') || s.smoke.includes('ดื่ม') || s.smoke.includes('เสพ') || s.smoke.includes('น้ำท่อม'))) ||
+                           (s.risk_behavior && (s.risk_behavior.includes('บุหรี่') || s.risk_behavior.includes('ยา') || s.risk_behavior.includes('สารเสพติด') || s.risk_behavior.includes('ดื่ม') || s.risk_behavior.includes('เหล้า')));
+    const matchSubstance = !fSubstance || (fSubstance === 'risk' ? isSubstanceRisk : !isSubstanceRisk);
+
+    // กรองขับขี่มอเตอร์ไซค์มาวิทยาลัย
+    const isMotorcycle = s.transport && (s.transport.includes('มอเตอร์') || s.transport.includes('มอไซค์') || s.transport.includes('มอเตอร์ไซค์') || s.transport.includes('มอเตอร์ไชล์') || s.transport.includes('มอไซ') || s.transport.includes('มอไซด์'));
+    const matchTransport = !fTransport || (fTransport === 'motorcycle' ? isMotorcycle : !isMotorcycle);
+
+    return matchQuery && matchLvl && matchYr && matchRm && matchSt && matchSubstance && matchTransport;
   });
 
   const total = filtered.length;
@@ -6806,6 +6843,53 @@ function triggerTestError() {
     // Throws intentional crash to test system diagnostics catcher (Window Error Listener)
     throw new Error("Test diagnostic error triggered by technical admin user.");
   }, 300);
+}
+
+// ── HELPER NAVIGATION FUNCTIONS (v14.1) ──
+
+// กรองสถานะอัจฉริยะแล้วเปิดหน้ารายชื่อนักเรียนอัตโนมัติ
+function filterByStatus(status) {
+  const statusFilter = document.getElementById('filter-status');
+  if (statusFilter) {
+    statusFilter.value = status;
+  }
+  
+  // รีเซ็ตตัวกรองพิเศษอื่นๆ เพื่อไม่ให้ขัดแย้งกัน
+  if (document.getElementById('filter-substance')) document.getElementById('filter-substance').value = '';
+  if (document.getElementById('filter-transport')) document.getElementById('filter-transport').value = '';
+  
+  goPage('students');
+  renderStudents();
+}
+
+// กรองสารเสพติดอัจฉริยะแล้วเปิดหน้ารายชื่อนักเรียนอัตโนมัติ
+function filterBySubstance(type) {
+  const substanceFilter = document.getElementById('filter-substance');
+  if (substanceFilter) {
+    substanceFilter.value = type;
+  }
+  
+  // รีเซ็ตตัวกรองขัดแย้งอื่นๆ
+  if (document.getElementById('filter-status')) document.getElementById('filter-status').value = 'กำลังศึกษา'; // กรองเฉพาะที่ยังศึกษาอยู่
+  if (document.getElementById('filter-transport')) document.getElementById('filter-transport').value = '';
+  
+  goPage('students');
+  renderStudents();
+}
+
+// กรองการเดินทาง (รถจักรยานยนต์) แล้วเปิดหน้ารายชื่อนักเรียนอัตโนมัติ
+function filterByTransport(type) {
+  const transportFilter = document.getElementById('filter-transport');
+  if (transportFilter) {
+    transportFilter.value = type;
+  }
+  
+  // รีเซ็ตตัวกรองขัดแย้งอื่นๆ
+  if (document.getElementById('filter-status')) document.getElementById('filter-status').value = 'กำลังศึกษา'; // กรองเฉพาะที่ยังศึกษาอยู่
+  if (document.getElementById('filter-substance')) document.getElementById('filter-substance').value = '';
+  
+  goPage('students');
+  renderStudents();
 }
 
 
