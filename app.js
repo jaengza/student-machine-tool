@@ -807,14 +807,9 @@ function updateDashboard() {
     s.transport && (s.transport.includes('มอเตอร์') || s.transport.includes('มอไซค์') || s.transport.includes('มอเตอร์ไซค์') || s.transport.includes('มอเตอร์ไชล์') || s.transport.includes('มอไซ') || s.transport.includes('มอไซด์'))
   ).length;
 
-  // คำนวณนักเรียนที่มีปัญหาการเงิน / ต้องการทุน ตามที่คุณครูขอ (v14.3 Upgrade)
+  // คำนวณนักเรียนที่มีปัญหาการเงิน / ต้องการทุน ตามที่คุณครูขอ (v14.3 Upgrade - กรองเฉพาะคนระบุค่ากินต่อวัน)
   const rFinancial = DB.filter(s => 
-    s.status === 'กำลังศึกษา' && (
-      (s.needs_scholarship === 'ต้องการ') ||
-      (s.risk_economic && (s.risk_economic.includes('ยากจน') || s.risk_economic.includes('ขาดแคลน') || s.risk_economic.includes('ทำงานพิเศษ') || s.risk_economic.includes('เสี่ยง'))) ||
-      (s.parent_income && s.parent_income.includes('ต่ำกว่า 10000')) ||
-      (s.allowance && !isNaN(Number(s.allowance)) && Number(s.allowance) > 0 && Number(s.allowance) <= 100)
-    )
+    s.status === 'กำลังศึกษา' && checkFinancialRisk(s)
   ).length;
 
   // Stat Grid Inner HTML
@@ -1058,11 +1053,8 @@ function renderStudents() {
     const isMotorcycle = s.transport && (s.transport.includes('มอเตอร์') || s.transport.includes('มอไซค์') || s.transport.includes('มอเตอร์ไซค์') || s.transport.includes('มอเตอร์ไชล์') || s.transport.includes('มอไซ') || s.transport.includes('มอไซด์'));
     const matchTransport = !fTransport || (fTransport === 'motorcycle' ? isMotorcycle : !isMotorcycle);
 
-    // กรองประเด็นปัญหาการเงินและการขอทุน (v14.3 Upgrade)
-    const isFinancialRisk = (s.needs_scholarship === 'ต้องการ') ||
-                            (s.risk_economic && (s.risk_economic.includes('ยากจน') || s.risk_economic.includes('ขาดแคลน') || s.risk_economic.includes('ทำงานพิเศษ') || s.risk_economic.includes('เสี่ยง'))) ||
-                            (s.parent_income && s.parent_income.includes('ต่ำกว่า 10000')) ||
-                            (s.allowance && !isNaN(Number(s.allowance)) && Number(s.allowance) > 0 && Number(s.allowance) <= 100);
+    // กรองประเด็นปัญหาการเงินและการขอทุน (v14.3 Upgrade - กรองเฉพาะคนระบุค่ากินต่อวัน)
+    const isFinancialRisk = checkFinancialRisk(s);
     const matchFinancial = !fFinancial || (fFinancial === 'risk' ? isFinancialRisk : !isFinancialRisk);
 
     return matchQuery && matchLvl && matchYr && matchRm && matchSt && matchSubstance && matchTransport && matchFinancial;
@@ -1647,11 +1639,8 @@ function viewProfile(studentId) {
   const driveImg = normalizeDriveUrl(s.photo);
   const hasImg = driveImg ? true : false;
 
-  // ตรวจประเมินปัญหาทางการเงินและการขอทุนเพื่อคัดวิเคราะห์ความช่วยเหลือ (v14.3 Upgrade)
-  const isFinancialRisk = (s.needs_scholarship === 'ต้องการ') ||
-                          (s.risk_economic && (s.risk_economic.includes('ยากจน') || s.risk_economic.includes('ขาดแคลน') || s.risk_economic.includes('ทำงานพิเศษ') || s.risk_economic.includes('เสี่ยง'))) ||
-                          (s.parent_income && s.parent_income.includes('ต่ำกว่า 10000')) ||
-                          (s.allowance && !isNaN(Number(s.allowance)) && Number(s.allowance) > 0 && Number(s.allowance) <= 100);
+  // ตรวจประเมินปัญหาทางการเงินและการขอทุนเพื่อคัดวิเคราะห์ความช่วยเหลือ (v14.3 Upgrade - กรองเฉพาะคนระบุค่ากินต่อวัน)
+  const isFinancialRisk = checkFinancialRisk(s);
 
   let financialAlertHTML = '';
   if (isFinancialRisk) {
@@ -6950,6 +6939,23 @@ function checkSubstanceRisk(smokeVal, behaviorVal) {
   }
   
   return smokeRisk || behaviorRisk;
+}
+
+// ฟังก์ชันตรวจวิเคราะห์ความเดือดร้อนทางการเงินและยื่นขอทุนการเรียนอัจฉริยะ (v14.3 Upgrade - กรองเฉพาะคนระบุค่ากินต่อวัน)
+function checkFinancialRisk(s) {
+  if (!s) return false;
+  
+  // กรองเฉพาะนักเรียนที่ให้ข้อมูลเงินได้รับต่อวันมากินวิทยาลัยเท่านั้น
+  const hasAllowance = s.allowance && !isNaN(Number(s.allowance)) && Number(s.allowance) > 0;
+  if (!hasAllowance) return false;
+  
+  // ตรวจจับเงื่อนไขยากจน/ขอทุนร่วมด้วย
+  const needsScholarship = s.needs_scholarship === 'ต้องการ';
+  const riskEconomic = s.risk_economic && (s.risk_economic.includes('ยากจน') || s.risk_economic.includes('ขาดแคลน') || s.risk_economic.includes('ทำงานพิเศษ') || s.risk_economic.includes('เสี่ยง'));
+  const lowIncome = s.parent_income && s.parent_income.includes('ต่ำกว่า 10000');
+  const lowAllowance = Number(s.allowance) <= 100;
+  
+  return needsScholarship || riskEconomic || lowIncome || lowAllowance;
 }
 
 // ── HELPER NAVIGATION FUNCTIONS (v14.1) ──
