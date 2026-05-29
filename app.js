@@ -5582,7 +5582,29 @@ function selectMobileRoom(room, event) {
 
   const fRm = document.getElementById('filter-room');
   if (fRm) {
-    fRm.value = room;
+    if (room === '') {
+      fRm.value = '';
+    } else {
+      // กลไกแมปตัวเลขชิปในมือถือ (เช่น '1') เข้ากับตัวเลือกกลุ่มเรียนจริงในระบบ (เช่น 'กลุ่ม 1' หรือ 'กลุ่ม1')
+      let matchedValue = '';
+      for (let i = 0; i < fRm.options.length; i++) {
+        const optVal = fRm.options[i].value;
+        // สกัดดึงเฉพาะตัวเลขออกจากข้อความ
+        const optNum = optVal.replace(/\D/g, '');
+        if (optNum === String(room)) {
+          matchedValue = optVal;
+          break;
+        }
+      }
+      
+      if (matchedValue) {
+        fRm.value = matchedValue;
+      } else {
+        // Fallback กรณีไม่พบตัวเลือกตรงเป๊ะ
+        const fallbackVal = [...fRm.options].map(o => o.value).find(v => v.includes(room));
+        fRm.value = fallbackVal || room;
+      }
+    }
   }
 
   currentPage = 1;
