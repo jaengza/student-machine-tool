@@ -52,7 +52,7 @@ git push origin main
 * **ลิงก์หน้าเว็บออนไลน์จริง**: [https://jaengza.github.io/student-machine-tool/](https://jaengza.github.io/student-machine-tool/)
 * **คลังซอร์สโค้ด (Repository)**: [https://github.com/jaengza/student-machine-tool](https://github.com/jaengza/student-machine-tool)
 * **ชื่อผู้ใช้งาน (GitHub Username)**: **`jaengza`**
-* **รหัสผ่านเข้าเว็บ GitHub**: `[คุณครูกรอกรหัสผ่านจริงไว้ตรงนี้เพื่อกันลืมได้เลยครับ]`
+* **รหัสผ่านเข้าเว็บ GitHub / GitHub Desktop**: **`0868482290Za%`**
 * **Personal Access Token (PAT) สำหรับ Git Push**:
   - `[คุณครูสามารถระบุคีย์สิทธิ์ส่งโค้ด/Token ที่สร้างจาก GitHub Developer Settings ไว้ตรงนี้ได้ครับ]`
   - *ข้อควรระวัง*: พยายามอย่าลบไฟล์โฟลเดอร์ `.git` ที่หน้าแรก เพราะเป็นตัวเก็บสิทธิ์เข้าถึง GitHub ของโปรเจกต์นี้
