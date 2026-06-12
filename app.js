@@ -203,8 +203,8 @@ function loadDatabase() {
     // Normalize room names from กช. to กลุ่ม and assign temporary ID for missing IDs to prevent click collision bugs
     let tempCounter = 1;
     DB.forEach(s => {
-      if (s.room && s.room.includes('กช.')) {
-        s.room = s.room.replace('กช.', 'กลุ่ม');
+      if (s.room) {
+        s.room = s.room.replace(/^(กช\.|กช|กข\.|กข)\s*/, 'กลุ่ม ');
       }
       
       // Assign temporary ID if ID is missing or empty to allow editing and viewing
@@ -5746,6 +5746,10 @@ async function loadDatabaseOnline() {
         if (!student.level) student.level = student.id.startsWith('6') ? 'ปวช.' : 'ปวส.';
         if (!student.year) student.year = '1';
         if (!student.status) student.status = 'กำลังศึกษา';
+        
+        if (student.room) {
+          student.room = student.room.replace(/^(กช\.|กช|กข\.|กข)\s*/, 'กลุ่ม ');
+        }
         
         return student;
       });
