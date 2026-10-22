@@ -60,7 +60,7 @@ class_groups = [
         "Major": "ช่างกลโรงงาน",
         "Group_No": 4,
         "Advisor_Name": "ครูที่ปรึกษา ปวช.2 กลุ่ม4 (คลิกเพื่อระบุชื่อ)",
-        "Note": "นักเรียนตกค้างรุ่น 68 (6820102)"
+        "Note": "นักเรียนรุ่น 68 (6820102)"
     },
     {
         "Class_ID": "ปวส.1 กลุ่ม1",
@@ -147,10 +147,6 @@ def clean_phone(raw_phone):
     return only_digits, s
 
 def analyze_substance(raw_sub):
-    """
-    วิเคราะห์ข้อมูลการใช้สารเสพติด/บุหรี่/แอลกอฮอล์ จากข้อความที่นักเรียนแจ้งในแบบบันทึกจริง
-    คืนค่า: (raw_display, clean_summary, tags_list, has_substance_risk)
-    """
     raw_str = str(raw_sub or "").strip()
     if not raw_str:
         return "ยังไม่ได้กรอกข้อมูล", "ไม่ระบุ", [], False
@@ -179,7 +175,6 @@ for idx, r in enumerate(raw_students, start=1):
     year_str = str(r.get("ชั้นปี", "")).strip()
     grp = int(str(r.get("กลุ่มเรียน", "1")).strip())
 
-    # ใช้ชื่อกลุ่มภาษาไทย เช่น "ปวช.1 กลุ่ม1", "ปวส.1 กลุ่ม5"
     if "ปวช.2" in year_str or sid.startswith("682"):
         class_id = f"ปวช.2 กลุ่ม{grp}"
         level_year = "ปวช.2"
@@ -192,8 +187,8 @@ for idx, r in enumerate(raw_students, start=1):
 
     group_label = f"กลุ่ม{grp}"
 
-    stu_phone, stu_phone_note = clean_phone(r.get("เบอร์โทรศัพท์มือถือ_นักเรียน", ""))
-    par_phone, par_phone_note = clean_phone(r.get("เบอร์โทรศัพท์มือถือ_ผู้ปกครอง", ""))
+    stu_phone, _ = clean_phone(r.get("เบอร์โทรศัพท์มือถือ_นักเรียน", ""))
+    par_phone, _ = clean_phone(r.get("เบอร์โทรศัพท์มือถือ_ผู้ปกครอง", ""))
     emg_phone, emg_phone_note = clean_phone(r.get("เบอร์โทรศัพท์มือถือ_ผู้ปกครอง_ฉุกเฉิน", ""))
 
     house_no = str(r.get("บ้านเลขที่", "")).strip()
@@ -212,23 +207,6 @@ for idx, r in enumerate(raw_students, start=1):
     full_address = " ".join(addr_parts) if addr_parts else "ยังไม่ได้กรอกที่อยู่"
 
     home_loc = DISTRICT_COORDS.get(zone_district, "")
-
-    issues = []
-    if sid == "69201020042" or full_address == "ยังไม่ได้กรอกที่อยู่":
-        issues.append("ยังไม่ได้กรอกแบบสอบถามข้อมูลหลัก (มีเฉพาะรูปถ่าย)")
-    if not stu_phone:
-        issues.append("ไม่มีเบอร์โทรศัพท์นักเรียน")
-    elif len(stu_phone) != 10:
-        issues.append(f"เบอร์โทรนักเรียนมี {len(stu_phone)} หลัก ({stu_phone})")
-    if not par_phone:
-        issues.append("ไม่มีเบอร์โทรศัพท์ผู้ปกครอง")
-    elif len(par_phone) != 10:
-        issues.append(f"เบอร์โทรผู้ปกครองไม่ครบ 10 หลัก ({par_phone})")
-    if r.get("สถานะรูปภาพ") != "มีรูปแล้ว":
-        issues.append("ยังไม่มีรูปถ่ายนักเรียน")
-    if zone_district == "ไม่ระบุ":
-        issues.append("ไม่ระบุอำเภอ/โซนพื้นที่")
-
     sub_raw, sub_clean, sub_tags, has_sub_risk = analyze_substance(r.get("ดิ่มหรือสูบไหม", ""))
 
     income = str(r.get("รายได้โดยเฉลี่ยของครอบครัว", "")).strip()
@@ -236,7 +214,6 @@ for idx, r in enumerate(raw_students, start=1):
     allowance = str(r.get("นักเรียนได้เงินมากินวันละกี่บาท", "")).strip()
     parent_job = str(r.get("อาชีพของผู้ปกครอง", "")).strip()
 
-    # วิเคราะห์สาเหตุความเสี่ยงและปัญหาอย่างละเอียด (เพื่อให้ครูรู้ว่าเสี่ยงเรื่องอะไร และกรองค้นหาได้ทันที)
     risk_reasons = []
     risk_tags = []
 
@@ -270,13 +247,11 @@ for idx, r in enumerate(raw_students, start=1):
         risk_reasons.append("ยังไม่กรอกข้อมูลพื้นฐาน")
         risk_tags.append("ข้อมูลไม่ครบ")
 
-    # ประเมินฐานะเศรษฐกิจ
     if is_low_income or is_low_allowance or (needs_scholarship and "10000-15000" in income):
         fin_status = "ขัดสน"
     else:
         fin_status = "เพียงพอ"
 
-    # จัดระดับความเสี่ยงรวม (กลุ่มปกติ / กลุ่มเสี่ยง / กลุ่มมีปัญหา) พร้อมเหตุผลชัดเจน
     if ("น้ำกระท่อม" in sub_tags or "กัญชา" in sub_tags) or (has_sub_risk and (is_low_income or is_low_allowance)):
         risk_level = "กลุ่มมีปัญหา"
     elif len(risk_reasons) > 0:
@@ -296,10 +271,8 @@ for idx, r in enumerate(raw_students, start=1):
         "Group_No": grp,
         "Status": "ปกติ",
         "Phone_Number": stu_phone,
-        "Phone_Raw": str(r.get("เบอร์โทรศัพท์มือถือ_นักเรียน", "")).strip(),
         "Parent_Name": str(r.get("ชื่อ-นามสกุล_ผู้ปกครอง", "")).strip(),
         "Parent_Phone": par_phone,
-        "Parent_Phone_Raw": str(r.get("เบอร์โทรศัพท์มือถือ_ผู้ปกครอง", "")).strip(),
         "Emergency_Phone": emg_phone,
         "Emergency_Contact_Note": emg_phone_note or str(r.get("เบอร์โทรศัพท์มือถือ_ผู้ปกครอง_ฉุกเฉิน", "")).strip(),
         "Social_Contact": str(r.get("ข้อมูลการติดต่ออื่นๆ_IG_Facebook", "")).strip(),
@@ -308,21 +281,16 @@ for idx, r in enumerate(raw_students, start=1):
         "Road": road,
         "Subdistrict": subdist,
         "Zone_District": zone_district,
-        "Raw_District": raw_dist,
         "Zipcode": zipcode,
         "Home_Location": home_loc,
-        "Location_Precision": "อำเภอ (รอปักหมุดบ้าน)" if home_loc else "ยังไม่ระบุพิกัด",
         "Photo_Status": str(r.get("สถานะรูปภาพ", "")).strip(),
         "Photo_URL": str(r.get("ลิงก์แสดงรูปภาพ_Direct", "")).strip(),
-        "Photo_Drive_Link": str(r.get("ลิงก์รูปภาพ_Drive", "")).strip(),
         "Commute_Method": str(r.get("นักเรียนเดินทางมาวิทยาลัยอย่างไร", "")).strip(),
-        "Previous_School": str(r.get("สถานศึกษาเดิมที่นักเรียนจบมา", "")).strip(),
+        "Previous_School": str(r.get("นักเรียนจบมาจากโรงเรียนอะไร", r.get("สถานศึกษาเดิมที่นักเรียนจบมา", ""))).strip(),
         "Substance_Raw": sub_raw,
         "Substance_Clean": sub_clean,
         "Substance_Tags": sub_tags,
-        "Data_Note": str(r.get("หมายเหตุการจัดการข้อมูล", "")).strip(),
-        "Data_Issues": issues,
-        "Updated_At": "2026-10-22T10:50:00+07:00"
+        "Data_Note": str(r.get("หมายเหตุการจัดการข้อมูล", "")).strip()
     }
     students_table.append(student_obj)
 
@@ -346,17 +314,15 @@ for idx, r in enumerate(raw_students, start=1):
         "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
         "Home_Visit_Date": "",
         "Home_Visit_Photo": "",
-        "Home_Visit_Summary": "",
-        "Updated_At": "2026-10-22T10:50:00+07:00"
+        "Home_Visit_Summary": ""
     }
     screening_table.append(screening_obj)
 
 db_bundle = {
     "metadata": {
         "app_name": "ระบบจัดการนักเรียนแผนกช่างกลโรงงานและเทคนิคอุตสาหกรรม",
-        "schema_version": "2.0.0",
+        "schema_version": "3.0.0",
         "academic_year": "2569",
-        "generated_at": "2026-10-22T10:50:00+07:00",
         "total_students": len(students_table)
     },
     "Class_Groups": class_groups,
@@ -365,27 +331,32 @@ db_bundle = {
     "Screening_Records": screening_table,
     "Audit_Logs": [
         {
-            "Log_ID": "LOG-INIT-002",
-            "Timestamp": "2026-10-22T10:50:00+07:00",
-            "Action": "อัปเดตฐานข้อมูล V2 (ระบบกลุ่มเรียนภาษาไทย + ข้อมูลสารเสพติดจากแบบบันทึก + วิเคราะห์สาเหตุความเสี่ยงรายบุคคล)",
-            "Details": f"ปรับรหัสกลุ่มเป็น กลุ่ม1-5, แสดงข้อมูลการดื่ม/สูบตามที่นักเรียนแจ้งจริง และจำแนกสาเหตุกลุ่มเสี่ยงครบ {len(students_table)} คน"
+            "Log_ID": "LOG-INIT-003",
+            "Timestamp": "2026-10-22T11:30:00+07:00",
+            "Action": "อัปเกรดฐานข้อมูล V3 (บีบอัดขนาดไฟล์ประหยัดพื้นที่ + รองรับการนำเข้าชั้นปีอื่น ปวช.1-3 และ ปวส.1-2)",
+            "Details": f"ฐานข้อมูลเริ่มต้น {len(students_table)} คน พร้อมระบบเพิ่มนักเรียนรายบุคคลและนำเข้ายกกลุ่ม"
         }
     ]
 }
 
 os.makedirs('data', exist_ok=True)
+# บันทึกแบบ Minified JSON (ประหยัดพื้นที่สูงสุดสำหรับ GitHub และการโคลนข้ามเครื่อง)
 with open('data/initial_db.json', 'w', encoding='utf-8') as f:
-    json.dump(db_bundle, f, ensure_ascii=False, indent=2)
+    json.dump(db_bundle, f, ensure_ascii=False, separators=(',', ':'))
 
 with open('data/initial_db.js', 'w', encoding='utf-8') as f:
-    f.write("// ฐานข้อมูลเริ่มต้น 4 ตารางหลัก (Relational Schema V2)\n")
-    f.write("window.INITIAL_RELATIONAL_DB = ")
-    json.dump(db_bundle, f, ensure_ascii=False, indent=2)
+    f.write("window.INITIAL_RELATIONAL_DB=")
+    json.dump(db_bundle, f, ensure_ascii=False, separators=(',', ':'))
     f.write(";\n")
 
-# Print summary statistics
-from collections import Counter
-risk_lvl_counts = Counter(s["Overall_Risk_Level"] for s in screening_table)
-reason_counts = Counter(tag for s in screening_table for tag in s["Risk_Tags"])
-print("Risk Levels:", dict(risk_lvl_counts))
-print("Risk Reasons Breakdown:", dict(reason_counts))
+# บีบอัดไฟล์ข้อมูลนักเรียน_รวมสมบูรณ์.json ให้ประหยัดพื้นที่เช่นกัน
+with open('ข้อมูลนักเรียน_รวมสมบูรณ์.json', 'w', encoding='utf-8') as f:
+    json.dump(raw_students, f, ensure_ascii=False, separators=(',', ':'))
+
+# แทนที่ไฟล์ HTML เก่าขนาด 361KB ด้วยไฟล์ Redirect ขนาดจิ๋วไปยัง index.html
+with open('ระบบดูข้อมูลและรูปภาพนักเรียน.html', 'w', encoding='utf-8') as f:
+    f.write('<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0; url=index.html"><title>กำลังเปลี่ยนเส้นทาง...</title></head><body><script>window.location.replace("index.html");</script></body></html>')
+
+print("Optimized files generated successfully!")
+for path in ['data/initial_db.js', 'data/initial_db.json', 'ข้อมูลนักเรียน_รวมสมบูรณ์.json', 'ระบบดูข้อมูลและรูปภาพนักเรียน.html']:
+    print(f" - {path}: {os.path.getsize(path):,} bytes")

@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * Relational Database Engine V2 (4 Core Tables + Risk & Substance Analyzer)
+ * Relational Database Engine V3 (4 Core Tables + Bulk Import for Other Years)
  * ============================================================================
  * ตารางที่ 1: Class_Groups (PK: Class_ID เช่น "ปวช.1 กลุ่ม1", Group_Label: "กลุ่ม1")
  * ตารางที่ 2: Students (PK: Student_ID, FK: Class_ID)
@@ -8,8 +8,28 @@
  * ตารางที่ 4: Screening_Records (PK: Screening_ID, FK: Student_ID)
  */
 
-const STORAGE_KEY = 'STUDENT_MACHINE_TOOL_DB_V2';
+const STORAGE_KEY = 'STUDENT_MACHINE_TOOL_DB_V3';
 const CLOUD_URL_KEY = 'STUDENT_MACHINE_TOOL_CLOUD_URL';
+
+const DISTRICT_COORDS_MAP = {
+  'เมืองฉะเชิงเทรา': '13.6904, 101.0779',
+  'บางน้ำเปรี้ยว': '13.8466, 101.0536',
+  'แปลงยาว': '13.5855, 101.2872',
+  'บางคล้า': '13.7297, 101.2081',
+  'บ้านโพธิ์': '13.5997, 101.0789',
+  'ราชสาส์น': '13.7806, 101.2819',
+  'สนามชัยเขต': '13.6592, 101.4394',
+  'พนมสารคาม': '13.7483, 101.3486',
+  'คลองเขื่อน': '13.7900, 101.1633',
+  'บางปะกง': '13.5422, 100.9936',
+  'บ้านสร้าง': '13.9961, 101.2217',
+  'ศรีมโหสถ': '13.8869, 101.4119',
+  'บางบ่อ': '13.5839, 100.8683',
+  'หนองจอก': '13.8556, 100.8625',
+  'พนัสนิคม': '13.4528, 101.1794',
+  'พานทอง': '13.4683, 101.0953',
+  'องครักษ์': '14.1206, 101.0028'
+};
 
 class RelationalDatabase {
   constructor() {
@@ -26,7 +46,7 @@ class RelationalDatabase {
           throw new Error('Invalid schema in localStorage');
         }
       } catch (e) {
-        console.warn('Fallback to initial DB V2:', e);
+        console.warn('Fallback to initial DB V3:', e);
         this.resetToInitial(false);
       }
     } else {
@@ -51,9 +71,21 @@ class RelationalDatabase {
     window.dispatchEvent(new CustomEvent('db-updated'));
   }
 
-  // --------------------------------------------------------------------------
-  // วิเคราะห์ข้อมูลการใช้บุหรี่/แอลกอฮอล์/สารเสพติด จากข้อความที่นักเรียนแจ้ง
-  // --------------------------------------------------------------------------
+  normalizeDistrictName(rawDist) {
+    if (!rawDist) return 'ไม่ระบุ';
+    let d = String(rawDist).trim();
+    d = d.replace(/อำเภอ|จังหวัดฉะเชิงเทรา|ฉะเชิงเทรา|ฉะเฉิงเทรา|ฮะเชิงเทรา/g, '').trim();
+    d = d.replace('เเปลงยาว', 'แปลงยาว')
+         .replace('เมื่อง', 'เมือง')
+         .replace('บางคบ้า', 'บางคล้า')
+         .replace('บางนํ้าเปรี้ยว', 'บางน้ำเปรี้ยว')
+         .replace('ราชสาสน์', 'ราชสาส์น')
+         .replace('สยามชัยเขต', 'สนามชัยเขต');
+    if (!d || d === '-' || d === '.') return 'ไม่ระบุ';
+    if (d === 'เมือง') return 'เมืองฉะเชิงเทรา';
+    return d;
+  }
+
   parseSubstanceString(rawSub) {
     const rawStr = String(rawSub || '').trim();
     if (!rawStr || rawStr === 'ยังไม่ได้กรอกข้อมูล') {
@@ -67,7 +99,7 @@ class RelationalDatabase {
 
     const tags = [];
     if (rawStr.includes('บุหรี่')) tags.push('บุหรี่');
-    if (rawStr.includes('เหล้า') || rawStr.includes('เบียร')) tags.push('เหล้า/เบียร์');
+    if (rawStr.includes('เหล้า') || rawStr.includes('เบียร') || rawStr.includes('สุรา')) tags.push('เหล้า/เบียร์');
     if (rawStr.includes('กระท่อม')) tags.push('น้ำกระท่อม');
     if (rawStr.includes('กัญชา')) tags.push('กัญชา');
 
@@ -88,9 +120,6 @@ class RelationalDatabase {
     };
   }
 
-  // --------------------------------------------------------------------------
-  // ตรวจสอบความถูกต้องของข้อมูล (Data Accuracy) + วิเคราะห์สาเหตุกลุ่มเสี่ยงรายบุคคล
-  // --------------------------------------------------------------------------
   computeStudentIssues(stu) {
     const issues = [];
     const sid = String(stu.Student_ID || '').trim();
@@ -114,7 +143,7 @@ class RelationalDatabase {
       issues.push(`เบอร์โทรผู้ปกครองมี ${cleanParPhone.length} หลัก (${stu.Parent_Phone})`);
     }
 
-    if (!stu.Address || stu.Address === 'ยังไม่ได้กรอกที่อยู่' || (!stu.House_No && !stu.Subdistrict)) {
+    if (!stu.Address || stu.Address === 'ยังไม่ได้กรอกที่อยู่' || (!stu.House_No && !stu.Subdistrict && stu.Address.length < 5)) {
       issues.push('ยังไม่ได้กรอกที่อยู่/ข้อมูลพื้นฐานไม่ครบ');
     }
     if (!stu.Zone_District || stu.Zone_District === 'ไม่ระบุ') {
@@ -126,30 +155,66 @@ class RelationalDatabase {
     return issues;
   }
 
+  /**
+   * ตรวจสอบและสร้างกลุ่มเรียนในตาราง Class_Groups อัตโนมัติ เมื่อเพิ่มนักเรียนชั้นปีอื่น (เช่น ปวช.2, ปวช.3, ปวส.2)
+   */
+  ensureClassGroupExists(levelYear, groupNo, major = null) {
+    const cleanLvlYear = String(levelYear || 'ปวช.1').trim();
+    const gNum = Number(String(groupNo || '1').replace(/\D/g, '')) || 1;
+    const classId = `${cleanLvlYear} กลุ่ม${gNum}`;
+    const existing = (this.db.Class_Groups || []).find(c => c.Class_ID === classId);
+    if (existing) return existing;
+
+    const isPvs = cleanLvlYear.startsWith('ปวส');
+    const levelPrefix = isPvs ? 'ปวส.' : 'ปวช.';
+    const yrMatch = cleanLvlYear.match(/\d+/);
+    const yr = yrMatch ? Number(yrMatch[0]) : 1;
+    const defaultMajor = major || (isPvs ? 'เทคนิคอุตสาหกรรม' : 'ช่างกลโรงงาน');
+
+    const newGroup = {
+      Class_ID: classId,
+      Group_Label: `กลุ่ม${gNum}`,
+      Level: levelPrefix,
+      Level_Year: cleanLvlYear,
+      Year: yr,
+      Major: defaultMajor,
+      Group_No: gNum,
+      Advisor_Name: `ครูที่ปรึกษา ${classId} (คลิกเพื่อระบุชื่อ)`,
+      Note: 'สร้างอัตโนมัติจากการเพิ่มข้อมูลนักเรียน'
+    };
+    this.db.Class_Groups.push(newGroup);
+    // เรียงลำดับกลุ่มเรียนให้สวยงาม (ปวช.1 -> ปวช.2 -> ปวช.3 -> ปวส.1 -> ปวส.2)
+    this.db.Class_Groups.sort((a, b) => a.Class_ID.localeCompare(b.Class_ID, 'th'));
+    return newGroup;
+  }
+
   recomputeAllIssuesAndRisks() {
     if (!this.db || !this.db.Students) return;
 
     this.db.Students.forEach(stu => {
-      // 1. Normalize Group_Label ("กลุ่ม1", "กลุ่ม2", ...)
       const cg = (this.db.Class_Groups || []).find(c => c.Class_ID === stu.Class_ID);
       if (cg) {
         stu.Group_Label = cg.Group_Label || `กลุ่ม${cg.Group_No}`;
         stu.Level_Year = cg.Level_Year || `${cg.Level}${cg.Year}`;
         stu.Group_No = cg.Group_No;
-      } else if (!stu.Group_Label) {
-        const m = String(stu.Class_ID || '').match(/กลุ่ม\s*(\d+)|G(\d+)/i);
-        const gNum = m ? (m[1] || m[2]) : '1';
-        stu.Group_Label = `กลุ่ม${gNum}`;
+      } else {
+        const parts = String(stu.Class_ID || 'ปวช.1 กลุ่ม1').split(' ');
+        const ly = parts[0] || 'ปวช.1';
+        const gMatch = String(stu.Class_ID || '').match(/กลุ่ม\s*(\d+)/);
+        const gNo = gMatch ? Number(gMatch[1]) : (stu.Group_No || 1);
+        const createdCg = this.ensureClassGroupExists(ly, gNo);
+        stu.Class_ID = createdCg.Class_ID;
+        stu.Level_Year = createdCg.Level_Year;
+        stu.Group_Label = createdCg.Group_Label;
+        stu.Group_No = createdCg.Group_No;
       }
 
-      // 2. Compute Data Issues
       stu.Data_Issues = this.computeStudentIssues(stu);
 
-      // 3. Sync & Analyze Substance + Risk Reasons with Screening_Records
       let sc = (this.db.Screening_Records || []).find(r => r.Student_ID === stu.Student_ID);
       if (!sc) {
         sc = {
-          Screening_ID: `SCR-2569-${stu.Student_ID.slice(-3)}`,
+          Screening_ID: `SCR-2569-${stu.Student_ID.slice(-4)}`,
           Academic_Term: '1/2569',
           Student_ID: stu.Student_ID,
           Family_Status: 'อยู่ร่วมกัน',
@@ -177,7 +242,6 @@ class RelationalDatabase {
       sc.Substance_History = subInfo.cleanSummary;
       sc.Substance_Tags = subInfo.tags;
 
-      // Build comprehensive Risk Reasons & Tags
       const reasons = [];
       const rTags = [];
 
@@ -203,7 +267,6 @@ class RelationalDatabase {
       const schol = String(sc.Scholarship_Need || '');
       const fam = String(sc.Family_Status || '');
 
-      const isLowInc = income.includes('ต่ำกว่า 10000') || sc.Financial_Status === 'ขัดสน';
       const isLowAlw = allowance.includes('น้อยกว่า 100');
       const needSchol = schol === 'ต้องการ';
       const brokenFam = fam === 'หย่าร้าง' || fam === 'แยกกันอยู่' || fam === 'บิดาหรือมารดาเสียชีวิต';
@@ -231,7 +294,6 @@ class RelationalDatabase {
         rTags.push('ครอบครัวหย่าร้าง/แยกกันอยู่');
       }
 
-      // Check discipline deductions
       const discList = (this.db.Discipline_Records || []).filter(d => d.Student_ID === stu.Student_ID);
       const deducted = discList.reduce((acc, cur) => acc + Math.abs(Number(cur.Points_Deducted || 0)), 0);
       if (deducted > 0) {
@@ -239,8 +301,6 @@ class RelationalDatabase {
         rTags.push('ถูกหักคะแนนความประพฤติ');
       }
 
-      // Check missing core questionnaire
-      const nonPhotoIssues = (stu.Data_Issues || []).filter(i => i !== 'ยังไม่มีรูปถ่ายนักเรียน');
       if (stu.Address === 'ยังไม่ได้กรอกที่อยู่') {
         reasons.push('ยังไม่กรอกข้อมูลพื้นฐาน');
         rTags.push('ข้อมูลไม่ครบ');
@@ -250,7 +310,6 @@ class RelationalDatabase {
       sc.Risk_Tags = rTags;
       sc.Risk_Factors_Note = reasons.length > 0 ? reasons.join(', ') : 'ปกติ (ไม่พบความเสี่ยง)';
 
-      // Auto-calculate Overall_Risk_Level unless manually locked by teacher
       if (!sc.Manual_Risk_Override) {
         if (
           subInfo.tags.includes('น้ำกระท่อม') ||
@@ -268,9 +327,6 @@ class RelationalDatabase {
     });
   }
 
-  // --------------------------------------------------------------------------
-  // Relational Queries & 360-Degree Student Join
-  // --------------------------------------------------------------------------
   getClassGroups() {
     return this.db.Class_Groups || [];
   }
@@ -345,9 +401,6 @@ class RelationalDatabase {
     return this.getStudents().map(s => this.getStudent360(s.Student_ID));
   }
 
-  // --------------------------------------------------------------------------
-  // สรุปสถิติปัญหาและความเสี่ยงทั้งหมด (สำหรับปุ่มกรองค้นหาด่วน)
-  // --------------------------------------------------------------------------
   getProblemAndSubstanceSummary() {
     const all = this.getAllStudents360();
     const counts = {
@@ -401,29 +454,37 @@ class RelationalDatabase {
     return counts;
   }
 
-  // --------------------------------------------------------------------------
-  // CRUD ตารางที่ 1: Class_Groups
-  // --------------------------------------------------------------------------
   upsertClassGroup(groupObj) {
     groupObj.Group_Label = groupObj.Group_Label || `กลุ่ม${groupObj.Group_No}`;
     groupObj.Level_Year = groupObj.Level_Year || `${groupObj.Level}${groupObj.Year}`;
+    groupObj.Class_ID = `${groupObj.Level_Year} ${groupObj.Group_Label}`;
     const idx = this.db.Class_Groups.findIndex(c => c.Class_ID === groupObj.Class_ID);
     if (idx >= 0) {
       this.db.Class_Groups[idx] = { ...this.db.Class_Groups[idx], ...groupObj };
       this.addAuditLog('แก้ไขกลุ่มเรียน', `อัปเดต ${groupObj.Class_ID} (ครูที่ปรึกษา: ${groupObj.Advisor_Name})`);
     } else {
       this.db.Class_Groups.push(groupObj);
-      this.addAuditLog('เพิ่มกลุ่มเรียนใหม่', `สร้าง ${groupObj.Class_ID} (${groupObj.Major} ${groupObj.Group_Label})`);
+      this.db.Class_Groups.sort((a, b) => a.Class_ID.localeCompare(b.Class_ID, 'th'));
+      this.addAuditLog('เพิ่มกลุ่มเรียนใหม่', `สร้าง ${groupObj.Class_ID} (${groupObj.Major})`);
     }
     this.save();
   }
 
-  // --------------------------------------------------------------------------
-  // CRUD ตารางที่ 2: Students
-  // --------------------------------------------------------------------------
   upsertStudent(studentData, oldStudentId = null) {
     const targetId = oldStudentId || studentData.Student_ID;
     const idx = this.db.Students.findIndex(s => s.Student_ID === targetId);
+
+    // หากระบุ Level_Year และ Group_No มา ให้สร้างกลุ่มเรียนในตาราง 1 อัตโนมัติถ้ายังไม่มี
+    if (studentData.Level_Year && studentData.Group_No) {
+      const cg = this.ensureClassGroupExists(studentData.Level_Year, studentData.Group_No, studentData.Major);
+      studentData.Class_ID = cg.Class_ID;
+      studentData.Group_Label = cg.Group_Label;
+    }
+
+    studentData.Zone_District = this.normalizeDistrictName(studentData.Zone_District);
+    if (!studentData.Home_Location && DISTRICT_COORDS_MAP[studentData.Zone_District]) {
+      studentData.Home_Location = DISTRICT_COORDS_MAP[studentData.Zone_District];
+    }
 
     const parts = [];
     if (studentData.House_No && studentData.House_No !== '-') parts.push(`บ้านเลขที่ ${studentData.House_No}`);
@@ -433,10 +494,11 @@ class RelationalDatabase {
     if (studentData.Zipcode && studentData.Zipcode !== '-') parts.push(studentData.Zipcode);
     if (parts.length > 0) {
       studentData.Address = parts.join(' ');
+    } else if (!studentData.Address) {
+      studentData.Address = 'ยังไม่ได้กรอกที่อยู่';
     }
 
     studentData.Photo_Status = (studentData.Photo_URL && studentData.Photo_URL.trim() !== '') ? 'มีรูปแล้ว' : 'ยังไม่มีรูป';
-    studentData.Updated_At = new Date().toISOString();
 
     if (idx >= 0) {
       if (oldStudentId && oldStudentId !== studentData.Student_ID) {
@@ -452,27 +514,110 @@ class RelationalDatabase {
     } else {
       this.db.Students.push(studentData);
       this.db.Screening_Records.push({
-        Screening_ID: `SCR-2569-${Date.now().toString().slice(-4)}`,
+        Screening_ID: `SCR-2569-${Date.now().toString().slice(-4)}-${Math.floor(Math.random()*90+10)}`,
         Academic_Term: '1/2569',
         Student_ID: studentData.Student_ID,
         Family_Status: 'อยู่ร่วมกัน',
-        Parent_Occupation: '',
-        Family_Income_Range: '10000-15000 บาท',
-        Daily_Allowance: '100 บาท',
-        Scholarship_Need: 'ไม่ต้องการ',
+        Parent_Occupation: studentData.Parent_Occupation || '',
+        Family_Income_Range: studentData.Family_Income_Range || '10000-15000 บาท',
+        Daily_Allowance: studentData.Daily_Allowance || '100 บาท',
+        Scholarship_Need: studentData.Scholarship_Need || 'ไม่ต้องการ',
         Financial_Status: 'เพียงพอ',
-        Substance_Raw: studentData.Substance_Raw || 'ไม่มี',
+        Substance_Raw: studentData.Substance_Raw || 'ไม่สูบ ไม่ดื่ม',
         Substance_History: 'ไม่ดื่ม/ไม่สูบ',
         Overall_Risk_Level: 'กลุ่มปกติ',
         Home_Visit_Status: 'ยังไม่เยี่ยมบ้าน',
         Home_Visit_Date: '',
         Home_Visit_Photo: '',
-        Home_Visit_Summary: '',
-        Updated_At: new Date().toISOString()
+        Home_Visit_Summary: ''
       });
-      this.addAuditLog('เพิ่มนักเรียนใหม่', `เพิ่มรหัส ${studentData.Student_ID} (${studentData.Full_Name}) ${studentData.Class_ID}`);
+      this.addAuditLog('เพิ่มนักเรียนใหม่', `เพิ่มรหัส ${studentData.Student_ID} (${studentData.Full_Name}) เข้า ${studentData.Class_ID}`);
     }
     this.save();
+  }
+
+  /**
+   * นำเข้ารายชื่อนักเรียนชั้นปีอื่นแบบยกกลุ่ม (Bulk Import)
+   */
+  bulkUpsertStudents(recordsList, defaultLevelYear, defaultGroupNo, defaultMajor) {
+    const cg = this.ensureClassGroupExists(defaultLevelYear, defaultGroupNo, defaultMajor);
+    let addedCount = 0;
+    let updatedCount = 0;
+
+    recordsList.forEach(item => {
+      const sid = String(item.Student_ID || '').trim();
+      const name = String(item.Full_Name || '').trim();
+      if (!sid || !name) return;
+
+      const existingIdx = this.db.Students.findIndex(s => s.Student_ID === sid);
+      const stuLvlYear = item.Level_Year || cg.Level_Year;
+      const stuGrpNo = item.Group_No || cg.Group_No;
+      const targetCg = this.ensureClassGroupExists(stuLvlYear, stuGrpNo, item.Major || defaultMajor);
+
+      const zoneDist = this.normalizeDistrictName(item.Zone_District || 'ไม่ระบุ');
+      const stuPayload = {
+        Student_ID: sid,
+        Prefix: item.Prefix || 'นาย',
+        Full_Name: name,
+        Nickname: item.Nickname || '',
+        Gender: item.Gender || 'ชาย',
+        Class_ID: targetCg.Class_ID,
+        Level_Year: targetCg.Level_Year,
+        Group_Label: targetCg.Group_Label,
+        Group_No: targetCg.Group_No,
+        Status: 'ปกติ',
+        Phone_Number: String(item.Phone_Number || '').replace(/\D/g, ''),
+        Parent_Name: item.Parent_Name || '',
+        Parent_Phone: String(item.Parent_Phone || '').replace(/\D/g, ''),
+        Emergency_Phone: String(item.Emergency_Phone || '').replace(/\D/g, ''),
+        Emergency_Contact_Note: item.Emergency_Contact_Note || '',
+        Social_Contact: item.Social_Contact || '',
+        House_No: item.House_No || '',
+        Road: item.Road || '',
+        Subdistrict: item.Subdistrict || '',
+        Zone_District: zoneDist,
+        Zipcode: item.Zipcode || '',
+        Address: item.Address || (zoneDist !== 'ไม่ระบุ' ? `อ.${zoneDist}` : 'ยังไม่ได้กรอกที่อยู่'),
+        Home_Location: DISTRICT_COORDS_MAP[zoneDist] || '',
+        Photo_URL: item.Photo_URL || '',
+        Photo_Status: item.Photo_URL ? 'มีรูปแล้ว' : 'ยังไม่มีรูป',
+        Commute_Method: item.Commute_Method || '',
+        Previous_School: item.Previous_School || '',
+        Substance_Raw: item.Substance_Raw || 'ไม่สูบ ไม่ดื่ม',
+        Data_Note: item.Data_Note || 'นำเข้าผ่านระบบ Bulk Import'
+      };
+
+      if (existingIdx >= 0) {
+        this.db.Students[existingIdx] = { ...this.db.Students[existingIdx], ...stuPayload };
+        updatedCount++;
+      } else {
+        this.db.Students.push(stuPayload);
+        this.db.Screening_Records.push({
+          Screening_ID: `SCR-2569-${sid.slice(-4)}`,
+          Academic_Term: '1/2569',
+          Student_ID: sid,
+          Family_Status: 'อยู่ร่วมกัน',
+          Parent_Occupation: item.Parent_Occupation || '',
+          Family_Income_Range: item.Family_Income_Range || 'ไม่ระบุ',
+          Daily_Allowance: item.Daily_Allowance || 'ไม่ระบุ',
+          Scholarship_Need: item.Scholarship_Need || 'ไม่ระบุ',
+          Financial_Status: 'เพียงพอ',
+          Substance_Raw: stuPayload.Substance_Raw,
+          Home_Visit_Status: 'ยังไม่เยี่ยมบ้าน',
+          Home_Visit_Date: '',
+          Home_Visit_Photo: '',
+          Home_Visit_Summary: ''
+        });
+        addedCount++;
+      }
+    });
+
+    this.addAuditLog(
+      'นำเข้าข้อมูลนักเรียนยกกลุ่ม (Bulk Import)',
+      `ชั้น ${cg.Class_ID}: เพิ่มใหม่ ${addedCount} คน, อัปเดต ${updatedCount} คน`
+    );
+    this.save();
+    return { addedCount, updatedCount, classId: cg.Class_ID };
   }
 
   deleteStudent(studentId) {
@@ -481,13 +626,10 @@ class RelationalDatabase {
     this.db.Students = this.db.Students.filter(s => s.Student_ID !== studentId);
     this.db.Discipline_Records = this.db.Discipline_Records.filter(d => d.Student_ID !== studentId);
     this.db.Screening_Records = this.db.Screening_Records.filter(sc => sc.Student_ID !== studentId);
-    this.addAuditLog('ลบข้อมูลนักเรียน', `ลบรหัส ${studentId} (${stu.Full_Name}) และประวัติที่เกี่ยวข้อง`);
+    this.addAuditLog('ลบข้อมูลนักเรียน', `ลบรหัส ${studentId} (${stu.Full_Name})`);
     this.save();
   }
 
-  // --------------------------------------------------------------------------
-  // CRUD ตารางที่ 3: Discipline_Records
-  // --------------------------------------------------------------------------
   addDisciplineRecord(record) {
     const newRecord = {
       Record_ID: record.Record_ID || `DISC-${Date.now()}`,
@@ -503,7 +645,7 @@ class RelationalDatabase {
     const stu = this.getStudentById(newRecord.Student_ID);
     this.addAuditLog(
       'บันทึกพฤติกรรม/ตัดคะแนน',
-      `${stu ? stu.Full_Name : newRecord.Student_ID}: ${newRecord.Violation_Category} (${newRecord.Points_Deducted} คะแนน) - ${newRecord.Action_Taken}`
+      `${stu ? stu.Full_Name : newRecord.Student_ID}: ${newRecord.Violation_Category} (${newRecord.Points_Deducted} คะแนน)`
     );
     this.save();
     return newRecord;
@@ -513,14 +655,11 @@ class RelationalDatabase {
     const rec = this.db.Discipline_Records.find(d => d.Record_ID === recordId);
     this.db.Discipline_Records = this.db.Discipline_Records.filter(d => d.Record_ID !== recordId);
     if (rec) {
-      this.addAuditLog('ลบบันทึกคะแนนความประพฤติ', `ลบรหัสบันทึก ${recordId} ของรหัสนักศึกษา ${rec.Student_ID}`);
+      this.addAuditLog('ลบบันทึกคะแนนความประพฤติ', `ลบรหัสบันทึก ${recordId} ของรหัส ${rec.Student_ID}`);
     }
     this.save();
   }
 
-  // --------------------------------------------------------------------------
-  // CRUD ตารางที่ 4: Screening_Records (SDQ & เยี่ยมบ้าน)
-  // --------------------------------------------------------------------------
   upsertScreeningRecord(studentId, screeningData) {
     const idx = this.db.Screening_Records.findIndex(sc => sc.Student_ID === studentId);
     const stu = this.getStudentById(studentId);
@@ -528,7 +667,6 @@ class RelationalDatabase {
       stu.Substance_Raw = screeningData.Substance_Raw;
     }
 
-    screeningData.Updated_At = new Date().toISOString();
     if (screeningData.Home_Visit_Date || screeningData.Home_Visit_Photo) {
       screeningData.Home_Visit_Status = 'เยี่ยมบ้านแล้ว';
     }
@@ -548,14 +686,11 @@ class RelationalDatabase {
     }
     this.addAuditLog(
       'อัปเดตผลคัดกรอง/เยี่ยมบ้าน',
-      `${stu ? stu.Full_Name : studentId} -> ความเสี่ยง: ${screeningData.Overall_Risk_Level || '-'}, สถานะเยี่ยมบ้าน: ${screeningData.Home_Visit_Status || '-'}`
+      `${stu ? stu.Full_Name : studentId} -> ${screeningData.Overall_Risk_Level || '-'}`
     );
     this.save();
   }
 
-  // --------------------------------------------------------------------------
-  // Audit Log & Import / Export / Cloud Sync
-  // --------------------------------------------------------------------------
   addAuditLog(action, details) {
     if (!this.db.Audit_Logs) this.db.Audit_Logs = [];
     this.db.Audit_Logs.unshift({
@@ -564,8 +699,8 @@ class RelationalDatabase {
       Action: action,
       Details: details
     });
-    if (this.db.Audit_Logs.length > 200) {
-      this.db.Audit_Logs = this.db.Audit_Logs.slice(0, 200);
+    if (this.db.Audit_Logs.length > 100) {
+      this.db.Audit_Logs = this.db.Audit_Logs.slice(0, 100);
     }
   }
 
@@ -574,7 +709,7 @@ class RelationalDatabase {
       throw new Error('ไฟล์ JSON ไม่มีโครงสร้างตาราง Class_Groups และ Students ที่ถูกต้อง');
     }
     this.db = {
-      metadata: jsonObj.metadata || { app_name: 'Student Machine Tool DB V2', updated_at: new Date().toISOString() },
+      metadata: jsonObj.metadata || { app_name: 'Student Machine Tool DB V3', updated_at: new Date().toISOString() },
       Class_Groups: jsonObj.Class_Groups,
       Students: jsonObj.Students,
       Discipline_Records: jsonObj.Discipline_Records || [],

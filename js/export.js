@@ -1,18 +1,74 @@
 /**
  * ============================================================================
- * Export & Backup Utility V2 (JSON, CSV, Excel .xlsx ครบ 4 ตาราง + สาเหตุความเสี่ยง)
+ * Export & Backup Utility V3 (Space-Optimized GitHub Sync + Excel/CSV/JSON)
  * ============================================================================
  */
 
 window.ExportManager = {
+  /**
+   * ส่งออกไฟล์ initial_db.js แบบบีบอัดขนาดเล็กที่สุด (Minified)
+   * สำหรับนำไปวางทับในโฟลเดอร์ data/initial_db.js แล้วอัปขึ้น GitHub เพื่อเปิดใช้ใน Notebook เครื่องอื่น
+   */
+  exportMinifiedInitialDbJs() {
+    const compactJson = JSON.stringify(window.appDB.db);
+    const jsContent = `window.INITIAL_RELATIONAL_DB=${compactJson};\n`;
+    const blob = new Blob([jsContent], { type: 'application/javascript;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'initial_db.js';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  },
+
   exportFullJSON() {
-    const dataStr = JSON.stringify(window.appDB.db, null, 2);
+    const dataStr = JSON.stringify(window.appDB.db);
     const blob = new Blob([dataStr], { type: 'application/json;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     const datePart = new Date().toISOString().slice(0, 10);
     a.href = url;
     a.download = `ฐานข้อมูลนักเรียน_4ตาราง_${datePart}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  },
+
+  /**
+   * ดาวน์โหลดไฟล์แม่แบบ (Template CSV) สำหรับกรอกข้อมูลนักเรียนชั้นปีอื่น (เช่น ปวช.2, ปวช.3, ปวส.2)
+   */
+  downloadImportTemplateCSV() {
+    const headers = [
+      'รหัสประจำตัวนักเรียน',
+      'ชื่อ-นามสกุล',
+      'ชื่อเล่น',
+      'ชั้นปี',
+      'กลุ่มเรียน',
+      'สาขาวิชา',
+      'เบอร์โทรศัพท์มือถือ_นักเรียน',
+      'ชื่อ-นามสกุล_ผู้ปกครอง',
+      'เบอร์โทรศัพท์มือถือ_ผู้ปกครอง',
+      'ตำบล',
+      'อำเภอ',
+      'ดิ่มหรือสูบไหม',
+      'รายได้โดยเฉลี่ยของครอบครัว',
+      'นักเรียนได้เงินมากินวันละกี่บาท',
+      'นักเรียนมีความต้องการทุนการศึกษาไหมในอนาคต',
+      'ลิงก์แสดงรูปภาพ_Direct'
+    ];
+    const sampleRows = [
+      ['68201020001', 'สมชาย ใจดี', 'ชาย', 'ปวช.2', '1', 'ช่างกลโรงงาน', '0812345678', 'สมศรี ใจดี', '0898765432', 'หน้าเมือง', 'เมืองฉะเชิงเทรา', 'ไม่สูบ ไม่ดื่ม', '10000-15000 บาท', '100 บาท', 'ไม่ต้องการ', ''],
+      ['67201020001', 'วีรภัทร รักเรียน', 'พีท', 'ปวช.3', '1', 'ช่างกลโรงงาน', '0823456789', 'วิชัย รักเรียน', '0811112222', 'บางคล้า', 'บางคล้า', 'บุหรี่', 'ต่ำกว่า 10000 บาท', '100 บาท', 'ต้องการ', '']
+    ];
+    const csvContent = '\uFEFF' + [headers.join(','), ...sampleRows.map(r => r.map(v => `"${v}"`).join(','))].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'แม่แบบนำเข้าข้อมูลนักเรียนชั้นปีอื่น_Template.csv';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -108,11 +164,9 @@ window.ExportManager = {
     }
     const wb = XLSX.utils.book_new();
 
-    // Sheet 1: Class_Groups
     const ws1 = XLSX.utils.json_to_sheet(window.appDB.db.Class_Groups);
     XLSX.utils.book_append_sheet(wb, ws1, '1_Class_Groups');
 
-    // Sheet 2: Students
     const cleanStudents = window.appDB.db.Students.map(s => ({
       Student_ID: s.Student_ID,
       Full_Name: s.Full_Name,
@@ -141,14 +195,12 @@ window.ExportManager = {
     const ws2 = XLSX.utils.json_to_sheet(cleanStudents);
     XLSX.utils.book_append_sheet(wb, ws2, '2_Students');
 
-    // Sheet 3: Discipline_Records
     const discData = window.appDB.db.Discipline_Records.length > 0
       ? window.appDB.db.Discipline_Records
       : [{ Record_ID: '-', Date_Time: '-', Student_ID: '-', Violation_Category: '-', Description: 'ยังไม่มีประวัติการตัดคะแนน', Points_Deducted: 0, Action_Taken: '-', Teacher_Reported: '-' }];
     const ws3 = XLSX.utils.json_to_sheet(discData);
     XLSX.utils.book_append_sheet(wb, ws3, '3_Discipline_Records');
 
-    // Sheet 4: Screening_Records
     const scrData = window.appDB.db.Screening_Records.map(sc => ({
       Screening_ID: sc.Screening_ID,
       Academic_Term: sc.Academic_Term,
