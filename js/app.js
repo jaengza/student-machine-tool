@@ -1,6 +1,9 @@
 /**
  * ============================================================================
- * Main Application Controller (Mobile-First & PC Responsive UI)
+ * Main Application Controller V2 (Mobile-First & PC Responsive UI)
+ * - ระบบกลุ่มภาษาไทย ("กลุ่ม1", "กลุ่ม2", ...) แทนรหัส Code
+ * - แสดงข้อมูลการใช้บุหรี่/สุรา/สารเสพติด ตามที่นักเรียนแจ้งในแบบบันทึกจริง
+ * - แสดงสาเหตุของกลุ่มเสี่ยง/มีปัญหาชัดเจน และกดกรองค้นหาตามสาเหตุปัญหาได้ทันที
  * ============================================================================
  */
 
@@ -8,19 +11,22 @@ window.AppState = {
   currentTab: 'dashboard', // 'dashboard' | 'students' | 'discipline' | 'screening' | 'settings'
   studentViewMode: 'grid', // 'grid' | 'table'
   searchQuery: '',
-  filterClassId: 'ALL',
+  filterLevelYear: 'ALL',  // 'ALL' | 'ปวช.1' | 'ปวช.2' | 'ปวส.1'
+  filterGroupLabel: 'ALL', // 'ALL' | 'กลุ่ม1' | 'กลุ่ม2' | 'กลุ่ม3' | 'กลุ่ม4' | 'กลุ่ม5'
+  filterClassId: 'ALL',    // 'ALL' | 'ปวช.1 กลุ่ม1' ...
   filterDistrict: 'ALL',
   filterPhoto: 'ALL',
-  filterRisk: 'ALL',
+  filterRisk: 'ALL',       // 'ALL' | 'กลุ่มมีปัญหา' | 'กลุ่มเสี่ยง' | 'กลุ่มปกติ'
+  filterProblemTag: 'ALL', // 'ALL' | 'สูบบุหรี่' | 'ดื่มเหล้า/เบียร์' | 'น้ำกระท่อม' | 'กัญชา' | 'ANY_SUBSTANCE' | 'NO_SUBSTANCE' | 'รายได้ต่ำ (<10,000 บ.)' | 'ต้องการทุนการศึกษา' | 'ค่าขนมน้อย (<100 บ.)' | 'ครอบครัวหย่าร้าง/แยกกันอยู่' | 'ถูกหักคะแนนความประพฤติ'
   filterIssueOnly: false,
   selectedStudentId: null,
-  profileSubTab: 'info', // 'info' | 'discipline' | 'screening'
   screeningZoneFilter: 'ALL',
-  screeningRiskFilter: 'ALL'
+  screeningRiskFilter: 'ALL',
+  screeningProblemFilter: 'ALL'
 };
 
 // ============================================================================
-// Helper Functions
+// Helper Functions & Visual Badges
 // ============================================================================
 function escapeHtml(str) {
   return String(str ?? '')
@@ -40,7 +46,7 @@ function showToast(message, type = 'success') {
     : type === 'warning'
       ? 'bg-amber-500 text-white'
       : 'bg-emerald-600 text-white';
-  el.className = `${bg} px-4 py-3 rounded-xl shadow-xl flex items-center gap-2.5 text-sm font-medium animate-modal max-w-sm`;
+  el.className = `${bg} px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 text-sm font-medium animate-modal max-w-sm pointer-events-auto`;
   el.innerHTML = `
     <i data-lucide="${type === 'error' ? 'alert-circle' : 'check-circle-2'}" class="w-5 h-5 shrink-0"></i>
     <span>${escapeHtml(message)}</span>
@@ -56,12 +62,124 @@ function showToast(message, type = 'success') {
 
 function getRiskBadge(riskLevel) {
   if (riskLevel === 'กลุ่มมีปัญหา') {
-    return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200"><span class="w-1.5 h-1.5 rounded-full bg-red-600"></span>กลุ่มมีปัญหา</span>`;
+    return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-prompt font-bold bg-red-100 text-red-800 border border-red-300 shadow-sm"><span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>กลุ่มมีปัญหา</span>`;
   }
   if (riskLevel === 'กลุ่มเสี่ยง') {
-    return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>กลุ่มเสี่ยง</span>`;
+    return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-prompt font-bold bg-amber-100 text-amber-900 border border-amber-300"><span class="w-2 h-2 rounded-full bg-amber-500"></span>กลุ่มเสี่ยง</span>`;
   }
-  return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>กลุ่มปกติ</span>`;
+  return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-prompt font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>กลุ่มปกติ</span>`;
+}
+
+/**
+ * แสดงป้ายสาเหตุความเสี่ยง/ปัญหาแต่ละด้านอย่างชัดเจน (ให้รู้ว่าเสี่ยงเรื่องอะไร)
+ */
+function renderRiskReasonBadges(stu) {
+  const reasons = (stu.Screening && stu.Screening.Risk_Reasons) || [];
+  if (reasons.length === 0) {
+    return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">✅ ไม่พบความเสี่ยง (ไม่ดื่ม/ไม่สูบ • เศรษฐกิจปกติ)</span>`;
+  }
+
+  return reasons.map(r => {
+    let color = 'bg-amber-50 text-amber-800 border-amber-200';
+    let icon = '⚠️';
+    if (r.includes('กัญชา') || r.includes('กระท่อม')) {
+      color = 'bg-red-100 text-red-800 border-red-300 font-bold';
+      icon = r.includes('กัญชา') ? '🍁' : '🌿';
+    } else if (r.includes('บุหรี่')) {
+      color = 'bg-orange-100 text-orange-800 border-orange-300 font-semibold';
+      icon = '🚬';
+    } else if (r.includes('เหล้า') || r.includes('เบียร์')) {
+      color = 'bg-purple-100 text-purple-800 border-purple-300 font-semibold';
+      icon = '🍺';
+    } else if (r.includes('รายได้') || r.includes('เศรษฐกิจ') || r.includes('ค่าขนม')) {
+      color = 'bg-rose-50 text-rose-700 border-rose-200 font-semibold';
+      icon = '💰';
+    } else if (r.includes('ทุนการศึกษา')) {
+      color = 'bg-blue-50 text-blue-700 border-blue-200 font-semibold';
+      icon = '🎓';
+    } else if (r.includes('คะแนนความประพฤติ')) {
+      color = 'bg-red-100 text-red-800 border-red-300 font-bold';
+      icon = '🚨';
+    }
+    return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] border ${color}">${icon} ${escapeHtml(r)}</span>`;
+  }).join(' ');
+}
+
+/**
+ * แสดงข้อมูลการใช้บุหรี่/สุรา/สารเสพติด ตามที่นักเรียนแจ้งในแบบบันทึกจริง
+ */
+function renderSubstanceBox(stu, compact = false) {
+  const rawText = stu.Substance_Raw || 'ไม่ระบุ';
+  const tags = stu.Substance_Tags || [];
+  const hasRisk = tags.some(t => ['บุหรี่', 'เหล้า/เบียร์', 'น้ำกระท่อม', 'กัญชา'].includes(t));
+
+  if (compact) {
+    if (!hasRisk) {
+      return `<div class="text-xs text-emerald-700 font-medium">✅ ไม่ดื่ม/ไม่สูบ <span class="text-slate-400 font-normal">(แจ้งว่า: "${escapeHtml(rawText)}")</span></div>`;
+    }
+    return `
+      <div class="text-xs">
+        <span class="font-bold text-rose-700">🚬 ${escapeHtml(tags.join(', '))}</span>
+        <div class="text-[11px] text-slate-500">แจ้งในแบบบันทึก: "${escapeHtml(rawText)}"</div>
+      </div>
+    `;
+  }
+
+  if (!hasRisk) {
+    return `
+      <div class="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200/80 flex items-center justify-between gap-2 text-xs">
+        <span class="text-emerald-900 font-semibold flex items-center gap-1.5">
+          <span class="text-sm">🛡️</span> การใช้บุหรี่/สารเสพติด: <span class="text-emerald-700">ปลอดสารเสพติด</span>
+        </span>
+        <span class="text-[11px] text-emerald-800 bg-white px-2 py-0.5 rounded-md border border-emerald-200">
+          นร.แจ้งว่า: "${escapeHtml(rawText)}"
+        </span>
+      </div>
+    `;
+  }
+
+  const isSevere = tags.includes('น้ำกระท่อม') || tags.includes('กัญชา');
+  const boxStyle = isSevere
+    ? 'bg-red-50/90 border-red-300 text-red-900'
+    : 'bg-orange-50/90 border-orange-200 text-orange-950';
+
+  return `
+    <div class="p-2.5 rounded-xl border ${boxStyle} text-xs space-y-1.5">
+      <div class="flex flex-wrap items-center justify-between gap-1">
+        <span class="font-prompt font-bold flex items-center gap-1">
+          <span>${isSevere ? '🚨' : '🚬'}</span> ข้อมูลบุหรี่/สารเสพติด:
+        </span>
+        <div class="flex flex-wrap gap-1">
+          ${tags.map(t => {
+            if (t === 'กัญชา') return `<span class="px-2 py-0.5 rounded-md bg-red-600 text-white font-bold text-[11px]">🍁 กัญชา</span>`;
+            if (t === 'น้ำกระท่อม') return `<span class="px-2 py-0.5 rounded-md bg-rose-600 text-white font-bold text-[11px]">🌿 น้ำกระท่อม</span>`;
+            if (t === 'เหล้า/เบียร์') return `<span class="px-2 py-0.5 rounded-md bg-purple-600 text-white font-semibold text-[11px]">🍺 เหล้า/เบียร์</span>`;
+            return `<span class="px-2 py-0.5 rounded-md bg-amber-600 text-white font-semibold text-[11px]">🚬 บุหรี่</span>`;
+          }).join('')}
+        </div>
+      </div>
+      <div class="text-[11px] bg-white/80 px-2.5 py-1 rounded-lg border border-black/5 text-slate-700 flex items-center justify-between">
+        <span class="text-slate-500">ข้อมูลที่นักเรียนแจ้งในแบบบันทึก:</span>
+        <b class="text-slate-900">"${escapeHtml(rawText)}"</b>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * แสดงป้ายระดับชั้นและกลุ่มเรียนภาษาไทยสวยงาม ("ปวช.1" + "กลุ่ม1") แทนรหัส Code
+ */
+function renderClassAndGroupBadges(stu) {
+  const lvl = stu.ClassGroup?.Level_Year || stu.Level_Year || 'ปวช.1';
+  const grp = stu.ClassGroup?.Group_Label || stu.Group_Label || `กลุ่ม${stu.Group_No || 1}`;
+  const isPvs = lvl.startsWith('ปวส');
+  const lvlBadge = isPvs
+    ? 'bg-purple-100 text-purple-900 border-purple-200'
+    : 'bg-blue-100 text-blue-900 border-blue-200';
+  return `
+    <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-prompt font-bold border ${lvlBadge}">${escapeHtml(lvl)}</span>
+    <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-prompt font-bold bg-slate-800 text-white">${escapeHtml(grp)}</span>
+  `;
 }
 
 function getStatusBadge(status) {
@@ -71,14 +189,14 @@ function getStatusBadge(status) {
   if (status === 'พักการเรียน') {
     return `<span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-amber-100 text-amber-700">พักการเรียน</span>`;
   }
-  return `<span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-blue-50 text-blue-700">ปกติ</span>`;
+  return `<span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">ปกติ</span>`;
 }
 
-function getAvatarHtml(stu, sizeClass = 'w-14 h-14', textClass = 'text-lg') {
+function getAvatarHtml(stu, sizeClass = 'w-16 h-16', textClass = 'text-lg') {
   const initials = (stu.Full_Name || 'นร').trim().slice(0, 2);
   if (stu.Photo_URL && stu.Photo_Status === 'มีรูปแล้ว') {
     return `
-      <div class="${sizeClass} rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0 relative avatar-wrapper">
+      <div class="${sizeClass} rounded-2xl overflow-hidden bg-slate-100 border-2 border-white shadow-md shrink-0 relative avatar-wrapper">
         <img src="${escapeHtml(stu.Photo_URL)}" alt="${escapeHtml(stu.Full_Name)}" class="w-full h-full object-cover"
           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" loading="lazy" />
         <div style="display:none" class="w-full h-full bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-prompt font-bold ${textClass} items-center justify-center">
@@ -88,7 +206,7 @@ function getAvatarHtml(stu, sizeClass = 'w-14 h-14', textClass = 'text-lg') {
     `;
   }
   return `
-    <div class="${sizeClass} rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 text-slate-600 border border-slate-300 shrink-0 flex flex-col items-center justify-center font-prompt font-bold ${textClass}">
+    <div class="${sizeClass} rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 text-slate-600 border-2 border-white shadow-sm shrink-0 flex flex-col items-center justify-center font-prompt font-bold ${textClass}">
       <span>${escapeHtml(initials)}</span>
       <span class="text-[9px] font-normal text-slate-500 -mt-1">ไม่มีรูป</span>
     </div>
@@ -104,12 +222,25 @@ function switchMainTab(tabName) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function jumpToProblemFilter(problemTag, riskLevel = 'ALL') {
+  window.AppState.currentTab = 'students';
+  window.AppState.filterProblemTag = problemTag;
+  window.AppState.filterRisk = riskLevel;
+  window.AppState.filterIssueOnly = false;
+  window.AppState.filterPhoto = 'ALL';
+  renderAll();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function jumpToStudentIssueFilter(issueFilterType) {
   window.AppState.currentTab = 'students';
   window.AppState.searchQuery = '';
   window.AppState.filterClassId = 'ALL';
+  window.AppState.filterLevelYear = 'ALL';
+  window.AppState.filterGroupLabel = 'ALL';
   window.AppState.filterDistrict = 'ALL';
   window.AppState.filterRisk = 'ALL';
+  window.AppState.filterProblemTag = 'ALL';
 
   if (issueFilterType === 'NO_PHOTO') {
     window.AppState.filterPhoto = 'ยังไม่มีรูป';
@@ -140,7 +271,6 @@ function updateNavActiveState() {
     if (section) {
       section.classList.toggle('hidden', window.AppState.currentTab !== t);
     }
-    // Desktop Nav buttons
     const dBtn = document.getElementById(`desktop-nav-${t}`);
     if (dBtn) {
       if (window.AppState.currentTab === t) {
@@ -149,7 +279,6 @@ function updateNavActiveState() {
         dBtn.className = 'px-3.5 py-2 rounded-xl text-sm font-medium flex items-center gap-2 text-blue-100 hover:bg-white/10 transition';
       }
     }
-    // Mobile Bottom Nav buttons
     const mBtn = document.getElementById(`mobile-nav-${t}`);
     if (mBtn) {
       if (window.AppState.currentTab === t) {
@@ -165,14 +294,14 @@ function populateFilterDropdowns() {
   const groups = window.appDB.getClassGroups();
   const students = window.appDB.getStudents();
 
-  // Class Group Select
+  // Class Group Select (ใช้คำว่า ปวช.1 กลุ่ม1 แทนรหัส Code)
   const classSelect = document.getElementById('filterClassSelect');
   if (classSelect) {
     const currentVal = window.AppState.filterClassId;
-    classSelect.innerHTML = `<option value="ALL">ทุกกลุ่มเรียน (${students.length} คน)</option>` +
+    classSelect.innerHTML = `<option value="ALL">ทุกระดับชั้น / ทุกกลุ่ม (${students.length} คน)</option>` +
       groups.map(g => {
         const cnt = students.filter(s => s.Class_ID === g.Class_ID).length;
-        return `<option value="${escapeHtml(g.Class_ID)}">${escapeHtml(g.Class_ID)} - ${escapeHtml(g.Level)}${g.Year} ${escapeHtml(g.Major)} ก.${g.Group_No} (${cnt} คน)</option>`;
+        return `<option value="${escapeHtml(g.Class_ID)}">${escapeHtml(g.Class_ID)} - ${escapeHtml(g.Major)} (${cnt} คน)</option>`;
       }).join('');
     classSelect.value = currentVal;
   }
@@ -193,7 +322,6 @@ function populateFilterDropdowns() {
     distSelect.value = currentDist;
   }
 
-  // Screening Zone Filter
   const scrZoneSelect = document.getElementById('screeningZoneSelect');
   if (scrZoneSelect) {
     const curZ = window.AppState.screeningZoneFilter;
@@ -201,67 +329,73 @@ function populateFilterDropdowns() {
       sortedDistricts.map(d => `<option value="${escapeHtml(d)}">โซน อ.${escapeHtml(d)} (${distCounts[d]} คน)</option>`).join('');
     scrZoneSelect.value = curZ;
   }
+
+  const filterRiskSelect = document.getElementById('filterRiskSelect');
+  if (filterRiskSelect) {
+    filterRiskSelect.value = window.AppState.filterRisk;
+  }
 }
 
 // ============================================================================
-// TAB 1: DASHBOARD & DATA FIX QUEUE (ศูนย์ตรวจสอบความถูกต้องของข้อมูล)
+// TAB 1: DASHBOARD, สรุปจำนวนเด็กที่มีปัญหาตามสาเหตุ & คิวตรวจข้อมูล
 // ============================================================================
 function renderDashboardTab() {
   const all360 = window.appDB.getAllStudents360();
   const groups = window.appDB.getClassGroups();
+  const stats = window.appDB.getProblemAndSubstanceSummary();
+
   const total = all360.length;
   const pvcCount = all360.filter(s => s.ClassGroup.Level === 'ปวช.').length;
   const pvsCount = all360.filter(s => s.ClassGroup.Level === 'ปวส.').length;
   const hasPhoto = all360.filter(s => s.Photo_Status === 'มีรูปแล้ว').length;
   const noPhoto = total - hasPhoto;
-  const riskCount = all360.filter(s => s.Screening.Overall_Risk_Level !== 'กลุ่มปกติ').length;
-  const visitedCount = all360.filter(s => s.Screening.Home_Visit_Status === 'เยี่ยมบ้านแล้ว').length;
 
-  // คัดกรองนักเรียนที่มีความผิดพลาดของข้อมูลสำคัญ (ไม่รวมเรื่องยังไม่มีรูป เพื่อให้แก้ข้อมูลสำคัญก่อน)
   const criticalIssueStudents = all360.filter(s => {
     const nonPhotoIssues = (s.Data_Issues || []).filter(i => i !== 'ยังไม่มีรูปถ่ายนักเรียน');
     return nonPhotoIssues.length > 0;
   });
 
-  // Update badge on nav
-  const badgeEl = document.getElementById('issueCountBadge');
-  if (badgeEl) {
-    badgeEl.textContent = criticalIssueStudents.length + noPhoto;
-  }
-
   const container = document.getElementById('dashboardContent');
   if (!container) return;
 
-  // Group breakdown rows
+  // Group breakdown cards (แสดง "กลุ่ม1", "กลุ่ม2", ... ชัดเจน)
   const groupCardsHtml = groups.map(g => {
     const gStudents = all360.filter(s => s.Class_ID === g.Class_ID);
     const gPhoto = gStudents.filter(s => s.Photo_Status === 'มีรูปแล้ว').length;
-    const gRisk = gStudents.filter(s => s.Screening.Overall_Risk_Level !== 'กลุ่มปกติ').length;
-    const isEmpty = gStudents.length === 0;
+    const gSub = gStudents.filter(s => (s.Substance_Tags || []).some(t => ['บุหรี่', 'เหล้า/เบียร์', 'น้ำกระท่อม', 'กัญชา'].includes(t))).length;
+    const gProblem = gStudents.filter(s => s.Screening.Overall_Risk_Level === 'กลุ่มมีปัญหา').length;
+    const gRisk = gStudents.filter(s => s.Screening.Overall_Risk_Level === 'กลุ่มเสี่ยง').length;
+
     return `
       <div onclick="filterByClassFromDashboard('${escapeHtml(g.Class_ID)}')"
-           class="interactive-card cursor-pointer bg-white p-4 rounded-2xl border ${isEmpty ? 'border-dashed border-slate-200 opacity-60' : 'border-slate-200/90'} shadow-sm flex flex-col justify-between gap-3">
+           class="interactive-card cursor-pointer bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm flex flex-col justify-between gap-3 hover:border-blue-400">
         <div class="flex items-start justify-between gap-2">
           <div>
-            <span class="inline-block px-2 py-0.5 rounded-md text-[11px] font-bold font-prompt ${g.Level === 'ปวช.' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}">
-              ${escapeHtml(g.Class_ID)}
-            </span>
-            <h4 class="font-prompt font-bold text-slate-800 text-sm sm:text-base mt-1">
-              ${escapeHtml(g.Level)}${g.Year} ${escapeHtml(g.Major)} (กลุ่ม ${g.Group_No})
+            <div class="flex items-center gap-1.5">
+              <span class="px-2.5 py-0.5 rounded-lg text-xs font-prompt font-bold ${g.Level === 'ปวช.' ? 'bg-blue-100 text-blue-900' : 'bg-purple-100 text-purple-900'}">
+                ${escapeHtml(g.Level_Year || (g.Level + g.Year))}
+              </span>
+              <span class="px-2.5 py-0.5 rounded-lg text-xs font-prompt font-bold bg-slate-800 text-white">
+                ${escapeHtml(g.Group_Label || ('กลุ่ม' + g.Group_No))}
+              </span>
+            </div>
+            <h4 class="font-prompt font-bold text-slate-900 text-sm sm:text-base mt-2">
+              สาขา${escapeHtml(g.Major)}
             </h4>
             <p class="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
               <i data-lucide="user-check" class="w-3.5 h-3.5 text-slate-400"></i>
               ${escapeHtml(g.Advisor_Name)}
             </p>
           </div>
-          <div class="text-right shrink-0">
+          <div class="text-right shrink-0 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">
             <span class="text-xl font-bold font-prompt text-slate-900">${gStudents.length}</span>
-            <span class="block text-[11px] text-slate-400">คน</span>
+            <span class="block text-[10px] text-slate-500">คน</span>
           </div>
         </div>
-        <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-          <span class="text-emerald-700 font-medium">มีรูป: ${gPhoto}/${gStudents.length}</span>
-          <span class="${gRisk > 0 ? 'text-amber-700 font-semibold' : 'text-slate-400'}">กลุ่มเสี่ยง: ${gRisk} คน</span>
+        <div class="pt-2.5 border-t border-slate-100 grid grid-cols-3 gap-1 text-[11px] text-center">
+          <div class="bg-emerald-50 text-emerald-800 rounded-lg py-1 font-medium">รูปครบ ${gPhoto}/${gStudents.length}</div>
+          <div class="bg-orange-50 text-orange-800 rounded-lg py-1 font-semibold">ดื่ม/สูบ ${gSub} คน</div>
+          <div class="bg-red-50 text-red-800 rounded-lg py-1 font-semibold">เสี่ยง/ปัญหา ${gRisk + gProblem}</div>
         </div>
       </div>
     `;
@@ -269,21 +403,21 @@ function renderDashboardTab() {
 
   // Critical Data Fix Queue Rows
   const criticalRowsHtml = criticalIssueStudents.length === 0
-    ? `<div class="p-6 text-center text-emerald-700 bg-emerald-50 rounded-xl border border-emerald-200 text-sm font-medium">
-         ข้อมูลหลัก (รหัสนักศึกษา, เบอร์โทรศัพท์ 10 หลัก, ที่อยู่/โซนอำเภอ) ครบถ้วนสมบูรณ์ 100%!
+    ? `<div class="p-5 text-center text-emerald-700 bg-emerald-50 rounded-2xl border border-emerald-200 text-sm font-medium">
+         ✅ ข้อมูลหลัก (รหัสนักศึกษา, เบอร์โทรศัพท์ 10 หลัก, ที่อยู่/โซนอำเภอ) ครบถ้วนสมบูรณ์ 100%!
        </div>`
     : criticalIssueStudents.map(stu => {
         const nonPhotoIssues = (stu.Data_Issues || []).filter(i => i !== 'ยังไม่มีรูปถ่ายนักเรียน');
         return `
-          <div class="p-3.5 bg-amber-50/70 hover:bg-amber-50 rounded-xl border border-amber-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition">
+          <div class="p-3.5 bg-amber-50/70 hover:bg-amber-50 rounded-2xl border border-amber-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition">
             <div class="flex items-start gap-3">
-              ${getAvatarHtml(stu, 'w-11 h-11', 'text-sm')}
+              ${getAvatarHtml(stu, 'w-12 h-12', 'text-sm')}
               <div>
                 <div class="flex flex-wrap items-center gap-1.5">
-                  <span class="font-mono text-xs font-bold text-blue-900 bg-blue-100 px-2 py-0.5 rounded">${escapeHtml(stu.Student_ID)}</span>
+                  <span class="font-mono text-xs font-bold text-blue-900 bg-blue-100 px-2 py-0.5 rounded-md">${escapeHtml(stu.Student_ID)}</span>
                   <span class="font-prompt font-bold text-slate-900 text-sm">${escapeHtml(stu.Full_Name)}</span>
                   ${stu.Nickname ? `<span class="text-xs text-slate-500">(${escapeHtml(stu.Nickname)})</span>` : ''}
-                  <span class="text-xs px-2 py-0.5 rounded bg-slate-200 text-slate-700 font-medium">${escapeHtml(stu.Class_ID)}</span>
+                  ${renderClassAndGroupBadges(stu)}
                 </div>
                 <div class="flex flex-wrap gap-1.5 mt-1.5">
                   ${nonPhotoIssues.map(iss => `
@@ -292,7 +426,6 @@ function renderDashboardTab() {
                     </span>
                   `).join('')}
                 </div>
-                ${stu.Data_Note ? `<p class="text-xs text-slate-500 mt-1">หมายเหตุเดิม: ${escapeHtml(stu.Data_Note)}</p>` : ''}
               </div>
             </div>
             <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
@@ -310,106 +443,211 @@ function renderDashboardTab() {
       }).join('');
 
   container.innerHTML = `
-    <!-- KPI Metric Cards -->
+    <!-- 1. KPI Metric Cards ด้านบนสุด -->
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
-      <div onclick="switchMainTab('students')" class="interactive-card cursor-pointer bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80">
+      <div onclick="resetStudentFilters(); switchMainTab('students')" class="interactive-card cursor-pointer bg-white p-4 rounded-2xl shadow-sm border border-slate-200/90">
         <div class="flex items-center justify-between mb-1">
           <span class="text-xs font-medium text-slate-500">นักเรียนทั้งหมด</span>
-          <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center"><i data-lucide="users" class="w-4 h-4"></i></div>
+          <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><i data-lucide="users" class="w-4 h-4"></i></div>
         </div>
         <div class="text-2xl font-bold font-prompt text-slate-900">${total} <span class="text-xs font-normal text-slate-500">คน</span></div>
-        <div class="text-[11px] text-slate-500 mt-1">ปวช. ${pvcCount} | ปวส. ${pvsCount}</div>
+        <div class="text-[11px] text-slate-500 mt-1">ปวช. ${pvcCount} • ปวส. ${pvsCount}</div>
       </div>
 
-      <div onclick="jumpToStudentIssueFilter('CRITICAL_DATA')" class="interactive-card cursor-pointer bg-white p-4 rounded-2xl shadow-sm border ${criticalIssueStudents.length > 0 ? 'border-red-300 bg-red-50/20' : 'border-slate-200/80'}">
+      <div onclick="jumpToProblemFilter('ALL', 'กลุ่มมีปัญหา')" class="interactive-card cursor-pointer bg-white p-4 rounded-2xl shadow-sm border-2 border-red-200 bg-red-50/20">
         <div class="flex items-center justify-between mb-1">
-          <span class="text-xs font-semibold text-red-700">ข้อมูลรอแก้ไขด่วน</span>
-          <div class="w-8 h-8 rounded-lg bg-red-100 text-red-600 flex items-center justify-center"><i data-lucide="Wrench" class="w-4 h-4"></i></div>
+          <span class="text-xs font-bold text-red-700">🔴 กลุ่มมีปัญหา</span>
+          <div class="w-8 h-8 rounded-xl bg-red-100 text-red-600 flex items-center justify-center"><i data-lucide="flame" class="w-4 h-4"></i></div>
         </div>
-        <div class="text-2xl font-bold font-prompt text-red-600">${criticalIssueStudents.length} <span class="text-xs font-normal text-slate-500">คน</span></div>
-        <div class="text-[11px] text-red-600 mt-1 underline">กดเพื่อดูและแก้ไข</div>
+        <div class="text-2xl font-bold font-prompt text-red-600">${stats.riskProblem} <span class="text-xs font-normal text-slate-500">คน</span></div>
+        <div class="text-[11px] text-red-700 mt-1 underline">กระท่อม/กัญชา/ปัญหาซ้ำซ้อน</div>
       </div>
 
-      <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80">
+      <div onclick="jumpToProblemFilter('ALL', 'กลุ่มเสี่ยง')" class="interactive-card cursor-pointer bg-white p-4 rounded-2xl shadow-sm border border-amber-300 bg-amber-50/20">
         <div class="flex items-center justify-between mb-1">
-          <span class="text-xs font-medium text-slate-500">มีรูปถ่ายแล้ว</span>
-          <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center"><i data-lucide="image" class="w-4 h-4"></i></div>
+          <span class="text-xs font-bold text-amber-800">🟠 กลุ่มเสี่ยง</span>
+          <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center"><i data-lucide="alert-triangle" class="w-4 h-4"></i></div>
         </div>
-        <div class="text-2xl font-bold font-prompt text-emerald-600">${hasPhoto} <span class="text-xs font-normal text-slate-500">คน</span></div>
-        <div class="text-[11px] text-slate-500 mt-1">คิดเป็น ${Math.round((hasPhoto / (total || 1)) * 100)}%</div>
+        <div class="text-2xl font-bold font-prompt text-amber-600">${stats.riskWarning} <span class="text-xs font-normal text-slate-500">คน</span></div>
+        <div class="text-[11px] text-amber-800 mt-1 underline">บุหรี่/สุรา/รายได้ต่ำ/ขอทุน</div>
       </div>
 
-      <div onclick="jumpToStudentIssueFilter('NO_PHOTO')" class="interactive-card cursor-pointer bg-white p-4 rounded-2xl shadow-sm border border-amber-200">
+      <div onclick="jumpToProblemFilter('ANY_SUBSTANCE', 'ALL')" class="interactive-card cursor-pointer bg-white p-4 rounded-2xl shadow-sm border border-orange-200">
         <div class="flex items-center justify-between mb-1">
-          <span class="text-xs font-medium text-amber-800">ยังไม่มีรูปถ่าย</span>
-          <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center"><i data-lucide="image-off" class="w-4 h-4"></i></div>
+          <span class="text-xs font-semibold text-orange-800">🚬 ดื่ม/สูบ/สารเสพติด</span>
+          <div class="w-8 h-8 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center"><i data-lucide="cigarette" class="w-4 h-4"></i></div>
         </div>
-        <div class="text-2xl font-bold font-prompt text-amber-600">${noPhoto} <span class="text-xs font-normal text-slate-500">คน</span></div>
-        <div class="text-[11px] text-amber-700 mt-1 underline">กดเพื่อกรองตามรูป</div>
+        <div class="text-2xl font-bold font-prompt text-orange-600">${stats.anySubstance} <span class="text-xs font-normal text-slate-500">คน</span></div>
+        <div class="text-[11px] text-orange-700 mt-1 underline">ตามที่นักเรียนแจ้งในฟอร์ม</div>
       </div>
 
-      <div onclick="switchMainTab('screening')" class="interactive-card cursor-pointer bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80">
+      <div onclick="jumpToStudentIssueFilter('NO_PHOTO')" class="interactive-card cursor-pointer bg-white p-4 rounded-2xl shadow-sm border border-slate-200/90">
         <div class="flex items-center justify-between mb-1">
-          <span class="text-xs font-medium text-slate-500">กลุ่มเสี่ยง/มีปัญหา</span>
-          <div class="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center"><i data-lucide="shield-alert" class="w-4 h-4"></i></div>
+          <span class="text-xs font-medium text-slate-600">รูปถ่ายนักเรียน</span>
+          <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><i data-lucide="camera" class="w-4 h-4"></i></div>
         </div>
-        <div class="text-2xl font-bold font-prompt text-orange-600">${riskCount} <span class="text-xs font-normal text-slate-500">คน</span></div>
-        <div class="text-[11px] text-slate-500 mt-1">จากระบบคัดกรอง SDQ</div>
+        <div class="text-2xl font-bold font-prompt text-emerald-600">${hasPhoto}<span class="text-sm text-slate-400">/${total}</span></div>
+        <div class="text-[11px] text-amber-600 mt-1 underline">ยังไม่มีรูป ${noPhoto} คน (กดดู)</div>
       </div>
 
-      <div onclick="switchMainTab('screening')" class="interactive-card cursor-pointer bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80">
+      <div onclick="jumpToStudentIssueFilter('CRITICAL_DATA')" class="interactive-card cursor-pointer bg-white p-4 rounded-2xl shadow-sm border border-slate-200/90">
         <div class="flex items-center justify-between mb-1">
-          <span class="text-xs font-medium text-slate-500">เยี่ยมบ้านแล้ว</span>
-          <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
+          <span class="text-xs font-semibold text-rose-700">ข้อมูลรอแก้ไข</span>
+          <div class="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center"><i data-lucide="wrench" class="w-4 h-4"></i></div>
         </div>
-        <div class="text-2xl font-bold font-prompt text-indigo-600">${visitedCount}/${total}</div>
-        <div class="text-[11px] text-slate-500 mt-1">บันทึกพิกัด & รูปถ่าย</div>
+        <div class="text-2xl font-bold font-prompt text-rose-600">${criticalIssueStudents.length} <span class="text-xs font-normal text-slate-500">คน</span></div>
+        <div class="text-[11px] text-rose-600 mt-1 underline">เบอร์ผิด/ยังไม่กรอกฟอร์ม</div>
       </div>
     </div>
 
-    <!-- กล่องคิวแก้ไขข้อมูลที่ผิดพลาด (Data Fix Queue) -->
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200/90 p-4 sm:p-6 mb-6">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
-        <div class="flex items-start sm:items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
-            <i data-lucide="clipboard-check" class="w-5 h-5"></i>
-          </div>
+    <!-- 2. ศูนย์วิเคราะห์และค้นหานักเรียนที่มีปัญหาแยกตามสาเหตุ (กดเพื่อดูรายชื่อทันที) -->
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 p-5 sm:p-6 mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-100">
+        <div>
+          <h2 class="font-prompt font-bold text-base sm:text-lg text-slate-900 flex items-center gap-2">
+            <i data-lucide="search-check" class="w-5 h-5 text-indigo-600"></i>
+            สรุปจำนวนนักเรียนแยกตามสาเหตุปัญหา & การใช้บุหรี่/สารเสพติด (คลิกที่กล่องเพื่อดูรายชื่อทันที)
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            จำแนกจากข้อมูลที่นักเรียนแจ้งจริงในแบบสอบถาม เพื่อให้ครูที่ปรึกษาและงานปกครองรู้ทันทีว่ามีเด็กมีปัญหากี่คน จากเรื่องอะไรบ้าง
+          </p>
+        </div>
+        <button onclick="resetStudentFilters(); switchMainTab('students')" class="self-start sm:self-center px-3.5 py-2 rounded-xl bg-slate-900 text-white text-xs font-prompt font-semibold flex items-center gap-1.5 shrink-0">
+          ดูรายชื่อทั้งหมด (${total} คน) <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3 mt-4">
+        <!-- บุหรี่ -->
+        <div onclick="jumpToProblemFilter('สูบบุหรี่')" class="interactive-card cursor-pointer p-3.5 rounded-2xl bg-orange-50/80 hover:bg-orange-100/80 border border-orange-200 flex items-center justify-between">
           <div>
-            <h2 class="font-prompt font-bold text-base sm:text-lg text-slate-900">
-              รายการตรวจพบข้อมูลไม่สมบูรณ์ / รอการแก้ไข (${criticalIssueStudents.length} รายการ)
-            </h2>
-            <p class="text-xs text-slate-500">
-              ระบบตรวจสอบอัตโนมัติ (เบอร์โทรไม่ครบ 10 หลัก, ยังไม่กรอกแบบสอบถามหลัก, ไม่ระบุอำเภอ) สามารถกดปุ่ม <b>"แก้ไขข้อมูลทันที"</b> ได้เลย
-            </p>
+            <div class="text-xs font-prompt font-bold text-orange-900">🚬 สูบบุหรี่</div>
+            <div class="text-[11px] text-orange-700 mt-0.5">แจ้งในแบบบันทึก</div>
           </div>
+          <div class="text-xl font-prompt font-bold text-orange-700 bg-white px-2.5 py-1 rounded-xl border border-orange-200">${stats.smoke} คน</div>
         </div>
-        <div class="flex items-center gap-2 shrink-0">
-          <button onclick="openEditStudentModal(null)" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-prompt font-semibold flex items-center gap-1.5 shadow-sm transition">
-            <i data-lucide="user-plus" class="w-4 h-4"></i> เพิ่มนักเรียนใหม่
-          </button>
+
+        <!-- เหล้า/เบียร์ -->
+        <div onclick="jumpToProblemFilter('ดื่มเหล้า/เบียร์')" class="interactive-card cursor-pointer p-3.5 rounded-2xl bg-purple-50/80 hover:bg-purple-100/80 border border-purple-200 flex items-center justify-between">
+          <div>
+            <div class="text-xs font-prompt font-bold text-purple-900">🍺 ดื่มเหล้า/เบียร์</div>
+            <div class="text-[11px] text-purple-700 mt-0.5">แจ้งในแบบบันทึก</div>
+          </div>
+          <div class="text-xl font-prompt font-bold text-purple-700 bg-white px-2.5 py-1 rounded-xl border border-purple-200">${stats.alcohol} คน</div>
         </div>
-      </div>
-      <div class="mt-4 space-y-2.5">
-        ${criticalRowsHtml}
+
+        <!-- น้ำกระท่อม -->
+        <div onclick="jumpToProblemFilter('น้ำกระท่อม')" class="interactive-card cursor-pointer p-3.5 rounded-2xl bg-rose-50/90 hover:bg-rose-100/80 border border-rose-300 flex items-center justify-between">
+          <div>
+            <div class="text-xs font-prompt font-bold text-rose-900">🌿 ดื่มน้ำกระท่อม</div>
+            <div class="text-[11px] text-rose-700 mt-0.5">เฝ้าระวังเข้มงวด</div>
+          </div>
+          <div class="text-xl font-prompt font-bold text-rose-700 bg-white px-2.5 py-1 rounded-xl border border-rose-300">${stats.kratom} คน</div>
+        </div>
+
+        <!-- กัญชา -->
+        <div onclick="jumpToProblemFilter('กัญชา')" class="interactive-card cursor-pointer p-3.5 rounded-2xl bg-red-50 hover:bg-red-100 border border-red-300 flex items-center justify-between">
+          <div>
+            <div class="text-xs font-prompt font-bold text-red-900">🍁 ใช้กัญชา</div>
+            <div class="text-[11px] text-red-700 mt-0.5">กลุ่มมีปัญหาเร่งด่วน</div>
+          </div>
+          <div class="text-xl font-prompt font-bold text-red-700 bg-white px-2.5 py-1 rounded-xl border border-red-300">${stats.weed} คน</div>
+        </div>
+
+        <!-- ปลอดสารเสพติด -->
+        <div onclick="jumpToProblemFilter('NO_SUBSTANCE')" class="interactive-card cursor-pointer p-3.5 rounded-2xl bg-emerald-50/80 hover:bg-emerald-100/80 border border-emerald-200 flex items-center justify-between">
+          <div>
+            <div class="text-xs font-prompt font-bold text-emerald-900">✅ ไม่ดื่ม/ไม่สูบ</div>
+            <div class="text-[11px] text-emerald-700 mt-0.5">ปลอดสารเสพติด</div>
+          </div>
+          <div class="text-xl font-prompt font-bold text-emerald-700 bg-white px-2.5 py-1 rounded-xl border border-emerald-200">${stats.cleanSubstance} คน</div>
+        </div>
+
+        <!-- รายได้ต่ำกว่า 10,000 -->
+        <div onclick="jumpToProblemFilter('รายได้ต่ำ (<10,000 บ.)')" class="interactive-card cursor-pointer p-3.5 rounded-2xl bg-amber-50/80 hover:bg-amber-100/80 border border-amber-200 flex items-center justify-between">
+          <div>
+            <div class="text-xs font-prompt font-bold text-amber-900">💰 รายได้ต่ำ</div>
+            <div class="text-[11px] text-amber-700 mt-0.5">ต่ำกว่า 10,000 บ./เดือน</div>
+          </div>
+          <div class="text-xl font-prompt font-bold text-amber-800 bg-white px-2.5 py-1 rounded-xl border border-amber-200">${stats.lowIncome} คน</div>
+        </div>
+
+        <!-- ต้องการทุนการศึกษา -->
+        <div onclick="jumpToProblemFilter('ต้องการทุนการศึกษา')" class="interactive-card cursor-pointer p-3.5 rounded-2xl bg-blue-50/80 hover:bg-blue-100/80 border border-blue-200 flex items-center justify-between">
+          <div>
+            <div class="text-xs font-prompt font-bold text-blue-900">🎓 ต้องการทุนฯ</div>
+            <div class="text-[11px] text-blue-700 mt-0.5">แจ้งความประสงค์ขอทุน</div>
+          </div>
+          <div class="text-xl font-prompt font-bold text-blue-700 bg-white px-2.5 py-1 rounded-xl border border-blue-200">${stats.scholarship} คน</div>
+        </div>
+
+        <!-- เงินมาเรียนน้อย (<100 บ.) -->
+        <div onclick="jumpToProblemFilter('ค่าขนมน้อย (<100 บ.)')" class="interactive-card cursor-pointer p-3.5 rounded-2xl bg-pink-50/80 hover:bg-pink-100/80 border border-pink-200 flex items-center justify-between">
+          <div>
+            <div class="text-xs font-prompt font-bold text-pink-900">💸 ค่าขนมน้อย</div>
+            <div class="text-[11px] text-pink-700 mt-0.5">น้อยกว่า 100 บาท/วัน</div>
+          </div>
+          <div class="text-xl font-prompt font-bold text-pink-700 bg-white px-2.5 py-1 rounded-xl border border-pink-200">${stats.lowAllowance} คน</div>
+        </div>
+
+        <!-- ถูกหักคะแนนความประพฤติ -->
+        <div onclick="jumpToProblemFilter('ถูกหักคะแนนความประพฤติ')" class="interactive-card cursor-pointer p-3.5 rounded-2xl bg-slate-100 hover:bg-slate-200 border border-slate-300 flex items-center justify-between">
+          <div>
+            <div class="text-xs font-prompt font-bold text-slate-900">🚨 ถูกตัดคะแนน</div>
+            <div class="text-[11px] text-slate-600 mt-0.5">มีประวัติงานปกครอง</div>
+          </div>
+          <div class="text-xl font-prompt font-bold text-slate-800 bg-white px-2.5 py-1 rounded-xl border border-slate-300">${stats.disciplineDeducted} คน</div>
+        </div>
+
+        <!-- กลุ่มปกติ -->
+        <div onclick="jumpToProblemFilter('ALL', 'กลุ่มปกติ')" class="interactive-card cursor-pointer p-3.5 rounded-2xl bg-teal-50/80 hover:bg-teal-100/80 border border-teal-200 flex items-center justify-between">
+          <div>
+            <div class="text-xs font-prompt font-bold text-teal-900">🟢 กลุ่มปกติ</div>
+            <div class="text-[11px] text-teal-700 mt-0.5">ไม่พบความเสี่ยงใดๆ</div>
+          </div>
+          <div class="text-xl font-prompt font-bold text-teal-700 bg-white px-2.5 py-1 rounded-xl border border-teal-200">${stats.riskNormal} คน</div>
+        </div>
       </div>
     </div>
 
-    <!-- สรุปข้อมูลแยกตามตารางที่ 1: Class_Groups -->
+    <!-- 3. สรุปข้อมูลแยกตามกลุ่มเรียน (ใช้คำว่า กลุ่ม1 - กลุ่ม5) -->
     <div class="mb-6">
       <div class="flex items-center justify-between mb-3">
         <div>
           <h2 class="font-prompt font-bold text-base sm:text-lg text-slate-900 flex items-center gap-2">
             <i data-lucide="layers" class="w-5 h-5 text-blue-700"></i>
-            ตารางที่ 1: ข้อมูลชั้นเรียนและกลุ่มเรียน (Class_Groups)
+            ข้อมูลชั้นเรียนและกลุ่มเรียน (ปวช.1 กลุ่ม1–4 • ปวช.2 กลุ่ม4 • ปวส.1 กลุ่ม1, 2, 5)
           </h2>
-          <p class="text-xs text-slate-500">คลิกที่การ์ดกลุ่มเรียนเพื่อดูรายชื่อนักเรียนเฉพาะกลุ่มนั้น หรือตั้งค่าชื่อครูที่ปรึกษา</p>
+          <p class="text-xs text-slate-500">แตะที่การ์ดกลุ่มเรียนเพื่อดูรายชื่อนักเรียนเฉพาะกลุ่มนั้น</p>
         </div>
         <button onclick="switchMainTab('settings')" class="text-xs font-prompt font-semibold text-blue-700 hover:text-blue-900 flex items-center gap-1">
-          <i data-lucide="settings" class="w-3.5 h-3.5"></i> แก้ไขครูที่ปรึกษา/กลุ่ม
+          <i data-lucide="settings" class="w-3.5 h-3.5"></i> แก้ไขชื่อครูที่ปรึกษา
         </button>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         ${groupCardsHtml}
+      </div>
+    </div>
+
+    <!-- 4. กล่องคิวแก้ไขข้อมูลที่ผิดพลาด (Data Fix Queue) -->
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 p-5 sm:p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+        <div class="flex items-start sm:items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+            <i data-lucide="clipboard-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h2 class="font-prompt font-bold text-base sm:text-lg text-slate-900">
+              รายการตรวจพบข้อมูลพื้นฐาน/เบอร์โทรศัพท์ไม่สมบูรณ์ (${criticalIssueStudents.length} รายการ)
+            </h2>
+            <p class="text-xs text-slate-500">
+              สามารถกดปุ่ม <b>"แก้ไขข้อมูลทันที"</b> เพื่อซ่อมข้อมูลให้ถูกต้องสมบูรณ์ได้เลย
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="mt-4 space-y-2.5">
+        ${criticalRowsHtml}
       </div>
     </div>
   `;
@@ -418,14 +656,18 @@ function renderDashboardTab() {
 function filterByClassFromDashboard(classId) {
   window.AppState.currentTab = 'students';
   window.AppState.filterClassId = classId;
+  window.AppState.filterLevelYear = 'ALL';
+  window.AppState.filterGroupLabel = 'ALL';
   window.AppState.filterIssueOnly = false;
   window.AppState.filterPhoto = 'ALL';
+  window.AppState.filterRisk = 'ALL';
+  window.AppState.filterProblemTag = 'ALL';
   renderAll();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // ============================================================================
-// TAB 2: STUDENTS DIRECTORY & 360 PROFILE (ตารางที่ 2: Students)
+// TAB 2: ทำเนียบนักเรียน & ค้นหาตามกลุ่ม/สารเสพติด/สาเหตุความเสี่ยง
 // ============================================================================
 function getFilteredStudents360() {
   const all = window.appDB.getAllStudents360();
@@ -433,24 +675,47 @@ function getFilteredStudents360() {
 
   return all.filter(s => {
     if (window.AppState.filterClassId !== 'ALL' && s.Class_ID !== window.AppState.filterClassId) return false;
+    if (window.AppState.filterLevelYear !== 'ALL' && s.ClassGroup.Level_Year !== window.AppState.filterLevelYear) return false;
+    if (window.AppState.filterGroupLabel !== 'ALL' && s.ClassGroup.Group_Label !== window.AppState.filterGroupLabel) return false;
     if (window.AppState.filterDistrict !== 'ALL' && s.Zone_District !== window.AppState.filterDistrict) return false;
     if (window.AppState.filterPhoto !== 'ALL' && s.Photo_Status !== window.AppState.filterPhoto) return false;
     if (window.AppState.filterRisk !== 'ALL' && s.Screening.Overall_Risk_Level !== window.AppState.filterRisk) return false;
+
+    // กรองตามสาเหตุปัญหา / การใช้สารเสพติด
+    const pTag = window.AppState.filterProblemTag;
+    if (pTag !== 'ALL') {
+      const subTags = s.Substance_Tags || [];
+      const riskTags = (s.Screening && s.Screening.Risk_Tags) || [];
+      if (pTag === 'ANY_SUBSTANCE') {
+        if (!subTags.some(t => ['บุหรี่', 'เหล้า/เบียร์', 'น้ำกระท่อม', 'กัญชา'].includes(t))) return false;
+      } else if (pTag === 'NO_SUBSTANCE') {
+        if (!subTags.includes('ไม่ดื่ม/ไม่สูบ')) return false;
+      } else {
+        if (!subTags.includes(pTag) && !riskTags.includes(pTag)) return false;
+      }
+    }
+
     if (window.AppState.filterIssueOnly) {
       const nonPhotoIssues = (s.Data_Issues || []).filter(i => i !== 'ยังไม่มีรูปถ่ายนักเรียน');
       if (nonPhotoIssues.length === 0) return false;
     }
+
     if (q) {
       const hay = [
         s.Student_ID,
         s.Full_Name,
         s.Nickname,
+        s.Class_ID,
+        s.Group_Label,
         s.Phone_Number,
         s.Parent_Name,
         s.Parent_Phone,
         s.Zone_District,
         s.Subdistrict,
-        s.Previous_School
+        s.Previous_School,
+        s.Substance_Raw,
+        s.Substance_Clean,
+        (s.Screening && s.Screening.Risk_Factors_Note) || ''
       ].join(' ').toLowerCase();
       if (!hay.includes(q)) return false;
     }
@@ -459,16 +724,107 @@ function getFilteredStudents360() {
 }
 
 function renderStudentsTab() {
+  const all360 = window.appDB.getAllStudents360();
+  const stats = window.appDB.getProblemAndSubstanceSummary();
+
+  // 1. Render Quick Group Filter Bar (ระดับชั้น + กลุ่ม1 ถึง กลุ่ม5)
+  const groupBar = document.getElementById('quickGroupFilterBar');
+  if (groupBar) {
+    const levels = ['ALL', 'ปวช.1', 'ปวช.2', 'ปวส.1'];
+    const groupLabels = ['ALL', 'กลุ่ม1', 'กลุ่ม2', 'กลุ่ม3', 'กลุ่ม4', 'กลุ่ม5'];
+
+    groupBar.innerHTML = `
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+          <span class="text-xs font-prompt font-bold text-slate-500 mr-1 shrink-0">ระดับชั้น:</span>
+          ${levels.map(lv => {
+            const active = window.AppState.filterLevelYear === lv && window.AppState.filterClassId === 'ALL';
+            const cnt = lv === 'ALL' ? all360.length : all360.filter(s => s.ClassGroup.Level_Year === lv).length;
+            return `
+              <button onclick="setQuickLevelFilter('${lv}')"
+                      class="px-3 py-1.5 rounded-xl text-xs font-prompt font-semibold whitespace-nowrap transition ${active ? 'bg-blue-700 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}">
+                ${lv === 'ALL' ? `ทุกระดับชั้น (${cnt})` : `${lv} (${cnt})`}
+              </button>
+            `;
+          }).join('')}
+        </div>
+
+        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+          <span class="text-xs font-prompt font-bold text-slate-500 mr-1 shrink-0">เลือกกลุ่มเรียน:</span>
+          ${groupLabels.map(gl => {
+            const active = window.AppState.filterGroupLabel === gl && window.AppState.filterClassId === 'ALL';
+            const cnt = gl === 'ALL'
+              ? all360.length
+              : all360.filter(s => (window.AppState.filterLevelYear === 'ALL' || s.ClassGroup.Level_Year === window.AppState.filterLevelYear) && s.ClassGroup.Group_Label === gl).length;
+            return `
+              <button onclick="setQuickGroupLabelFilter('${gl}')"
+                      class="px-3 py-1.5 rounded-xl text-xs font-prompt font-semibold whitespace-nowrap transition ${active ? 'bg-slate-900 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}">
+                ${gl === 'ALL' ? `ทุกกลุ่ม` : `${gl} (${cnt})`}
+              </button>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // 2. Render Quick Problem & Substance Filter Bar (ค้นหาได้ง่ายว่ามีเด็กมีปัญหากี่คนจากเรื่องอะไร)
+  const problemBar = document.getElementById('quickProblemFilterBar');
+  if (problemBar) {
+    const problemPills = [
+      { id: 'ALL', label: `ทั้งหมด (${stats.total})` },
+      { id: 'สูบบุหรี่', label: `🚬 สูบบุหรี่ (${stats.smoke})` },
+      { id: 'ดื่มเหล้า/เบียร์', label: `🍺 ดื่มเหล้า/เบียร์ (${stats.alcohol})` },
+      { id: 'น้ำกระท่อม', label: `🌿 น้ำกระท่อม (${stats.kratom})` },
+      { id: 'กัญชา', label: `🍁 กัญชา (${stats.weed})` },
+      { id: 'ANY_SUBSTANCE', label: `🔥 ดื่ม/สูบทุกชนิด (${stats.anySubstance})` },
+      { id: 'NO_SUBSTANCE', label: `✅ ไม่ดื่ม/ไม่สูบ (${stats.cleanSubstance})` },
+      { id: 'รายได้ต่ำ (<10,000 บ.)', label: `💰 รายได้ต่ำ <10,000 (${stats.lowIncome})` },
+      { id: 'ต้องการทุนการศึกษา', label: `🎓 ต้องการทุนฯ (${stats.scholarship})` },
+      { id: 'ค่าขนมน้อย (<100 บ.)', label: `💸 ค่าขนม <100 บ. (${stats.lowAllowance})` }
+    ];
+
+    problemBar.innerHTML = `
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+        <span class="text-xs font-prompt font-bold text-rose-700 mr-1 shrink-0 flex items-center gap-1">
+          <i data-lucide="filter" class="w-3.5 h-3.5"></i> กรองตามปัญหา/สารเสพติด:
+        </span>
+        ${problemPills.map(p => {
+          const active = window.AppState.filterProblemTag === p.id;
+          return `
+            <button onclick="setQuickProblemTag('${p.id}')"
+                    class="px-3 py-1.5 rounded-xl text-xs font-prompt font-semibold whitespace-nowrap transition ${active ? 'bg-rose-600 text-white shadow-sm' : 'bg-rose-50/70 text-rose-900 border border-rose-200 hover:bg-rose-100'}">
+              ${p.label}
+            </button>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
+
   const filtered = getFilteredStudents360();
   const countEl = document.getElementById('filteredStudentCount');
   if (countEl) countEl.textContent = `${filtered.length} คน`;
 
+  // Update view mode buttons
+  const btnGrid = document.getElementById('btnViewGrid');
+  const btnTable = document.getElementById('btnViewTable');
+  if (btnGrid && btnTable) {
+    if (window.AppState.studentViewMode === 'grid') {
+      btnGrid.className = 'px-2.5 py-1 rounded-lg text-xs font-prompt font-semibold flex items-center gap-1 bg-white text-slate-900 shadow-sm';
+      btnTable.className = 'px-2.5 py-1 rounded-lg text-xs font-prompt font-medium flex items-center gap-1 text-slate-600';
+    } else {
+      btnTable.className = 'px-2.5 py-1 rounded-lg text-xs font-prompt font-semibold flex items-center gap-1 bg-white text-slate-900 shadow-sm';
+      btnGrid.className = 'px-2.5 py-1 rounded-lg text-xs font-prompt font-medium flex items-center gap-1 text-slate-600';
+    }
+  }
+
   const issueBtn = document.getElementById('toggleIssueOnlyBtn');
   if (issueBtn) {
     if (window.AppState.filterIssueOnly) {
-      issueBtn.className = 'px-3 py-2 rounded-xl text-xs font-prompt font-semibold flex items-center gap-1.5 bg-red-600 text-white shadow-sm transition shrink-0';
+      issueBtn.className = 'px-3 py-1.5 rounded-xl text-xs font-prompt font-semibold flex items-center gap-1.5 bg-red-600 text-white shadow-sm transition shrink-0';
     } else {
-      issueBtn.className = 'px-3 py-2 rounded-xl text-xs font-prompt font-medium flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200 transition shrink-0';
+      issueBtn.className = 'px-3 py-1.5 rounded-xl text-xs font-prompt font-medium flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200 transition shrink-0';
     }
   }
 
@@ -486,12 +842,12 @@ function renderStudentsTab() {
 
   if (filtered.length === 0) {
     const emptyHtml = `
-      <div class="col-span-full bg-white rounded-2xl p-10 text-center border border-slate-200">
+      <div class="col-span-full bg-white rounded-3xl p-10 text-center border border-slate-200">
         <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
           <i data-lucide="search-x" class="w-6 h-6"></i>
         </div>
-        <h3 class="font-prompt font-bold text-slate-800">ไม่พบข้อมูลนักเรียนตามเงื่อนไขที่กรอง</h3>
-        <p class="text-xs text-slate-500 mt-1">ลองล้างตัวกรองหรือเปลี่ยนคำค้นหาใหม่</p>
+        <h3 class="font-prompt font-bold text-slate-800">ไม่พบข้อมูลนักเรียนตามเงื่อนไขที่เลือก</h3>
+        <p class="text-xs text-slate-500 mt-1">ลองกดปุ่ม "ล้างตัวกรองทั้งหมด" เพื่อดูรายชื่อทั้งหมด 125 คน</p>
         <button onclick="resetStudentFilters()" class="mt-4 px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-prompt font-semibold">
           ล้างตัวกรองทั้งหมด
         </button>
@@ -502,85 +858,97 @@ function renderStudentsTab() {
     return;
   }
 
-  // Render Mobile-First Cards
+  // Render Polished Mobile-First & PC Cards
   gridContainer.innerHTML = filtered.map(stu => {
     const nonPhotoIssues = (stu.Data_Issues || []).filter(i => i !== 'ยังไม่มีรูปถ่ายนักเรียน');
+    const riskLvl = stu.Screening.Overall_Risk_Level;
+    const borderAccent = riskLvl === 'กลุ่มมีปัญหา'
+      ? 'border-l-4 border-l-red-500 border-slate-200'
+      : riskLvl === 'กลุ่มเสี่ยง'
+        ? 'border-l-4 border-l-amber-500 border-slate-200'
+        : 'border-l-4 border-l-emerald-500 border-slate-200';
+
     return `
-      <div class="interactive-card bg-white rounded-2xl border ${nonPhotoIssues.length > 0 ? 'border-amber-300' : 'border-slate-200/90'} shadow-sm p-4 flex flex-col justify-between gap-3">
-        <div>
-          <!-- Card Header -->
-          <div class="flex items-start gap-3">
+      <div class="interactive-card bg-white rounded-3xl border ${borderAccent} shadow-sm p-4 sm:p-5 flex flex-col justify-between gap-3.5">
+        <div class="space-y-3">
+          <!-- 1. Card Header: Photo, ID, Name, Level & "กลุ่ม1" Badge -->
+          <div class="flex items-start gap-3.5">
             <div onclick="openStudent360Modal('${escapeHtml(stu.Student_ID)}')" class="cursor-pointer">
               ${getAvatarHtml(stu, 'w-16 h-16', 'text-lg')}
             </div>
             <div class="flex-1 min-w-0">
               <div class="flex items-center justify-between gap-1">
-                <span class="font-mono text-xs font-bold text-blue-800 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
+                <span class="font-mono text-xs font-bold text-blue-900 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
                   ${escapeHtml(stu.Student_ID)}
                 </span>
-                ${getStatusBadge(stu.Status)}
+                ${getRiskBadge(riskLvl)}
               </div>
               <h3 onclick="openStudent360Modal('${escapeHtml(stu.Student_ID)}')"
                   class="font-prompt font-bold text-slate-900 text-base mt-1 truncate cursor-pointer hover:text-blue-700">
                 ${escapeHtml(stu.Full_Name)}
                 ${stu.Nickname ? `<span class="text-xs font-normal text-slate-500">(${escapeHtml(stu.Nickname)})</span>` : ''}
               </h3>
-              <div class="flex flex-wrap items-center gap-1.5 mt-1">
-                <span class="text-xs font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
-                  ${escapeHtml(stu.ClassGroup.Level)}${stu.ClassGroup.Year} ก.${stu.ClassGroup.Group_No} (${escapeHtml(stu.ClassGroup.Major)})
-                </span>
+              <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
+                ${renderClassAndGroupBadges(stu)}
+                <span class="text-[11px] text-slate-500 truncate">${escapeHtml(stu.ClassGroup.Major)}</span>
               </div>
             </div>
           </div>
 
-          <!-- Quick Info Rows -->
-          <div class="mt-3 pt-3 border-t border-slate-100 space-y-1.5 text-xs text-slate-600">
+          <!-- 2. กล่องแสดงข้อมูลบุหรี่/สารเสพติด ตามที่นักเรียนแจ้งในแบบบันทึกจริง -->
+          ${renderSubstanceBox(stu, false)}
+
+          <!-- 3. กล่องระบุสาเหตุความเสี่ยง/ปัญหาชัดเจน (รู้ทันทีว่าเสี่ยงเรื่องอะไร) -->
+          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
+            <div class="text-[11px] font-prompt font-bold text-slate-600 flex items-center justify-between">
+              <span>📌 สาเหตุความเสี่ยง / เรื่องที่ต้องดูแล:</span>
+              <span class="text-slate-500 font-normal">คะแนนความประพฤติ: <b class="${stu.BehaviorScore < 80 ? 'text-red-600' : 'text-emerald-700'}">${stu.BehaviorScore}</b></span>
+            </div>
+            <div class="flex flex-wrap gap-1">
+              ${renderRiskReasonBadges(stu)}
+            </div>
+          </div>
+
+          <!-- 4. ข้อมูลติดต่อและโซนอำเภอ -->
+          <div class="pt-1 space-y-1.5 text-xs text-slate-600">
             <div class="flex items-center justify-between">
-              <span class="text-slate-400 flex items-center gap-1"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i> โซนอำเภอ:</span>
+              <span class="text-slate-400 flex items-center gap-1"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i> โซนบ้านพัก:</span>
               <span class="font-semibold text-slate-800">อ.${escapeHtml(stu.Zone_District)} ${stu.Subdistrict ? `(ต.${escapeHtml(stu.Subdistrict)})` : ''}</span>
             </div>
             <div class="flex items-center justify-between">
               <span class="text-slate-400 flex items-center gap-1"><i data-lucide="phone" class="w-3.5 h-3.5"></i> เบอร์นักเรียน:</span>
               ${stu.Phone_Number
-                ? `<a href="tel:${escapeHtml(stu.Phone_Number)}" class="font-semibold text-blue-700 hover:underline flex items-center gap-1">${escapeHtml(stu.Phone_Number)}</a>`
+                ? `<a href="tel:${escapeHtml(stu.Phone_Number)}" class="font-bold text-blue-700 hover:underline flex items-center gap-1">${escapeHtml(stu.Phone_Number)}</a>`
                 : `<span class="text-red-500 font-medium">ยังไม่ระบุ</span>`}
             </div>
             <div class="flex items-center justify-between">
-              <span class="text-slate-400 flex items-center gap-1"><i data-lucide="heart-handshake" class="w-3.5 h-3.5"></i> ผู้ปกครอง:</span>
+              <span class="text-slate-400 flex items-center gap-1"><i data-lucide="heart-handshake" class="w-3.5 h-3.5"></i> เบอร์ผู้ปกครอง:</span>
               ${stu.Parent_Phone
-                ? `<a href="tel:${escapeHtml(stu.Parent_Phone)}" class="font-semibold text-emerald-700 hover:underline">${escapeHtml(stu.Parent_Phone)}</a>`
+                ? `<a href="tel:${escapeHtml(stu.Parent_Phone)}" class="font-bold text-emerald-700 hover:underline">${escapeHtml(stu.Parent_Phone)} (${escapeHtml(stu.Parent_Name || 'ผปก.')})</a>`
                 : `<span class="text-red-500 font-medium">ยังไม่ระบุ</span>`}
-            </div>
-            <div class="flex items-center justify-between pt-1">
-              <span class="text-slate-400">คะแนนความประพฤติ:</span>
-              <span class="font-prompt font-bold ${stu.BehaviorScore < 80 ? 'text-red-600' : 'text-emerald-700'}">${stu.BehaviorScore} คะแนน</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-slate-400">การคัดกรอง SDQ:</span>
-              ${getRiskBadge(stu.Screening.Overall_Risk_Level)}
             </div>
           </div>
 
           ${nonPhotoIssues.length > 0 ? `
-            <div class="mt-2.5 p-2 rounded-lg bg-amber-50 border border-amber-200 text-[11px] text-amber-800 flex items-start gap-1.5">
+            <div class="p-2 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-900 flex items-start gap-1.5">
               <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5"></i>
-              <span>${escapeHtml(nonPhotoIssues.join(', '))}</span>
+              <span>ข้อมูลรอแก้ไข: ${escapeHtml(nonPhotoIssues.join(', '))}</span>
             </div>
           ` : ''}
         </div>
 
         <!-- Mobile-Friendly Action Bar -->
-        <div class="pt-2.5 border-t border-slate-100 grid grid-cols-3 gap-1.5">
+        <div class="pt-3 border-t border-slate-100 grid grid-cols-3 gap-1.5">
           <button onclick="openStudent360Modal('${escapeHtml(stu.Student_ID)}')"
-                  class="py-2 px-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-800 text-xs font-prompt font-semibold flex items-center justify-center gap-1 transition">
+                  class="py-2 px-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-prompt font-semibold flex items-center justify-center gap-1 shadow-sm transition">
             <i data-lucide="eye" class="w-3.5 h-3.5"></i> โปรไฟล์ 360°
           </button>
           <button onclick="openEditStudentModal('${escapeHtml(stu.Student_ID)}')"
-                  class="py-2 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-prompt font-medium flex items-center justify-center gap-1 transition">
-            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> แก้ไข
+                  class="py-2 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-prompt font-semibold flex items-center justify-center gap-1 transition">
+            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> แก้ไขข้อมูล
           </button>
           <button onclick="openDisciplineModal('${escapeHtml(stu.Student_ID)}')"
-                  class="py-2 px-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-prompt font-medium flex items-center justify-center gap-1 transition">
+                  class="py-2 px-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-prompt font-semibold flex items-center justify-center gap-1 transition">
             <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i> ตัดคะแนน
           </button>
         </div>
@@ -588,54 +956,56 @@ function renderStudentsTab() {
     `;
   }).join('');
 
-  // Render PC Table View
+  // Render PC Table View (แสดงกลุ่ม1-5, ข้อมูลบุหรี่ที่แจ้ง และสาเหตุความเสี่ยงครบถ้วน)
   tableContainer.innerHTML = `
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse text-xs sm:text-sm">
           <thead>
-            <tr class="bg-slate-800 text-white font-prompt text-xs">
-              <th class="py-3 px-3">รูป</th>
-              <th class="py-3 px-3">รหัสนักศึกษา</th>
-              <th class="py-3 px-3">ชื่อ-นามสกุล (ชื่อเล่น)</th>
-              <th class="py-3 px-3">กลุ่มเรียน</th>
-              <th class="py-3 px-3">โซนอำเภอ</th>
-              <th class="py-3 px-3">เบอร์นักเรียน / ผู้ปกครอง</th>
-              <th class="py-3 px-3 text-center">คะแนน</th>
-              <th class="py-3 px-3">ความเสี่ยง SDQ</th>
-              <th class="py-3 px-3 text-right">จัดการ</th>
+            <tr class="bg-slate-900 text-white font-prompt text-xs">
+              <th class="py-3.5 px-3">รูป</th>
+              <th class="py-3.5 px-3">รหัสนักศึกษา</th>
+              <th class="py-3.5 px-3">ชื่อ-นามสกุล (ชื่อเล่น)</th>
+              <th class="py-3.5 px-3">ระดับชั้น / กลุ่ม</th>
+              <th class="py-3.5 px-3">บุหรี่/สารเสพติด (ตามที่แจ้ง)</th>
+              <th class="py-3.5 px-3">ระดับความเสี่ยง & สาเหตุ</th>
+              <th class="py-3.5 px-3">โซนอำเภอ / เบอร์โทร</th>
+              <th class="py-3.5 px-3 text-right">จัดการ</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-200">
             ${filtered.map(stu => `
               <tr class="hover:bg-blue-50/40 transition">
-                <td class="py-2.5 px-3" onclick="openStudent360Modal('${escapeHtml(stu.Student_ID)}')">
-                  ${getAvatarHtml(stu, 'w-10 h-10', 'text-xs')}
+                <td class="py-3 px-3 cursor-pointer" onclick="openStudent360Modal('${escapeHtml(stu.Student_ID)}')">
+                  ${getAvatarHtml(stu, 'w-11 h-11', 'text-xs')}
                 </td>
-                <td class="py-2.5 px-3 font-mono font-bold text-blue-900 whitespace-nowrap">${escapeHtml(stu.Student_ID)}</td>
-                <td class="py-2.5 px-3 font-medium text-slate-900">
-                  <div class="font-prompt font-semibold cursor-pointer hover:text-blue-700" onclick="openStudent360Modal('${escapeHtml(stu.Student_ID)}')">
+                <td class="py-3 px-3 font-mono font-bold text-blue-900 whitespace-nowrap">${escapeHtml(stu.Student_ID)}</td>
+                <td class="py-3 px-3 font-medium text-slate-900">
+                  <div class="font-prompt font-bold cursor-pointer hover:text-blue-700" onclick="openStudent360Modal('${escapeHtml(stu.Student_ID)}')">
                     ${escapeHtml(stu.Full_Name)} ${stu.Nickname ? `<span class="text-slate-500 font-normal">(${escapeHtml(stu.Nickname)})</span>` : ''}
                   </div>
-                  ${(stu.Data_Issues || []).filter(i => i !== 'ยังไม่มีรูปถ่ายนักเรียน').length > 0
-                    ? `<span class="inline-block mt-0.5 text-[11px] text-red-600 font-semibold">⚠️ ข้อมูลไม่สมบูรณ์</span>`
-                    : ''}
+                  <div class="text-[11px] text-slate-500">ความประพฤติ: <b>${stu.BehaviorScore}</b> คะแนน</div>
                 </td>
-                <td class="py-2.5 px-3 whitespace-nowrap">
-                  <span class="px-2 py-0.5 rounded bg-slate-100 font-semibold text-xs">${escapeHtml(stu.Class_ID)}</span>
-                  <div class="text-[11px] text-slate-500">${escapeHtml(stu.ClassGroup.Level)}${stu.ClassGroup.Year} ก.${stu.ClassGroup.Group_No}</div>
+                <td class="py-3 px-3 whitespace-nowrap">
+                  <div class="flex items-center gap-1">${renderClassAndGroupBadges(stu)}</div>
+                  <div class="text-[11px] text-slate-500 mt-0.5">${escapeHtml(stu.ClassGroup.Major)}</div>
                 </td>
-                <td class="py-2.5 px-3 whitespace-nowrap">อ.${escapeHtml(stu.Zone_District)}</td>
-                <td class="py-2.5 px-3 whitespace-nowrap text-xs">
+                <td class="py-3 px-3">
+                  ${renderSubstanceBox(stu, true)}
+                </td>
+                <td class="py-3 px-3">
+                  <div class="mb-1">${getRiskBadge(stu.Screening.Overall_Risk_Level)}</div>
+                  <div class="flex flex-wrap gap-1">${renderRiskReasonBadges(stu)}</div>
+                </td>
+                <td class="py-3 px-3 whitespace-nowrap text-xs">
+                  <div class="font-semibold text-slate-800">อ.${escapeHtml(stu.Zone_District)}</div>
                   <div>นร: ${stu.Phone_Number ? `<a href="tel:${escapeHtml(stu.Phone_Number)}" class="text-blue-700 font-semibold">${escapeHtml(stu.Phone_Number)}</a>` : '<span class="text-red-500">-</span>'}</div>
                   <div>ผปก: ${stu.Parent_Phone ? `<a href="tel:${escapeHtml(stu.Parent_Phone)}" class="text-emerald-700 font-semibold">${escapeHtml(stu.Parent_Phone)}</a>` : '<span class="text-red-500">-</span>'}</div>
                 </td>
-                <td class="py-2.5 px-3 text-center font-prompt font-bold ${stu.BehaviorScore < 80 ? 'text-red-600' : 'text-emerald-700'}">${stu.BehaviorScore}</td>
-                <td class="py-2.5 px-3 whitespace-nowrap">${getRiskBadge(stu.Screening.Overall_Risk_Level)}</td>
-                <td class="py-2.5 px-3 text-right whitespace-nowrap">
+                <td class="py-3 px-3 text-right whitespace-nowrap">
                   <div class="inline-flex items-center gap-1">
-                    <button onclick="openStudent360Modal('${escapeHtml(stu.Student_ID)}')" class="px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs font-semibold">ดู 360°</button>
-                    <button onclick="openEditStudentModal('${escapeHtml(stu.Student_ID)}')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold">แก้ไข</button>
+                    <button onclick="openStudent360Modal('${escapeHtml(stu.Student_ID)}')" class="px-2.5 py-1.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700 text-xs font-prompt font-semibold">ดู 360°</button>
+                    <button onclick="openEditStudentModal('${escapeHtml(stu.Student_ID)}')" class="px-2.5 py-1.5 rounded-xl bg-slate-100 text-slate-800 hover:bg-slate-200 text-xs font-prompt font-semibold">แก้ไข</button>
                   </div>
                 </td>
               </tr>
@@ -647,12 +1017,35 @@ function renderStudentsTab() {
   `;
 }
 
+function setQuickLevelFilter(lv) {
+  window.AppState.filterLevelYear = lv;
+  window.AppState.filterClassId = 'ALL';
+  renderStudentsTab();
+  if (window.lucide) lucide.createIcons();
+}
+
+function setQuickGroupLabelFilter(gl) {
+  window.AppState.filterGroupLabel = gl;
+  window.AppState.filterClassId = 'ALL';
+  renderStudentsTab();
+  if (window.lucide) lucide.createIcons();
+}
+
+function setQuickProblemTag(tag) {
+  window.AppState.filterProblemTag = tag;
+  renderStudentsTab();
+  if (window.lucide) lucide.createIcons();
+}
+
 function resetStudentFilters() {
   window.AppState.searchQuery = '';
+  window.AppState.filterLevelYear = 'ALL';
+  window.AppState.filterGroupLabel = 'ALL';
   window.AppState.filterClassId = 'ALL';
   window.AppState.filterDistrict = 'ALL';
   window.AppState.filterPhoto = 'ALL';
   window.AppState.filterRisk = 'ALL';
+  window.AppState.filterProblemTag = 'ALL';
   window.AppState.filterIssueOnly = false;
   const searchInput = document.getElementById('studentSearchInput');
   if (searchInput) searchInput.value = '';
@@ -668,22 +1061,18 @@ function renderDisciplineTab() {
 
   const records = window.appDB.db.Discipline_Records || [];
   const all360 = window.appDB.getAllStudents360();
-  const deductedStudents = all360
-    .filter(s => s.TotalPointsDeducted > 0)
-    .sort((a, b) => b.TotalPointsDeducted - a.TotalPointsDeducted);
 
   container.innerHTML = `
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Left Column: Quick Record Form -->
       <div class="lg:col-span-1">
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sticky top-20">
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-5 sticky top-20">
           <div class="flex items-center gap-2.5 pb-3 border-b border-slate-100 mb-4">
-            <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center">
+            <div class="w-10 h-10 rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center">
               <i data-lucide="shield-alert" class="w-5 h-5"></i>
             </div>
             <div>
               <h3 class="font-prompt font-bold text-slate-900 text-base">บันทึกพฤติกรรม / ตัดคะแนน</h3>
-              <p class="text-xs text-slate-500">ตารางที่ 3: Discipline_Records (One-to-Many)</p>
+              <p class="text-xs text-slate-500">ตารางที่ 3: Discipline_Records</p>
             </div>
           </div>
 
@@ -745,21 +1134,20 @@ function renderDisciplineTab() {
         </div>
       </div>
 
-      <!-- Right Column: History & Top Deducted -->
       <div class="lg:col-span-2 space-y-6">
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-5">
           <div class="flex items-center justify-between mb-4">
             <div>
               <h3 class="font-prompt font-bold text-slate-900 text-base">ประวัติการบันทึกพฤติกรรมล่าสุด (${records.length} รายการ)</h3>
-              <p class="text-xs text-slate-500">เชื่อมโยงกับโปรไฟล์นักเรียนแต่ละคนอัตโนมัติผ่าน Student_ID</p>
+              <p class="text-xs text-slate-500">เมื่อบันทึกแล้ว ระบบจะอัปเดตสาเหตุความเสี่ยงของนักเรียนคนนั้นให้อัตโนมัติ</p>
             </div>
           </div>
 
           ${records.length === 0 ? `
-            <div class="p-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
+            <div class="p-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200">
               <i data-lucide="check-circle" class="w-8 h-8 text-emerald-500 mx-auto mb-2"></i>
-              <p class="font-prompt font-semibold text-slate-700 text-sm">ยังไม่มีประวัติการทำผิดระเบียบ</p>
-              <p class="text-xs text-slate-500 mt-0.5">นักเรียนทั้ง 125 คนมีคะแนนความประพฤติเต็ม 100 คะแนน สามารถใช้ฟอร์มด้านซ้ายเพื่อเพิ่มบันทึกเมื่อเกิดเหตุการณ์จริง</p>
+              <p class="font-prompt font-semibold text-slate-700 text-sm">ยังไม่มีประวัติการตัดคะแนนความประพฤติ</p>
+              <p class="text-xs text-slate-500 mt-0.5">นักเรียนทั้ง 125 คนมีคะแนนความประพฤติตั้งต้น 100 คะแนน</p>
             </div>
           ` : `
             <div class="space-y-3">
@@ -767,7 +1155,7 @@ function renderDisciplineTab() {
                 const stu = window.appDB.getStudent360(r.Student_ID);
                 const dateStr = new Date(r.Date_Time).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
                 return `
-                  <div class="p-3.5 rounded-xl border border-slate-200 hover:border-slate-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div class="p-3.5 rounded-2xl border border-slate-200 hover:border-slate-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div class="flex items-start gap-3">
                       <div class="px-2.5 py-1.5 rounded-xl bg-rose-100 text-rose-700 font-prompt font-bold text-sm shrink-0">
                         ${r.Points_Deducted}
@@ -777,6 +1165,7 @@ function renderDisciplineTab() {
                           <span onclick="openStudent360Modal('${escapeHtml(r.Student_ID)}')" class="font-prompt font-bold text-slate-900 text-sm cursor-pointer hover:text-blue-700">
                             ${stu ? escapeHtml(stu.Full_Name) : escapeHtml(r.Student_ID)}
                           </span>
+                          ${stu ? renderClassAndGroupBadges(stu) : ''}
                           <span class="text-xs px-2 py-0.5 rounded bg-rose-50 text-rose-700 font-semibold border border-rose-200">${escapeHtml(r.Violation_Category)}</span>
                           <span class="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-700">${escapeHtml(r.Action_Taken)}</span>
                         </div>
@@ -854,7 +1243,6 @@ function renderScreeningTab() {
 
   const all360 = window.appDB.getAllStudents360();
 
-  // Compute Zone summary
   const zoneCounts = {};
   all360.forEach(s => {
     const z = s.Zone_District || 'ไม่ระบุ';
@@ -865,7 +1253,7 @@ function renderScreeningTab() {
   zoneSummaryContainer.innerHTML = `
     <button onclick="setScreeningZone('ALL')"
             class="px-3 py-1.5 rounded-xl text-xs font-prompt font-semibold whitespace-nowrap transition ${window.AppState.screeningZoneFilter === 'ALL' ? 'bg-blue-700 text-white shadow-sm' : 'bg-white text-slate-700 border border-slate-200'}">
-      ทุกโซน (${all360.length})
+      ทุกโซนอำเภอ (${all360.length})
     </button>
     ${sortedZones.map(z => `
       <button onclick="setScreeningZone('${escapeHtml(z)}')"
@@ -887,17 +1275,17 @@ function renderScreeningTab() {
     const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
 
     return `
-      <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-4 flex flex-col justify-between gap-3">
-        <div>
+      <div class="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-4 sm:p-5 flex flex-col justify-between gap-3.5">
+        <div class="space-y-3">
           <div class="flex items-start justify-between gap-2">
             <div class="flex items-center gap-3">
               ${getAvatarHtml(stu, 'w-12 h-12', 'text-sm')}
               <div>
-                <div class="flex items-center gap-1.5">
+                <div class="flex flex-wrap items-center gap-1">
                   <span class="font-mono text-[11px] font-bold text-blue-800 bg-blue-50 px-1.5 py-0.5 rounded">${escapeHtml(stu.Student_ID)}</span>
-                  <span class="text-xs font-semibold text-slate-600">${escapeHtml(stu.Class_ID)}</span>
+                  ${renderClassAndGroupBadges(stu)}
                 </div>
-                <h4 onclick="openStudent360Modal('${escapeHtml(stu.Student_ID)}')" class="font-prompt font-bold text-slate-900 text-sm mt-0.5 cursor-pointer hover:text-blue-700">
+                <h4 onclick="openStudent360Modal('${escapeHtml(stu.Student_ID)}')" class="font-prompt font-bold text-slate-900 text-sm mt-1 cursor-pointer hover:text-blue-700">
                   ${escapeHtml(stu.Full_Name)} ${stu.Nickname ? `(${escapeHtml(stu.Nickname)})` : ''}
                 </h4>
               </div>
@@ -905,22 +1293,29 @@ function renderScreeningTab() {
             ${getRiskBadge(sc.Overall_Risk_Level)}
           </div>
 
-          <div class="mt-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs space-y-1">
+          <!-- สาเหตุความเสี่ยงชัดเจน -->
+          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+            <div class="text-[11px] font-prompt font-bold text-slate-600">📌 สาเหตุความเสี่ยง / เรื่องที่พบ:</div>
+            <div class="flex flex-wrap gap-1">
+              ${renderRiskReasonBadges(stu)}
+            </div>
+          </div>
+
+          <!-- ข้อมูลบุหรี่/สารเสพติดที่แจ้ง -->
+          ${renderSubstanceBox(stu, false)}
+
+          <div class="p-2.5 rounded-xl bg-slate-50/70 border border-slate-100 text-xs space-y-1">
             <div class="flex items-start justify-between gap-2">
               <span class="text-slate-500 shrink-0">โซนเยี่ยมบ้าน:</span>
               <span class="font-semibold text-blue-900 text-right">อ.${escapeHtml(stu.Zone_District)} (${escapeHtml(stu.Address)})</span>
             </div>
             <div class="flex items-center justify-between">
-              <span class="text-slate-500">ฐานะเศรษฐกิจ / รายได้:</span>
-              <span class="font-semibold ${sc.Financial_Status === 'ขัดสน' ? 'text-amber-700' : 'text-slate-700'}">${escapeHtml(sc.Financial_Status)} (${escapeHtml(sc.Family_Income_Range || '-')})</span>
+              <span class="text-slate-500">รายได้ครอบครัว / ค่าขนม:</span>
+              <span class="font-semibold text-slate-800">${escapeHtml(sc.Family_Income_Range || '-')} (วันละ ${escapeHtml(sc.Daily_Allowance || '-')})</span>
             </div>
             <div class="flex items-center justify-between">
               <span class="text-slate-500">ความต้องการทุน:</span>
               <span class="font-semibold ${sc.Scholarship_Need === 'ต้องการ' ? 'text-blue-700' : 'text-slate-700'}">${escapeHtml(sc.Scholarship_Need || '-')}</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-slate-500">พฤติกรรมดื่ม/สูบ:</span>
-              <span class="font-semibold ${sc.Substance_History !== 'ไม่ดื่ม/ไม่สูบ' ? 'text-rose-600' : 'text-emerald-700'}">${escapeHtml(sc.Substance_History || '-')}</span>
             </div>
             <div class="flex items-center justify-between">
               <span class="text-slate-500">สถานะเยี่ยมบ้าน:</span>
@@ -931,7 +1326,7 @@ function renderScreeningTab() {
           </div>
 
           ${sc.Home_Visit_Photo ? `
-            <div class="mt-2 rounded-xl overflow-hidden border border-slate-200 h-32 bg-slate-100">
+            <div class="rounded-2xl overflow-hidden border border-slate-200 h-36 bg-slate-100">
               <img src="${escapeHtml(sc.Home_Visit_Photo)}" class="w-full h-full object-cover" alt="รูปเยี่ยมบ้าน" />
             </div>
           ` : ''}
@@ -939,11 +1334,11 @@ function renderScreeningTab() {
 
         <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
           <a href="${mapsUrl}" target="_blank" rel="noopener"
-             class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-prompt font-medium flex items-center justify-center gap-1.5 transition">
+             class="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-prompt font-semibold flex items-center justify-center gap-1.5 transition">
             <i data-lucide="navigation" class="w-3.5 h-3.5 text-blue-600"></i> นำทางไปบ้าน
           </a>
           <button onclick="openScreeningModal('${escapeHtml(stu.Student_ID)}')"
-                  class="py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-prompt font-semibold flex items-center justify-center gap-1.5 shadow-sm transition">
+                  class="py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-prompt font-semibold flex items-center justify-center gap-1.5 shadow-sm transition">
             <i data-lucide="camera" class="w-3.5 h-3.5"></i> บันทึกเยี่ยมบ้าน/SDQ
           </button>
         </div>
@@ -974,11 +1369,11 @@ function renderSettingsTab() {
   container.innerHTML = `
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Manage Table 1: Class_Groups -->
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+      <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-5">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
           <div>
             <h3 class="font-prompt font-bold text-slate-900 text-base">จัดการตารางที่ 1: กลุ่มเรียนและครูที่ปรึกษา (Class_Groups)</h3>
-            <p class="text-xs text-slate-500">สามารถแก้ไขชื่อครูที่ปรึกษาประจำกลุ่ม หรือเพิ่มกลุ่มเรียนใหม่ได้ทันที</p>
+            <p class="text-xs text-slate-500">ใช้ระบบชื่อกลุ่มเข้าใจง่าย (กลุ่ม1 - กลุ่ม5) สามารถระบุชื่อครูที่ปรึกษาประจำกลุ่มได้ทันที</p>
           </div>
           <button onclick="openClassGroupModal(null)" class="px-3 py-1.5 rounded-xl bg-blue-600 text-white text-xs font-prompt font-semibold flex items-center gap-1">
             <i data-lucide="plus" class="w-3.5 h-3.5"></i> เพิ่มกลุ่มเรียน
@@ -989,19 +1384,20 @@ function renderSettingsTab() {
           ${groups.map(g => {
             const count = window.appDB.getStudents().filter(s => s.Class_ID === g.Class_ID).length;
             return `
-              <div class="p-3 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div class="p-3.5 rounded-2xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
                   <div class="flex items-center gap-2">
-                    <span class="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-800">${escapeHtml(g.Class_ID)}</span>
-                    <span class="font-prompt font-bold text-sm text-slate-900">${escapeHtml(g.Level)}${g.Year} ${escapeHtml(g.Major)} กลุ่ม ${g.Group_No}</span>
+                    <span class="font-prompt text-xs font-bold px-2.5 py-0.5 rounded-lg bg-blue-100 text-blue-900">${escapeHtml(g.Level_Year || (g.Level + g.Year))}</span>
+                    <span class="font-prompt text-xs font-bold px-2.5 py-0.5 rounded-lg bg-slate-800 text-white">${escapeHtml(g.Group_Label || ('กลุ่ม' + g.Group_No))}</span>
+                    <span class="font-prompt font-bold text-sm text-slate-900">สาขา${escapeHtml(g.Major)}</span>
                     <span class="text-xs text-slate-500">(${count} คน)</span>
                   </div>
-                  <div class="text-xs text-slate-600 mt-1">
+                  <div class="text-xs text-slate-600 mt-1.5">
                     👨‍🏫 ครูที่ปรึกษา: <b class="text-slate-900">${escapeHtml(g.Advisor_Name)}</b>
                   </div>
                 </div>
                 <div class="flex items-center gap-1.5 self-end sm:self-center">
-                  <button onclick="openClassGroupModal('${escapeHtml(g.Class_ID)}')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-medium">
+                  <button onclick="openClassGroupModal('${escapeHtml(g.Class_ID)}')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-prompt font-semibold">
                     แก้ไขชื่อครู/กลุ่ม
                   </button>
                 </div>
@@ -1013,9 +1409,9 @@ function renderSettingsTab() {
 
       <!-- Backup, Import/Export & Cloud Sync -->
       <div class="space-y-6">
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-5">
           <h3 class="font-prompt font-bold text-slate-900 text-base mb-1">ส่งออกและสำรองฐานข้อมูล (Export & Backup)</h3>
-          <p class="text-xs text-slate-500 mb-4">ข้อมูลที่คุณแก้ไขทั้งหมดจะถูกบันทึกไว้ในเบราว์เซอร์อัตโนมัติ และสามารถดาวน์โหลดเป็นไฟล์ Excel (.xlsx ครบ 4 ตาราง), CSV หรือ JSON เพื่อเก็บไว้หรืออัปเดตเข้า GitHub ได้ทันที</p>
+          <p class="text-xs text-slate-500 mb-4">ส่งออกข้อมูลทั้ง 4 ตารางพร้อมข้อมูลการใช้สารเสพติดและสาเหตุความเสี่ยงเป็นไฟล์ Excel (.xlsx), CSV หรือ JSON</p>
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             <button onclick="window.ExportManager.exportExcel4Sheets()" class="p-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-prompt font-semibold text-xs flex items-center justify-center gap-2 shadow-sm transition">
@@ -1040,10 +1436,9 @@ function renderSettingsTab() {
           </div>
         </div>
 
-        <!-- Optional Cloud Sync via Google Apps Script -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-5">
           <h3 class="font-prompt font-bold text-slate-900 text-base mb-1">เชื่อมต่อออนไลน์ข้ามเครื่อง (Google Sheets Cloud Sync)</h3>
-          <p class="text-xs text-slate-500 mb-3">หากต้องการให้แก้ไขข้อมูลในมือถือแล้วซิงก์เข้า PC อัตโนมัติ สามารถวาง URL ของ Google Apps Script Web App ได้ที่นี่</p>
+          <p class="text-xs text-slate-500 mb-3">วาง URL ของ Google Apps Script Web App เพื่อซิงก์ข้อมูลระหว่างมือถือและคอมพิวเตอร์</p>
           <div class="flex gap-2 mb-2.5">
             <input type="url" id="cloudSyncUrlInput" value="${escapeHtml(cloudUrl)}" placeholder="https://script.google.com/macros/s/.../exec"
                    class="flex-1 rounded-xl border border-slate-300 px-3 py-2 text-xs outline-none" />
@@ -1059,12 +1454,11 @@ function renderSettingsTab() {
           </div>
         </div>
 
-        <!-- Audit Log -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-5">
           <h3 class="font-prompt font-bold text-slate-900 text-base mb-2">ประวัติการแก้ไขข้อมูลล่าสุด (Audit Log)</h3>
           <div class="max-h-56 overflow-y-auto space-y-2 text-xs">
             ${logs.map(l => `
-              <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-100">
+              <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
                 <div class="flex items-center justify-between font-semibold text-slate-800">
                   <span>${escapeHtml(l.Action)}</span>
                   <span class="text-[10px] text-slate-400">${escapeHtml(new Date(l.Timestamp).toLocaleString('th-TH'))}</span>
@@ -1097,7 +1491,7 @@ function handleImportJSONFile(e) {
 }
 
 function confirmResetDatabase() {
-  if (!confirm('ยืนยันการรีเซ็ตข้อมูลกลับเป็นค่าเริ่มต้นจากไฟล์ต้นฉบับ? (ข้อมูลที่คุณเพิ่งแก้ไขในเบราว์เซอร์จะถูกแทนที่)')) return;
+  if (!confirm('ยืนยันการรีเซ็ตข้อมูลกลับเป็นค่าเริ่มต้นจากไฟล์ต้นฉบับ?')) return;
   window.appDB.resetToInitial(true);
   showToast('รีเซ็ตฐานข้อมูลกลับเป็นค่าเริ่มต้นเรียบร้อยแล้ว');
   renderAll();
@@ -1129,7 +1523,7 @@ async function triggerCloudSyncDown() {
 }
 
 // ============================================================================
-// MODALS: 1. โปรไฟล์นักเรียน 360° (ดึงข้อมูลครบทั้ง 4 ตารางมารวมกันอัตโนมัติ)
+// MODALS: 1. โปรไฟล์นักเรียน 360° (ดึงข้อมูลครบทั้ง 4 ตาราง + ข้อมูลสารเสพติด + สาเหตุความเสี่ยง)
 // ============================================================================
 function openStudent360Modal(studentId) {
   window.AppState.selectedStudentId = studentId;
@@ -1145,18 +1539,17 @@ function openStudent360Modal(studentId) {
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
 
   body.innerHTML = `
-    <!-- Top Banner -->
     <div class="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white p-5 sm:p-6">
       <div class="flex items-start justify-between gap-4">
         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
           ${getAvatarHtml(stu, 'w-20 h-20', 'text-2xl')}
           <div>
             <div class="flex flex-wrap items-center gap-2">
-              <span class="font-mono text-xs font-bold bg-blue-500/30 border border-blue-400/40 px-2.5 py-0.5 rounded-md text-blue-100">
+              <span class="font-mono text-xs font-bold bg-blue-500/30 border border-blue-400/40 px-2.5 py-0.5 rounded-lg text-blue-100">
                 รหัส: ${escapeHtml(stu.Student_ID)}
               </span>
-              <span class="text-xs font-semibold bg-white/15 px-2.5 py-0.5 rounded-md">
-                ${escapeHtml(stu.Class_ID)} (${escapeHtml(stu.ClassGroup.Level)}${stu.ClassGroup.Year} ก.${stu.ClassGroup.Group_No})
+              <span class="text-xs font-prompt font-bold bg-white text-slate-900 px-2.5 py-0.5 rounded-lg">
+                ${escapeHtml(stu.ClassGroup.Level_Year)} ${escapeHtml(stu.ClassGroup.Group_Label)}
               </span>
               ${getStatusBadge(stu.Status)}
             </div>
@@ -1173,15 +1566,14 @@ function openStudent360Modal(studentId) {
         </button>
       </div>
 
-      <!-- Quick Action Bar on Profile -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-5 pt-4 border-t border-white/10">
         <button onclick="closeModal('student360Modal'); openEditStudentModal('${escapeHtml(stu.Student_ID)}')"
                 class="py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-prompt font-semibold flex items-center justify-center gap-1.5 shadow">
-          <i data-lucide="edit-3" class="w-4 h-4"></i> แก้ไขประวัติ/เบอร์โทร
+          <i data-lucide="edit-3" class="w-4 h-4"></i> แก้ไขประวัติ/ข้อมูลดื่ม-สูบ
         </button>
         <button onclick="closeModal('student360Modal'); openDisciplineModal('${escapeHtml(stu.Student_ID)}')"
                 class="py-2 px-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-prompt font-semibold flex items-center justify-center gap-1.5 shadow">
-          <i data-lucide="shield-alert" class="w-4 h-4"></i> บันทึก/ตัดคะแนน (${stu.BehaviorScore})
+          <i data-lucide="shield-alert" class="w-4 h-4"></i> ตัดคะแนน (${stu.BehaviorScore})
         </button>
         <button onclick="closeModal('student360Modal'); openScreeningModal('${escapeHtml(stu.Student_ID)}')"
                 class="py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-prompt font-semibold flex items-center justify-center gap-1.5 shadow">
@@ -1194,8 +1586,27 @@ function openStudent360Modal(studentId) {
       </div>
     </div>
 
-    <!-- Body Content (3 Relational Sections) -->
-    <div class="p-5 sm:p-6 space-y-6 bg-slate-50 max-h-[72vh] overflow-y-auto">
+    <div class="p-5 sm:p-6 space-y-5 bg-slate-50 max-h-[72vh] overflow-y-auto">
+      <!-- กล่องสรุปความเสี่ยง + ข้อมูลการใช้บุหรี่/สารเสพติดที่นักเรียนแจ้ง -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
+          <h3 class="font-prompt font-bold text-slate-900 text-sm flex items-center gap-2">
+            <i data-lucide="activity" class="w-4 h-4 text-rose-600"></i>
+            สรุปผลการคัดกรองความเสี่ยง & ข้อมูลการใช้บุหรี่/สารเสพติด (จากแบบบันทึก)
+          </h3>
+          ${getRiskBadge(sc.Overall_Risk_Level)}
+        </div>
+
+        ${renderSubstanceBox(stu, false)}
+
+        <div>
+          <span class="block text-xs font-prompt font-bold text-slate-600 mb-1.5">สาเหตุความเสี่ยง / ปัจจัยที่พบทั้งหมด:</span>
+          <div class="flex flex-wrap gap-1.5">
+            ${renderRiskReasonBadges(stu)}
+          </div>
+        </div>
+      </div>
+
       <!-- 1. ข้อมูลส่วนตัว การติดต่อ และพิกัดบ้าน (ตาราง Students) -->
       <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
         <h3 class="font-prompt font-bold text-slate-900 text-sm flex items-center gap-2 pb-2.5 border-b border-slate-100">
@@ -1203,11 +1614,12 @@ function openStudent360Modal(studentId) {
           1. ข้อมูลประวัตินักเรียนและการติดต่อ (ตาราง Students)
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 text-xs sm:text-sm">
+          <div><span class="text-slate-400">ระดับชั้น / กลุ่มเรียน:</span> <span class="font-bold text-slate-900 ml-1">${escapeHtml(stu.ClassGroup.Level_Year)} ${escapeHtml(stu.ClassGroup.Group_Label)}</span></div>
           <div><span class="text-slate-400">เบอร์โทรนักเรียน:</span> ${stu.Phone_Number ? `<a href="tel:${escapeHtml(stu.Phone_Number)}" class="font-bold text-blue-700 underline ml-1">${escapeHtml(stu.Phone_Number)}</a>` : '<span class="text-red-500 ml-1">ยังไม่ระบุ</span>'}</div>
           <div><span class="text-slate-400">FB / IG:</span> <span class="font-medium text-slate-800 ml-1">${escapeHtml(stu.Social_Contact || '-')}</span></div>
           <div><span class="text-slate-400">ชื่อผู้ปกครอง:</span> <span class="font-medium text-slate-800 ml-1">${escapeHtml(stu.Parent_Name || '-')}</span></div>
           <div><span class="text-slate-400">เบอร์ผู้ปกครอง:</span> ${stu.Parent_Phone ? `<a href="tel:${escapeHtml(stu.Parent_Phone)}" class="font-bold text-emerald-700 underline ml-1">${escapeHtml(stu.Parent_Phone)}</a>` : '<span class="text-red-500 ml-1">ยังไม่ระบุ</span>'}</div>
-          <div class="sm:col-span-2"><span class="text-slate-400">เบอร์ฉุกเฉิน / ความสัมพันธ์:</span> <span class="font-medium text-slate-800 ml-1">${escapeHtml(stu.Emergency_Phone || '-')} ${stu.Emergency_Contact_Note ? `(${escapeHtml(stu.Emergency_Contact_Note)})` : ''}</span></div>
+          <div><span class="text-slate-400">เบอร์ติดต่อฉุกเฉิน:</span> <span class="font-medium text-slate-800 ml-1">${escapeHtml(stu.Emergency_Phone || '-')} ${stu.Emergency_Contact_Note ? `(${escapeHtml(stu.Emergency_Contact_Note)})` : ''}</span></div>
           <div class="sm:col-span-2"><span class="text-slate-400">ที่อยู่ปัจจุบัน:</span> <span class="font-medium text-slate-800 ml-1">${escapeHtml(stu.Address)}</span></div>
           <div><span class="text-slate-400">โซนพื้นที่ (Zone_District):</span> <span class="font-bold text-indigo-700 ml-1">อ.${escapeHtml(stu.Zone_District)}</span></div>
           <div><span class="text-slate-400">พิกัด GPS (Home_Location):</span> <span class="font-mono text-xs text-slate-700 ml-1">${escapeHtml(stu.Home_Location || 'ยังไม่ปักหมุด')}</span></div>
@@ -1246,15 +1658,12 @@ function openStudent360Modal(studentId) {
         </div>
       </div>
 
-      <!-- 3. ข้อมูลคัดกรอง SDQ และเยี่ยมบ้าน (ตาราง Screening_Records) -->
+      <!-- 3. ข้อมูลเศรษฐกิจครอบครัวและเยี่ยมบ้าน (ตาราง Screening_Records) -->
       <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-        <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
-          <h3 class="font-prompt font-bold text-slate-900 text-sm flex items-center gap-2">
-            <i data-lucide="heart-handshake" class="w-4 h-4 text-emerald-600"></i>
-            3. การคัดกรองและเยี่ยมบ้าน (ตาราง Screening_Records - ภาคเรียน ${escapeHtml(sc.Academic_Term)})
-          </h3>
-          ${getRiskBadge(sc.Overall_Risk_Level)}
-        </div>
+        <h3 class="font-prompt font-bold text-slate-900 text-sm flex items-center gap-2 pb-2.5 border-b border-slate-100">
+          <i data-lucide="heart-handshake" class="w-4 h-4 text-emerald-600"></i>
+          3. ข้อมูลครอบครัว เศรษฐกิจ และการเยี่ยมบ้าน (ตาราง Screening_Records)
+        </h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 text-xs sm:text-sm">
           <div><span class="text-slate-400">สถานภาพบิดามารดา:</span> <span class="font-semibold text-slate-800 ml-1">${escapeHtml(sc.Family_Status)}</span></div>
           <div><span class="text-slate-400">ฐานะทางเศรษฐกิจ:</span> <span class="font-semibold text-slate-800 ml-1">${escapeHtml(sc.Financial_Status)}</span></div>
@@ -1262,7 +1671,6 @@ function openStudent360Modal(studentId) {
           <div><span class="text-slate-400">รายได้ครอบครัวเฉลี่ย:</span> <span class="font-medium text-slate-800 ml-1">${escapeHtml(sc.Family_Income_Range || '-')}</span></div>
           <div><span class="text-slate-400">เงินมาวิทยาลัย/วัน:</span> <span class="font-medium text-slate-800 ml-1">${escapeHtml(sc.Daily_Allowance || '-')}</span></div>
           <div><span class="text-slate-400">ความต้องการทุนการศึกษา:</span> <span class="font-semibold text-blue-700 ml-1">${escapeHtml(sc.Scholarship_Need || '-')}</span></div>
-          <div class="sm:col-span-2"><span class="text-slate-400">ประวัติการดื่ม/สูบ:</span> <span class="font-semibold ${sc.Substance_History !== 'ไม่ดื่ม/ไม่สูบ' ? 'text-rose-600' : 'text-emerald-700'} ml-1">${escapeHtml(sc.Substance_History || '-')}</span></div>
           <div><span class="text-slate-400">สถานะเยี่ยมบ้าน:</span> <span class="font-bold text-slate-800 ml-1">${escapeHtml(sc.Home_Visit_Status)} ${sc.Home_Visit_Date ? `(${escapeHtml(sc.Home_Visit_Date)})` : ''}</span></div>
           <div class="sm:col-span-2"><span class="text-slate-400">สรุปผลเยี่ยมบ้าน:</span> <span class="font-medium text-slate-800 ml-1">${escapeHtml(sc.Home_Visit_Summary || 'ยังไม่มีบันทึกเพิ่มเติม')}</span></div>
         </div>
@@ -1289,7 +1697,7 @@ function openEditStudentModal(studentId = null) {
     Student_ID: '',
     Full_Name: '',
     Nickname: '',
-    Class_ID: 'V1-MECH-G1',
+    Class_ID: 'ปวช.1 กลุ่ม1',
     Status: 'ปกติ',
     Phone_Number: '',
     Parent_Name: '',
@@ -1297,6 +1705,7 @@ function openEditStudentModal(studentId = null) {
     Emergency_Phone: '',
     Emergency_Contact_Note: '',
     Social_Contact: '',
+    Substance_Raw: 'ไม่สูบ ไม่ดื่ม',
     House_No: '',
     Road: '',
     Subdistrict: '',
@@ -1336,9 +1745,9 @@ function openEditStudentModal(studentId = null) {
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">กลุ่มเรียน (Class_ID) *</label>
-          <select id="editStuClassId" required class="w-full rounded-xl border border-slate-300 px-3 py-2">
-            ${groups.map(g => `<option value="${escapeHtml(g.Class_ID)}" ${stu.Class_ID === g.Class_ID ? 'selected' : ''}>${escapeHtml(g.Class_ID)} (${escapeHtml(g.Level)}${g.Year} ${escapeHtml(g.Major)} กลุ่ม ${g.Group_No})</option>`).join('')}
+          <label class="block font-semibold text-slate-700 mb-1">ระดับชั้นและกลุ่มเรียน *</label>
+          <select id="editStuClassId" required class="w-full rounded-xl border border-slate-300 px-3 py-2 font-semibold">
+            ${groups.map(g => `<option value="${escapeHtml(g.Class_ID)}" ${stu.Class_ID === g.Class_ID ? 'selected' : ''}>${escapeHtml(g.Class_ID)} (${escapeHtml(g.Major)})</option>`).join('')}
           </select>
         </div>
         <div>
@@ -1349,6 +1758,19 @@ function openEditStudentModal(studentId = null) {
             <option value="พ้นสภาพ" ${stu.Status === 'พ้นสภาพ' ? 'selected' : ''}>พ้นสภาพ</option>
           </select>
         </div>
+      </div>
+
+      <!-- ข้อมูลการใช้บุหรี่/สุรา/สารเสพติด ตามแบบบันทึก -->
+      <div class="p-3.5 rounded-2xl bg-orange-50/70 border border-orange-200">
+        <label class="block font-prompt font-bold text-orange-950 mb-1">
+          🚬 ข้อมูลการดื่มหรือสูบ / สารเสพติด (ตามที่นักเรียนแจ้งในแบบบันทึก)
+        </label>
+        <input type="text" id="editStuSubstanceRaw" value="${escapeHtml(stu.Substance_Raw || '')}"
+               placeholder="เช่น บุหรี่, เหล้า เบียร, น้ำกระท่อม, กัญชา หรือ ไม่สูบ ไม่ดื่ม"
+               class="w-full rounded-xl border border-orange-300 bg-white px-3 py-2 font-semibold text-slate-900" />
+        <p class="text-[11px] text-orange-800 mt-1">
+          * ระบบจะวิเคราะห์คำสำคัญ (บุหรี่, เหล้า/เบียร์, น้ำกระท่อม, กัญชา) จากช่องนี้เพื่อจัดกลุ่มเสี่ยงให้อัตโนมัติ
+        </p>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-100">
@@ -1462,6 +1884,7 @@ function submitEditStudentForm(e, oldStudentId) {
     Nickname: document.getElementById('editStuNick').value.trim(),
     Class_ID: document.getElementById('editStuClassId').value,
     Status: document.getElementById('editStuStatus').value,
+    Substance_Raw: document.getElementById('editStuSubstanceRaw').value.trim(),
     Phone_Number: document.getElementById('editStuPhone').value.replace(/\D/g, ''),
     Parent_Name: document.getElementById('editStuParentName').value.trim(),
     Parent_Phone: document.getElementById('editStuParentPhone').value.replace(/\D/g, ''),
@@ -1503,17 +1926,20 @@ function openScreeningModal(studentId) {
 
   body.innerHTML = `
     <form onsubmit="submitScreeningForm(event, '${escapeHtml(studentId)}')" class="space-y-4 text-xs sm:text-sm">
-      <div class="p-3 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-between">
+      <div class="p-3.5 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-between">
         <div>
-          <span class="font-mono text-xs font-bold text-blue-800">${escapeHtml(stu.Student_ID)}</span>
-          <h4 class="font-prompt font-bold text-slate-900 text-sm">${escapeHtml(stu.Full_Name)} (${escapeHtml(stu.Class_ID)})</h4>
+          <div class="flex items-center gap-1.5">
+            <span class="font-mono text-xs font-bold text-blue-800">${escapeHtml(stu.Student_ID)}</span>
+            ${renderClassAndGroupBadges(stu)}
+          </div>
+          <h4 class="font-prompt font-bold text-slate-900 text-sm mt-1">${escapeHtml(stu.Full_Name)}</h4>
         </div>
         <span class="text-xs font-semibold text-blue-800">โซน: อ.${escapeHtml(stu.Zone_District)}</span>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">สถานภาพบิดามารดา (Family_Status)</label>
+          <label class="block font-semibold text-slate-700 mb-1">สถานภาพบิดามารดา</label>
           <select id="scrFamilyStatus" class="w-full rounded-xl border border-slate-300 px-3 py-2">
             <option value="อยู่ร่วมกัน" ${sc.Family_Status === 'อยู่ร่วมกัน' ? 'selected' : ''}>อยู่ร่วมกัน</option>
             <option value="หย่าร้าง" ${sc.Family_Status === 'หย่าร้าง' ? 'selected' : ''}>หย่าร้าง</option>
@@ -1522,7 +1948,7 @@ function openScreeningModal(studentId) {
           </select>
         </div>
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">ฐานะทางเศรษฐกิจ (Financial_Status)</label>
+          <label class="block font-semibold text-slate-700 mb-1">ฐานะทางเศรษฐกิจ</label>
           <select id="scrFinStatus" class="w-full rounded-xl border border-slate-300 px-3 py-2">
             <option value="เพียงพอ" ${sc.Financial_Status === 'เพียงพอ' ? 'selected' : ''}>เพียงพอ</option>
             <option value="ขัดสน" ${sc.Financial_Status === 'ขัดสน' ? 'selected' : ''}>ขัดสน</option>
@@ -1530,20 +1956,20 @@ function openScreeningModal(studentId) {
           </select>
         </div>
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">ระดับความเสี่ยงรวม (Overall_Risk_Level)</label>
+          <label class="block font-semibold text-slate-700 mb-1">ระดับความเสี่ยงรวม</label>
           <select id="scrRiskLevel" class="w-full rounded-xl border border-slate-300 px-3 py-2 font-bold">
-            <option value="กลุ่มปกติ" ${sc.Overall_Risk_Level === 'กลุ่มปกติ' ? 'selected' : ''}>กลุ่มปกติ</option>
-            <option value="กลุ่มเสี่ยง" ${sc.Overall_Risk_Level === 'กลุ่มเสี่ยง' ? 'selected' : ''}>กลุ่มเสี่ยง</option>
-            <option value="กลุ่มมีปัญหา" ${sc.Overall_Risk_Level === 'กลุ่มมีปัญหา' ? 'selected' : ''}>กลุ่มมีปัญหา</option>
+            <option value="กลุ่มปกติ" ${sc.Overall_Risk_Level === 'กลุ่มปกติ' ? 'selected' : ''}>🟢 กลุ่มปกติ</option>
+            <option value="กลุ่มเสี่ยง" ${sc.Overall_Risk_Level === 'กลุ่มเสี่ยง' ? 'selected' : ''}>🟠 กลุ่มเสี่ยง</option>
+            <option value="กลุ่มมีปัญหา" ${sc.Overall_Risk_Level === 'กลุ่มมีปัญหา' ? 'selected' : ''}>🔴 กลุ่มมีปัญหา</option>
           </select>
         </div>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">ประวัติพฤติกรรมดื่ม/สูบ</label>
-          <input type="text" id="scrSubstance" value="${escapeHtml(sc.Substance_History || '')}"
-                 class="w-full rounded-xl border border-slate-300 px-3 py-2" />
+          <label class="block font-semibold text-slate-700 mb-1">ข้อมูลดื่ม/สูบ/สารเสพติด (ตามแบบบันทึก)</label>
+          <input type="text" id="scrSubstanceRaw" value="${escapeHtml(stu.Substance_Raw || '')}"
+                 class="w-full rounded-xl border border-slate-300 px-3 py-2 font-semibold" />
         </div>
         <div>
           <label class="block font-semibold text-slate-700 mb-1">ความต้องการทุนการศึกษา</label>
@@ -1557,7 +1983,7 @@ function openScreeningModal(studentId) {
 
       <div class="pt-3 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">วันที่ลงพื้นที่เยี่ยมบ้าน (Home_Visit_Date)</label>
+          <label class="block font-semibold text-slate-700 mb-1">วันที่ลงพื้นที่เยี่ยมบ้าน</label>
           <input type="date" id="scrVisitDate" value="${escapeHtml(sc.Home_Visit_Date || new Date().toISOString().slice(0, 10))}"
                  class="w-full rounded-xl border border-slate-300 px-3 py-2" />
         </div>
@@ -1574,7 +2000,7 @@ function openScreeningModal(studentId) {
       </div>
 
       <div>
-        <label class="block font-semibold text-slate-700 mb-1">อัปโหลดรูปถ่ายจากการเยี่ยมบ้าน (Home_Visit_Photo - ถ่ายจากมือถือได้ทันที)</label>
+        <label class="block font-semibold text-slate-700 mb-1">อัปโหลดรูปถ่ายจากการเยี่ยมบ้าน (ถ่ายจากมือถือได้ทันที)</label>
         <input type="file" accept="image/*" capture="environment" onchange="handlePhotoUploadToInput(event, 'scrVisitPhotoData')"
                class="w-full text-xs text-slate-600 file:mr-2 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700" />
         <input type="hidden" id="scrVisitPhotoData" value="${escapeHtml(sc.Home_Visit_Photo || '')}" />
@@ -1611,7 +2037,8 @@ function submitScreeningForm(e, studentId) {
     Family_Status: document.getElementById('scrFamilyStatus').value,
     Financial_Status: document.getElementById('scrFinStatus').value,
     Overall_Risk_Level: document.getElementById('scrRiskLevel').value,
-    Substance_History: document.getElementById('scrSubstance').value.trim(),
+    Manual_Risk_Override: true,
+    Substance_Raw: document.getElementById('scrSubstanceRaw').value.trim(),
     Scholarship_Need: document.getElementById('scrScholarship').value,
     Home_Visit_Date: document.getElementById('scrVisitDate').value,
     Home_Visit_Photo: document.getElementById('scrVisitPhotoData').value,
@@ -1641,8 +2068,10 @@ function openDisciplineModal(studentId) {
 function openClassGroupModal(classId = null) {
   const isEdit = Boolean(classId);
   const grp = isEdit ? window.appDB.getClassGroupById(classId) : {
-    Class_ID: '',
+    Class_ID: 'ปวช.1 กลุ่ม1',
+    Group_Label: 'กลุ่ม1',
     Level: 'ปวช.',
+    Level_Year: 'ปวช.1',
     Year: 1,
     Major: 'ช่างกลโรงงาน',
     Group_No: 1,
@@ -1656,9 +2085,9 @@ function openClassGroupModal(classId = null) {
   body.innerHTML = `
     <form onsubmit="submitClassGroupForm(event)" class="space-y-3.5 text-xs sm:text-sm">
       <div>
-        <label class="block font-semibold text-slate-700 mb-1">รหัสกลุ่มเรียน (Class_ID - Primary Key) *</label>
-        <input type="text" id="cgId" value="${escapeHtml(grp.Class_ID)}" ${isEdit ? 'readonly' : 'required'} placeholder="เช่น V1-MECH-G1"
-               class="w-full rounded-xl border border-slate-300 px-3 py-2 font-mono font-bold ${isEdit ? 'bg-slate-100' : ''}" />
+        <label class="block font-semibold text-slate-700 mb-1">ชื่อกลุ่มเรียน (เช่น ปวช.1 กลุ่ม1) *</label>
+        <input type="text" id="cgId" value="${escapeHtml(grp.Class_ID)}" ${isEdit ? 'readonly' : 'required'} placeholder="เช่น ปวช.1 กลุ่ม1"
+               class="w-full rounded-xl border border-slate-300 px-3 py-2 font-prompt font-bold ${isEdit ? 'bg-slate-100' : ''}" />
       </div>
       <div class="grid grid-cols-3 gap-2.5">
         <div>
@@ -1700,12 +2129,17 @@ function openClassGroupModal(classId = null) {
 
 function submitClassGroupForm(e) {
   e.preventDefault();
+  const lvl = document.getElementById('cgLevel').value;
+  const yr = Number(document.getElementById('cgYear').value);
+  const gNo = Number(document.getElementById('cgGroupNo').value);
   window.appDB.upsertClassGroup({
     Class_ID: document.getElementById('cgId').value.trim(),
-    Level: document.getElementById('cgLevel').value,
-    Year: Number(document.getElementById('cgYear').value),
+    Group_Label: `กลุ่ม${gNo}`,
+    Level: lvl,
+    Level_Year: `${lvl}${yr}`,
+    Year: yr,
     Major: document.getElementById('cgMajor').value,
-    Group_No: Number(document.getElementById('cgGroupNo').value),
+    Group_No: gNo,
     Advisor_Name: document.getElementById('cgAdvisor').value.trim()
   });
   closeModal('classGroupModal');
@@ -1765,9 +2199,6 @@ function closeModal(modalId) {
   if (m) m.classList.add('hidden');
 }
 
-// ============================================================================
-// Initialize Event Listeners on DOM Ready
-// ============================================================================
 document.addEventListener('DOMContentLoaded', () => {
   renderAll();
 });

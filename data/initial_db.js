@@ -1,101 +1,99 @@
-// ฐานข้อมูลเริ่มต้น 4 ตารางหลัก (Relational Schema)
+// ฐานข้อมูลเริ่มต้น 4 ตารางหลัก (Relational Schema V2)
 window.INITIAL_RELATIONAL_DB = {
   "metadata": {
     "app_name": "ระบบจัดการนักเรียนแผนกช่างกลโรงงานและเทคนิคอุตสาหกรรม",
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "academic_year": "2569",
-    "generated_at": "2026-10-22T10:20:00+07:00",
+    "generated_at": "2026-10-22T10:50:00+07:00",
     "total_students": 125
   },
   "Class_Groups": [
     {
-      "Class_ID": "V1-MECH-G1",
+      "Class_ID": "ปวช.1 กลุ่ม1",
+      "Group_Label": "กลุ่ม1",
       "Level": "ปวช.",
+      "Level_Year": "ปวช.1",
       "Year": 1,
       "Major": "ช่างกลโรงงาน",
       "Group_No": 1,
-      "Advisor_Name": "ครูที่ปรึกษา ปวช.1 กลุ่ม 1 (ระบุชื่อ)",
+      "Advisor_Name": "ครูที่ปรึกษา ปวช.1 กลุ่ม1 (คลิกเพื่อระบุชื่อ)",
       "Note": "รหัสนำหน้า 6920102"
     },
     {
-      "Class_ID": "V1-MECH-G2",
+      "Class_ID": "ปวช.1 กลุ่ม2",
+      "Group_Label": "กลุ่ม2",
       "Level": "ปวช.",
+      "Level_Year": "ปวช.1",
       "Year": 1,
       "Major": "ช่างกลโรงงาน",
       "Group_No": 2,
-      "Advisor_Name": "ครูที่ปรึกษา ปวช.1 กลุ่ม 2 (ระบุชื่อ)",
+      "Advisor_Name": "ครูที่ปรึกษา ปวช.1 กลุ่ม2 (คลิกเพื่อระบุชื่อ)",
       "Note": "รหัสนำหน้า 6920102"
     },
     {
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Group_Label": "กลุ่ม3",
       "Level": "ปวช.",
+      "Level_Year": "ปวช.1",
       "Year": 1,
       "Major": "ช่างกลโรงงาน",
       "Group_No": 3,
-      "Advisor_Name": "ครูที่ปรึกษา ปวช.1 กลุ่ม 3 (ระบุชื่อ)",
+      "Advisor_Name": "ครูที่ปรึกษา ปวช.1 กลุ่ม3 (คลิกเพื่อระบุชื่อ)",
       "Note": "รหัสนำหน้า 6920102"
     },
     {
-      "Class_ID": "V1-MECH-G4",
+      "Class_ID": "ปวช.1 กลุ่ม4",
+      "Group_Label": "กลุ่ม4",
       "Level": "ปวช.",
+      "Level_Year": "ปวช.1",
       "Year": 1,
       "Major": "ช่างกลโรงงาน",
       "Group_No": 4,
-      "Advisor_Name": "ครูที่ปรึกษา ปวช.1 กลุ่ม 4 (ระบุชื่อ)",
+      "Advisor_Name": "ครูที่ปรึกษา ปวช.1 กลุ่ม4 (คลิกเพื่อระบุชื่อ)",
       "Note": "รหัสนำหน้า 6920102"
     },
     {
-      "Class_ID": "V2-MECH-G4",
+      "Class_ID": "ปวช.2 กลุ่ม4",
+      "Group_Label": "กลุ่ม4",
       "Level": "ปวช.",
+      "Level_Year": "ปวช.2",
       "Year": 2,
       "Major": "ช่างกลโรงงาน",
       "Group_No": 4,
-      "Advisor_Name": "ครูที่ปรึกษา ปวช.2 กลุ่ม 4 (ระบุชื่อ)",
+      "Advisor_Name": "ครูที่ปรึกษา ปวช.2 กลุ่ม4 (คลิกเพื่อระบุชื่อ)",
       "Note": "นักเรียนตกค้างรุ่น 68 (6820102)"
     },
     {
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Group_Label": "กลุ่ม1",
       "Level": "ปวส.",
+      "Level_Year": "ปวส.1",
       "Year": 1,
       "Major": "เทคนิคอุตสาหกรรม",
       "Group_No": 1,
-      "Advisor_Name": "ครูที่ปรึกษา ปวส.1 กลุ่ม 1 (ระบุชื่อ)",
+      "Advisor_Name": "ครูที่ปรึกษา ปวส.1 กลุ่ม1 (คลิกเพื่อระบุชื่อ)",
       "Note": "รหัสนำหน้า 6930111"
     },
     {
-      "Class_ID": "H1-IND-G2",
+      "Class_ID": "ปวส.1 กลุ่ม2",
+      "Group_Label": "กลุ่ม2",
       "Level": "ปวส.",
+      "Level_Year": "ปวส.1",
       "Year": 1,
       "Major": "เทคนิคอุตสาหกรรม",
       "Group_No": 2,
-      "Advisor_Name": "ครูที่ปรึกษา ปวส.1 กลุ่ม 2 (ระบุชื่อ)",
+      "Advisor_Name": "ครูที่ปรึกษา ปวส.1 กลุ่ม2 (คลิกเพื่อระบุชื่อ)",
       "Note": "รหัสนำหน้า 6930111"
     },
     {
-      "Class_ID": "H1-IND-G3",
+      "Class_ID": "ปวส.1 กลุ่ม5",
+      "Group_Label": "กลุ่ม5",
       "Level": "ปวส.",
-      "Year": 1,
-      "Major": "เทคนิคอุตสาหกรรม",
-      "Group_No": 3,
-      "Advisor_Name": "ครูที่ปรึกษา ปวส.1 กลุ่ม 3 (สำรอง)",
-      "Note": "เปิดสำรองตามโครงสร้างแผนก"
-    },
-    {
-      "Class_ID": "H1-IND-G4",
-      "Level": "ปวส.",
-      "Year": 1,
-      "Major": "เทคนิคอุตสาหกรรม",
-      "Group_No": 4,
-      "Advisor_Name": "ครูที่ปรึกษา ปวส.1 กลุ่ม 4 (สำรอง)",
-      "Note": "เปิดสำรองตามโครงสร้างแผนก"
-    },
-    {
-      "Class_ID": "H1-IND-G5",
-      "Level": "ปวส.",
+      "Level_Year": "ปวส.1",
       "Year": 1,
       "Major": "เทคนิคอุตสาหกรรม",
       "Group_No": 5,
-      "Advisor_Name": "ครูที่ปรึกษา ปวส.1 กลุ่ม 5 (ระบุชื่อ)",
+      "Advisor_Name": "ครูที่ปรึกษา ปวส.1 กลุ่ม5 (คลิกเพื่อระบุชื่อ)",
       "Note": "รหัสนำหน้า 6930111"
     }
   ],
@@ -106,7 +104,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "กิตติพงษ์ วงไกร",
       "Nickname": "ตูน",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G1",
+      "Class_ID": "ปวช.1 กลุ่ม1",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0983844332",
       "Phone_Raw": "0983844332",
@@ -130,9 +131,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1-7lnoq7iA0MTqEVDjaG3BSuAF5mmrD-M",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "หนองแหนวิทยา",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020002",
@@ -140,7 +146,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ชาญวิทย์ วงษ์ทอง",
       "Nickname": "ชาญ",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G1",
+      "Class_ID": "ปวช.1 กลุ่ม1",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0633601704",
       "Phone_Raw": "0633601704",
@@ -164,9 +173,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1yBXZvQaQESbyjzC1QhBo3IraRtvTRgz2",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "ศรีรักษ์ราษฎร์บำรุง",
+      "Substance_Raw": "ไม่สูบ ไม่ดื่ม",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "แก้ไขรหัสประจำตัวเป็น 69201020002 (เดิมกรอกซ้ำกับ กิตติพงษ์ 001)",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020003",
@@ -174,7 +188,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ไชยพสิษฐ์ เนตรายนต์",
       "Nickname": "กั้ง",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G1",
+      "Class_ID": "ปวช.1 กลุ่ม1",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0937484827",
       "Phone_Raw": "0937484827",
@@ -198,9 +215,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1e2NwIZIWGmWYWwW6VcbJamknIYmxnqqM",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "โรงเรียนวัดโสธรวรารามวรวิหาร",
+      "Substance_Raw": "ไม่เคย",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020004",
@@ -208,7 +230,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ณัฐภัทร พรหมเมือง",
       "Nickname": "ออม",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G1",
+      "Class_ID": "ปวช.1 กลุ่ม1",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0805243462",
       "Phone_Raw": "0805243462",
@@ -232,9 +257,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1Mp5l9syvU-qfWWzQYCuTKsCBZ8ml9mn-",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "โรงเรียนวัดลำต้อยติ่ง",
+      "Substance_Raw": "ไม่เอาหมด",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020006",
@@ -242,7 +272,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ธนพงษ์ คงสวัสดิ์",
       "Nickname": "บั้ม",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G1",
+      "Class_ID": "ปวช.1 กลุ่ม1",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0970810635",
       "Phone_Raw": "0970810635",
@@ -266,9 +299,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1T3XQIcnT-9bvmn2mtpk7VobV0CLUob3N",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "โรงเรียนวัดเขาดิน",
+      "Substance_Raw": "ไม่ดื่มไม่สูบ",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "ส่งฟอร์มรูปภาพ 2 ครั้ง (ใช้ข้อมูลครั้งล่าสุด)",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020007",
@@ -276,7 +314,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "นพกร โสดก",
       "Nickname": "ภัทร",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G1",
+      "Class_ID": "ปวช.1 กลุ่ม1",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0639981774",
       "Phone_Raw": "0639981774",
@@ -300,9 +341,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1xlRqChMszuQO02sahB9C0c1KFRGxn7my",
       "Commute_Method": "รถไฟ",
       "Previous_School": "โรงเรียนวัดโสธรวรารามวรวิหาร",
+      "Substance_Raw": "ไม่มี",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020008",
@@ -310,7 +356,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ภคนันท์ ขวัญยัง",
       "Nickname": "ฟลุ๊ค",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G1",
+      "Class_ID": "ปวช.1 กลุ่ม1",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0652249299",
       "Phone_Raw": "0652249299",
@@ -334,9 +383,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1DeC5owv9jTGqnPW2djx3MpwkMCuQe1Tp",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "โรงเรียนวัดคลองสวน",
+      "Substance_Raw": "ไม่ยุ่งอะไรเลย",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020009",
@@ -344,7 +398,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ภัทรดนัย ปิ่นไชโย",
       "Nickname": "เเสตมป์",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G1",
+      "Class_ID": "ปวช.1 กลุ่ม1",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0631762246",
       "Phone_Raw": "0631762246",
@@ -368,9 +425,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1eOmcWu01lTZpAf_4NVBsOgLRV1erQHWl",
       "Commute_Method": "2เเถว-มอไซค์ส่วนตัว",
       "Previous_School": "เบญ2",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020010",
@@ -378,7 +440,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ภัทรพงศ์ พุทธพงษ์",
       "Nickname": "พุทธพงษ์",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G1",
+      "Class_ID": "ปวช.1 กลุ่ม1",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0829920635",
       "Phone_Raw": "0829920635",
@@ -402,9 +467,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1TJKifiq6A-yp9IKK60U8FRHILwonhd8k",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "เบญจมราชรังสฤษฎิ์2",
+      "Substance_Raw": "ไม่มีครับ",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "เพิ่มนามสกุล พุทธพงษ์ ตามที่ระบุในฟอร์มรูปถ่าย",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020011",
@@ -412,7 +482,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ภัทรพล ศรีสวัสดิ์",
       "Nickname": "คุน",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G1",
+      "Class_ID": "ปวช.1 กลุ่ม1",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0906367752",
       "Phone_Raw": "0906367752",
@@ -436,9 +509,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1QpjYJ27xtLACrSRM8SxjAr62PBBF9xoj",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "โรงเรียนวัดปากน้ำโจ้โล้",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "ในฟอร์มรูปถ่ายนักเรียนกรอกเลขตก 0 (6920102011)",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020012",
@@ -446,7 +524,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ภาคภูมิ ถีถาวร",
       "Nickname": "ภูมิ",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G1",
+      "Class_ID": "ปวช.1 กลุ่ม1",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0804023699",
       "Phone_Raw": "0804023699",
@@ -470,9 +551,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1sg0RxDLK_kKMDfzIIKKV94gnI-ALhYtG",
       "Commute_Method": "ผู้ปกครองมาส่ง",
       "Previous_School": "โรงเรียนวัดนครเนื่องเขต(ศรีไพจิตร)",
+      "Substance_Raw": "ไม่มี",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020013",
@@ -480,7 +566,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "รัฐพล สิริรอง",
       "Nickname": "นัส",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G1",
+      "Class_ID": "ปวช.1 กลุ่ม1",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "064282796",
       "Phone_Raw": "064282796",
@@ -504,11 +593,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1GTKVQqXA6nW1f_J4bNCR0PjMy1Zxio4o",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "โรงเรียนวัดปากน้ำโจ้โล้",
+      "Substance_Raw": "เหล้า เบียร",
+      "Substance_Clean": "เหล้า/เบียร์",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "เบอร์โทรนักเรียนมี 9 หลัก (064282796)"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020014",
@@ -516,7 +610,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "วรวุฒิ วงค์คำจันทร์",
       "Nickname": "วี",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G1",
+      "Class_ID": "ปวช.1 กลุ่ม1",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0613630537",
       "Phone_Raw": "0613630537",
@@ -540,9 +637,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1QwsRvC5HQPnBwywj9QFcs7j5TNU4dCNB",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "เบญจมราชรังสฤษฎิ์2",
+      "Substance_Raw": "ไม่ดูด",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020015",
@@ -550,7 +652,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "วัชรินทร์ พุ่มนิคม",
       "Nickname": "กัส",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G1",
+      "Class_ID": "ปวช.1 กลุ่ม1",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0832787498",
       "Phone_Raw": "0832787498",
@@ -574,9 +679,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1fkcbrbuaJP41SMRgnLEzbKX32dlLuh5f",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "ดาราจรัส",
+      "Substance_Raw": "ม่ายมี",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "แก้ไขรหัสประจำตัวเป็น 69201020015 (เดิมกรอกซ้ำกับ อนุชิต 018) และแก้คำสะกดนามสกุลเป็น พุ่มนิคม",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020016",
@@ -584,7 +694,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "สิทธิพร พิมพัฒน์",
       "Nickname": "บาส",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G1",
+      "Class_ID": "ปวช.1 กลุ่ม1",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0948380919",
       "Phone_Raw": "0948380919",
@@ -608,9 +721,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1obStRKgvYrt_NlZhQ8zkJLTMqriqpQD3",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "โรงเรียนวัดลำต้อยติ่ง",
+      "Substance_Raw": "ไม่กินอะไรเลย",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020017",
@@ -618,7 +736,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "สุทธิมนต์ หนุนพิทักษ์สกุล",
       "Nickname": "ยูโร",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G1",
+      "Class_ID": "ปวช.1 กลุ่ม1",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0633630434",
       "Phone_Raw": "0633630434",
@@ -642,9 +763,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=19vAP58xAQ_jl02JFTsJyjboGY3zJtyxd",
       "Commute_Method": "เดินมาหออยู่ซอยจักรพรรดิ5ครับ",
       "Previous_School": "โรงเรียนสนามชัยเขต",
+      "Substance_Raw": "เหล้า เบียร",
+      "Substance_Clean": "เหล้า/เบียร์",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020018",
@@ -652,7 +778,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "อนุชิต อุบลรัตน์",
       "Nickname": "แป๊ะ",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G1",
+      "Class_ID": "ปวช.1 กลุ่ม1",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0908866092",
       "Phone_Raw": "0908866092",
@@ -676,9 +805,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1a-t7eIFyDZ-xlKYxBqGj-qYPSsPnJzk7",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "โรงเรียนบ้านหนองโสน",
+      "Substance_Raw": "ไม่สูบ",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "แก้ไขคำสะกดชื่อจาก แนุชิต เป็น อนุชิต",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020020",
@@ -686,7 +820,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "อิทธิกร คงศรี",
       "Nickname": "มาร์ค",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G1",
+      "Class_ID": "ปวช.1 กลุ่ม1",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0653402314",
       "Phone_Raw": "0653402314",
@@ -710,9 +847,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1IZauCTVssWW7XTwpUnzgmCiMrUVpY_pO",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วัดปากน้ำโจ้โล้",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020106",
@@ -720,7 +862,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ภาณุพงษ์ ใหม่ผึ้ง",
       "Nickname": "บาส",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G1",
+      "Class_ID": "ปวช.1 กลุ่ม1",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0982843751",
       "Phone_Raw": "0982843751",
@@ -744,9 +889,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1VFJq30cmpo_lVF90Xow96Bjyo38YGk4l",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "บางคล้าพิทยาคม",
+      "Substance_Raw": "ไม่สูบไม่ดื่ม",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020021",
@@ -754,7 +904,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ชัยมงคล ฉิมแก้ว",
       "Nickname": "ม่อน",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G2",
+      "Class_ID": "ปวช.1 กลุ่ม2",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0952830603",
       "Phone_Raw": "0952830603",
@@ -778,9 +931,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1jbGRTueNjRll_lITB-Z-Au4Emx37NDJl",
       "Commute_Method": "รถไฟ",
       "Previous_School": "โรงเรียนศรีรักษ์ราษฎร์บำรุง",
+      "Substance_Raw": "ไม่",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020022",
@@ -788,7 +946,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ชิษณุพงศ์ ซื่อตรง",
       "Nickname": "บอส",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G2",
+      "Class_ID": "ปวช.1 กลุ่ม2",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0858120327",
       "Phone_Raw": "0858120327",
@@ -812,9 +973,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1jEVg4ldbklLBcYQHyXcQRZpmyHpjskBF",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "รถเรียนเบญจมราชรังฏิ์3ชนะสงสารวิทยา",
+      "Substance_Raw": "ไม่ยุ่งเกี่ยว",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020023",
@@ -822,7 +988,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ญาณศรณ์ ด้วงเงิน",
       "Nickname": "พอส",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G2",
+      "Class_ID": "ปวช.1 กลุ่ม2",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0627591740",
       "Phone_Raw": "0627591740",
@@ -846,9 +1015,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1TKWpiFMr87UBU6uCN_Nc-iy_OejgxkRB",
       "Commute_Method": "รถตู้รับส่ง",
       "Previous_School": "เบญ 2",
+      "Substance_Raw": "เหล้า เบียร",
+      "Substance_Clean": "เหล้า/เบียร์",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020024",
@@ -856,7 +1030,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ตถตา จันทร์บาง",
       "Nickname": "เจ๋ง",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G2",
+      "Class_ID": "ปวช.1 กลุ่ม2",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0624086788",
       "Phone_Raw": "0624086788",
@@ -880,9 +1057,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1vSvS72xzIZQRxDvvv4m6_J0H5xZgYWel",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วัดเที่ยงพิมลมุข",
+      "Substance_Raw": "ไม่มี",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020025",
@@ -890,7 +1072,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ทศวรรธ รอดทุกข์",
       "Nickname": "ไนท์",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G2",
+      "Class_ID": "ปวช.1 กลุ่ม2",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0963029892",
       "Phone_Raw": "0963029892",
@@ -914,9 +1099,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1mC0NtNDJD9G6JMKub2XJu3mOTP1rdCNV",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "ไผ่ดำพิทยาคม รัชมังคลาภิเษก",
+      "Substance_Raw": "-",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020026",
@@ -924,7 +1114,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ธนพัฒน์ พึ่งพันธ์",
       "Nickname": "อ๊อฟ",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G2",
+      "Class_ID": "ปวช.1 กลุ่ม2",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0639103322",
       "Phone_Raw": "0639103322",
@@ -948,9 +1141,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1lHXCY6W75lVTWLb6yRdnj_mfBCXXCw2l",
       "Commute_Method": "รถตู้รับส่ง",
       "Previous_School": "สุตะบำรุงพิทยาคาร",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020027",
@@ -958,7 +1156,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ธนภูมิ โสดาตา",
       "Nickname": "ภูมิ",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G2",
+      "Class_ID": "ปวช.1 กลุ่ม2",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0659571147",
       "Phone_Raw": "0659571147",
@@ -982,9 +1183,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1R1P1sEH39CmoDYlcshcdoU8sOa5-EB38",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "โรงเรียนวัดคลอง18",
+      "Substance_Raw": "ไม่ยุ่งเกี่ยว",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020028",
@@ -992,7 +1198,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ธาวิน มิดยิ้ม",
       "Nickname": "มะดี",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G2",
+      "Class_ID": "ปวช.1 กลุ่ม2",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0910702750",
       "Phone_Raw": "0910702750",
@@ -1016,9 +1225,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1JzH8hphWToUIX-LKD6qjW9CoeeHWxVVJ",
       "Commute_Method": "ผู้ปกครองมาส่ง",
       "Previous_School": "ผดุงอิสลาม",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020029",
@@ -1026,7 +1240,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "บูรพา ริดมัด",
       "Nickname": "ตี๋",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G2",
+      "Class_ID": "ปวช.1 กลุ่ม2",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0813327574",
       "Phone_Raw": "0813327574",
@@ -1050,9 +1267,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=13Tz7LkLkCtfmeUI1cspKF2Xr3dLrBaFH",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "เบญจมราชรังสฤษฎิ์3",
+      "Substance_Raw": "ไม่ยุ่งเกี่ยวทุกชนิด",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020030",
@@ -1060,7 +1282,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ภัคพล ทองก้อน",
       "Nickname": "ธันวา",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G2",
+      "Class_ID": "ปวช.1 กลุ่ม2",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0923529369",
       "Phone_Raw": "0923529369",
@@ -1084,9 +1309,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1e4IVOzd5NJVZqvDQ3ExaGEW5JqC8dWn4",
       "Commute_Method": "เดินมา",
       "Previous_School": "โรงเรียนวัดประตูน้ำท่าไข่",
+      "Substance_Raw": "ไม่สูบ",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020031",
@@ -1094,7 +1324,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ภานุรุจ กุ่งแก้ว",
       "Nickname": "เจแปน",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G2",
+      "Class_ID": "ปวช.1 กลุ่ม2",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0993811939",
       "Phone_Raw": "0993811939",
@@ -1118,9 +1351,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1gtuzP8DGbA1t7Aig2JoSSCBaef-kwv6U",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "เบญจมราชรังสฤษฎิ์2",
+      "Substance_Raw": "เหล้า เบียร",
+      "Substance_Clean": "เหล้า/เบียร์",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020032",
@@ -1128,7 +1366,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ฤทธิรงค์ ฉานุ",
       "Nickname": "ไอซ์",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G2",
+      "Class_ID": "ปวช.1 กลุ่ม2",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0828893128",
       "Phone_Raw": "0828893128",
@@ -1152,9 +1393,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1qSiYlyXgQ7E4vG98fHqZHJJPCxT04SEK",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วัดปากน้ำโจ้โล้",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020033",
@@ -1162,7 +1408,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "วงศกร สอนสมนึก",
       "Nickname": "กาฟิวส์",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G2",
+      "Class_ID": "ปวช.1 กลุ่ม2",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0822963741",
       "Phone_Raw": "0822963741",
@@ -1186,9 +1435,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1iHnF5OhjSVE3V11yvuD_PhS_LY2jLzc1",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "ดาราสมุทร ฉะเชิงเทรา",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร, น้ำกระท่อม",
+      "Substance_Clean": "บุหรี่, เหล้า/เบียร์, น้ำกระท่อม",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์",
+        "น้ำกระท่อม"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020034",
@@ -1196,7 +1452,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "อนุพล บุญเมือง",
       "Nickname": "ไอซ์",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G2",
+      "Class_ID": "ปวช.1 กลุ่ม2",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0951657337",
       "Phone_Raw": "0951657337",
@@ -1220,9 +1479,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=19sx8a7t4ap3Y6jkynIBcQ3BRCkKFv93B",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วัดเที่ยงพิมลมุข",
+      "Substance_Raw": "ไม่ดูด",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020035",
@@ -1230,7 +1494,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "อภิชิต พิมพา",
       "Nickname": "ดรีม",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G2",
+      "Class_ID": "ปวช.1 กลุ่ม2",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0994745306",
       "Phone_Raw": "0994745306",
@@ -1254,9 +1521,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1IuFw_VZiyad5esZ7iP7QgmK-1V5j4z3t",
       "Commute_Method": "ผู้ปกครองมาส่ง",
       "Previous_School": "โรงเรียนวัดโสธรวรารามวรวิหาร",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020036",
@@ -1264,7 +1536,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ออมสิน มีมาก",
       "Nickname": "ออม",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G2",
+      "Class_ID": "ปวช.1 กลุ่ม2",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0966315393",
       "Phone_Raw": "0966315393",
@@ -1288,9 +1563,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1YL15CR1lmevbvU3RQgPad6rr1OAKJqVL",
       "Commute_Method": "มารถมอเตอร์ไซล์กับเพื่อน",
       "Previous_School": "วัดคลองสวน(พิบูลธรรมขันธ์)",
+      "Substance_Raw": "ไม่มี",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020037",
@@ -1298,7 +1578,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "อัครพนธ์ ศิลาภรพรรณ",
       "Nickname": "โซ่",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G2",
+      "Class_ID": "ปวช.1 กลุ่ม2",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0945096421",
       "Phone_Raw": "0945096421",
@@ -1322,9 +1605,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1cKLc7iWmpWfVKuaMYwF_6HyQKVTGtJrM",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "สุตะบำรุงพิทยาคาร",
+      "Substance_Raw": "บุหรี่,",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020038",
@@ -1332,7 +1620,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "อาทิตย์ หาญณรงค์",
       "Nickname": "ทิต",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G2",
+      "Class_ID": "ปวช.1 กลุ่ม2",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0614988815",
       "Phone_Raw": "0614988815",
@@ -1356,9 +1647,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1qGD5WbtvSTihL7CSTen9MxVRRcOfzxxu",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "พนมสารคามพนมอดุลย์วิทยา",
+      "Substance_Raw": "ไม่",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020040",
@@ -1366,7 +1662,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "อารักษ์ ใหม่โสภา",
       "Nickname": "นกฮูก",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G2",
+      "Class_ID": "ปวช.1 กลุ่ม2",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0961248115",
       "Phone_Raw": "0961248115",
@@ -1390,9 +1689,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1I39v5N0i_lRQekP1lp0C37Q__yeu4AVe",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "บางคล้าพิทยาคม",
+      "Substance_Raw": "ไม่เอาครับ",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020041",
@@ -1400,7 +1704,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "กรินทร์ คงบุญญา",
       "Nickname": "ปังปอนด์",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม3",
+      "Group_No": 3,
       "Status": "ปกติ",
       "Phone_Number": "0661520257",
       "Phone_Raw": "0661520257",
@@ -1424,9 +1731,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1t0h9z23nL-qBfyczJgWE19eHsL7FDA0k",
       "Commute_Method": "ผู้ปกครองมาส่ง",
       "Previous_School": "ดาราสมุทร ฉะเชิงเทรา",
+      "Substance_Raw": "ไม่สูบไม่ดิ่ม",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020042",
@@ -1434,7 +1746,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ก้องภพ เหมสมืติ",
       "Nickname": "",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม3",
+      "Group_No": 3,
       "Status": "ปกติ",
       "Phone_Number": "",
       "Phone_Raw": "",
@@ -1458,6 +1773,9 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1exxLssF1BUPO_L2zbCpyqN_mEoaAIH5P",
       "Commute_Method": "",
       "Previous_School": "",
+      "Substance_Raw": "ยังไม่ได้กรอกข้อมูล",
+      "Substance_Clean": "ไม่ระบุ",
+      "Substance_Tags": [],
       "Data_Note": "กรอกเฉพาะฟอร์มส่งรูปถ่าย (เลขที่ 42 ปวช1 กลุ่ม 3 กำหนดรหัสเป็น 69201020042) ยังไม่ได้ตอบแบบสอบถามข้อมูลหลัก",
       "Data_Issues": [
         "ยังไม่ได้กรอกแบบสอบถามข้อมูลหลัก (มีเฉพาะรูปถ่าย)",
@@ -1465,7 +1783,7 @@ window.INITIAL_RELATIONAL_DB = {
         "ไม่มีเบอร์โทรศัพท์ผู้ปกครอง",
         "ไม่ระบุอำเภอ/โซนพื้นที่"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020043",
@@ -1473,7 +1791,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ชนัญญู ศรีสมวงศ์",
       "Nickname": "เอิร์ท",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม3",
+      "Group_No": 3,
       "Status": "ปกติ",
       "Phone_Number": "0942933340",
       "Phone_Raw": "0942933340",
@@ -1497,9 +1818,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1-k3gUIB8iRZdud6C1598_aO6s0b2uMUb",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "ดาราจรัส",
+      "Substance_Raw": "เหล้า เบียร",
+      "Substance_Clean": "เหล้า/เบียร์",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "ส่งฟอร์มรูปภาพ 2 ครั้ง (ใช้ข้อมูลครั้งล่าสุด)",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020044",
@@ -1507,7 +1833,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ณัฐดนัย ไชยวงศ์",
       "Nickname": "เกมส์",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม3",
+      "Group_No": 3,
       "Status": "ปกติ",
       "Phone_Number": "0610053000",
       "Phone_Raw": "0610053000",
@@ -1531,9 +1860,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1gexQfwS6mebScMIXvAMsjmKfzqDbtE2u",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "กสน ระดับตำบลมาบข่า จ.ระยอง",
+      "Substance_Raw": "ไม่ดืมแหละไม่สูบครับ",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "ในฟอร์มรูปถ่ายใช้นามสกุลมารดา (วงษ์ประภา)",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020045",
@@ -1541,7 +1875,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ถิรศักดิ์ ชะฎาทอง",
       "Nickname": "พีม",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม3",
+      "Group_No": 3,
       "Status": "ปกติ",
       "Phone_Number": "0983069357",
       "Phone_Raw": "0983069357",
@@ -1565,9 +1902,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1MBjwqOMO9cFVv0m0AjZbOPUxkHkN3Hyq",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "โรงเรียน วัดสว่างอารมณ์",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020046",
@@ -1575,7 +1917,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ธนพัฒน์ พละศรี",
       "Nickname": "ไบทร์",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม3",
+      "Group_No": 3,
       "Status": "ปกติ",
       "Phone_Number": "0951392340",
       "Phone_Raw": "0951392340",
@@ -1599,11 +1944,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "ผู้ปกครองมาส่ง",
       "Previous_School": "หนองแหนวิทยา",
+      "Substance_Raw": "ไม่ดูดไม่กิน",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020047",
@@ -1611,7 +1961,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ธรรมรัตน์ หลวงชัย",
       "Nickname": "คอปเตอร์",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม3",
+      "Group_No": 3,
       "Status": "ปกติ",
       "Phone_Number": "0925474310",
       "Phone_Raw": "0925474310",
@@ -1635,9 +1988,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1Yl-tLhVu8kqTwWJ5FmxNM1b9PdVDaLRP",
       "Commute_Method": "ผู้ปกครองมาส่ง",
       "Previous_School": "โรงเรียนชำป่างามวิทยาคม",
+      "Substance_Raw": "ไม่เอาอะไรเลย",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020048",
@@ -1645,7 +2003,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ธีรเดช ทิพวรรณ์",
       "Nickname": "โทพาส",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม3",
+      "Group_No": 3,
       "Status": "ปกติ",
       "Phone_Number": "0863671858",
       "Phone_Raw": "086-367-1858",
@@ -1669,9 +2030,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1A5t1GEygF-YVKoJtkQrTNvOnPcwJUZuA",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "โรงเรียน วัดสว่างอารมณ์",
+      "Substance_Raw": "ไม่มี",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020049",
@@ -1679,7 +2045,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "นันทิภาคย์ ไชยดำ",
       "Nickname": "ลีซอ",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม3",
+      "Group_No": 3,
       "Status": "ปกติ",
       "Phone_Number": "0949304476",
       "Phone_Raw": "0949304476",
@@ -1703,9 +2072,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1aZMabTIXqhfBNeEDZdrwFWSr8F5_kUvv",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "โรงเรียนดาราจรัส",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020050",
@@ -1713,7 +2087,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "นิติพงษ์ สุนาวงษ์",
       "Nickname": "ฟลุ๊ค",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม3",
+      "Group_No": 3,
       "Status": "ปกติ",
       "Phone_Number": "0983458762",
       "Phone_Raw": "0983458762",
@@ -1737,11 +2114,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "เบญจมราชรังสฤษฎิ์2",
+      "Substance_Raw": ".",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020051",
@@ -1749,7 +2131,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ประกาศิต แสนหิน",
       "Nickname": "โอชิ",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม3",
+      "Group_No": 3,
       "Status": "ปกติ",
       "Phone_Number": "0623248661",
       "Phone_Raw": "0623248661",
@@ -1773,9 +2158,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1h9s4nOkOhusbmgc4HXXGJolsfSc8GMt0",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "กศน.คลองจุกเฌอ",
+      "Substance_Raw": "ไม่",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020052",
@@ -1783,7 +2173,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ปรินทร มาเจริญ",
       "Nickname": "ปริ้น",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม3",
+      "Group_No": 3,
       "Status": "ปกติ",
       "Phone_Number": "0650611125",
       "Phone_Raw": "06-5061-1125",
@@ -1807,11 +2200,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "ผู้ปกครองมาส่ง",
       "Previous_School": "โรงเรียนเทศบาล 1 วัดแหลมใต้(สุตสุนทร)",
+      "Substance_Raw": "ไม่เคย",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020053",
@@ -1819,7 +2217,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "พงควินท์ ฉิมวิเศษ",
       "Nickname": "อีส",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม3",
+      "Group_No": 3,
       "Status": "ปกติ",
       "Phone_Number": "0808308781",
       "Phone_Raw": "0808308781",
@@ -1843,9 +2244,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=16xChf9KoSUhHwN_3Azan_pVP7Xd_Fzh9",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "โรงเรียนดอนฉิมพลีพิทยาคม",
+      "Substance_Raw": "ไม่ดูด",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020054",
@@ -1853,7 +2259,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ภูมินทร์ ศรีมาลัย",
       "Nickname": "ภูมินทร์",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม3",
+      "Group_No": 3,
       "Status": "ปกติ",
       "Phone_Number": "0625951113",
       "Phone_Raw": "0625951113",
@@ -1877,9 +2286,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1vCZEhafM5R2zUmM2wethjGM2QD63R_Xn",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "ไผ่แก้ววิทยา",
+      "Substance_Raw": "ไม่มี",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020055",
@@ -1887,7 +2301,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "วันณุวัฒน์ ดำรงศรี",
       "Nickname": "แบงค์",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม3",
+      "Group_No": 3,
       "Status": "ปกติ",
       "Phone_Number": "0832489460",
       "Phone_Raw": "0832489460",
@@ -1911,9 +2328,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=10KGPZRz8FOSGx0iGC_6ggjGueHGiQ8M2",
       "Commute_Method": "รถไฟ",
       "Previous_School": "เตรียมอุดศึกษาพัฒนาการฉะเชิงเทรา",
+      "Substance_Raw": "ไม่สูบ",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020056",
@@ -1921,7 +2343,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "วีรภาพ พบบุญ",
       "Nickname": "ฮา",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม3",
+      "Group_No": 3,
       "Status": "ปกติ",
       "Phone_Number": "0969867374",
       "Phone_Raw": "0969867374",
@@ -1945,9 +2370,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1udMh-HCN9PuOrtYW2BmU0URfUKneygxc",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "วัดสว่างอารมณ์",
+      "Substance_Raw": "ฉันไม่เสพของมึนเมา",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020057",
@@ -1955,7 +2385,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ศุภกรพรมทอง",
       "Nickname": "บิ๊กซี",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม3",
+      "Group_No": 3,
       "Status": "ปกติ",
       "Phone_Number": "0660811864",
       "Phone_Raw": "0660811864",
@@ -1979,9 +2412,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1Hu71olO2NEBHJNnwqOmzbQafkoZnrrgr",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "โรงเรียนดาราจรัส",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020059",
@@ -1989,7 +2427,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "อัสนัย วันสตอน",
       "Nickname": "เปา",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม3",
+      "Group_No": 3,
       "Status": "ปกติ",
       "Phone_Number": "064752734",
       "Phone_Raw": "064752734",
@@ -2013,11 +2454,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1F2vTe1KtGRppVtFMX8gp18pbaGIcEE9l",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "โรงเรียนวัดสัมปทวน",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "เบอร์โทรนักเรียนมี 9 หลัก (064752734)"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020060",
@@ -2025,7 +2471,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "อุดมทรัพย์ ศรีคัชชะ",
       "Nickname": "ทรัพย์",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม3",
+      "Group_No": 3,
       "Status": "ปกติ",
       "Phone_Number": "0992745288",
       "Phone_Raw": "0992745288",
@@ -2049,9 +2498,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1z1Bz54iip7AWqVWuY_VQK-MijPj9cUWr",
       "Commute_Method": "รถตู้รับส่ง",
       "Previous_School": "ไผ่แก้ววิทยา",
+      "Substance_Raw": "ไม่มี",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "ส่งฟอร์มรูปภาพ 2 ครั้ง (ใช้ข้อมูลครั้งล่าสุด)",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020085",
@@ -2059,7 +2513,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "อัครพล คลังกลาง",
       "Nickname": "กัส",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G3",
+      "Class_ID": "ปวช.1 กลุ่ม3",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม3",
+      "Group_No": 3,
       "Status": "ปกติ",
       "Phone_Number": "0946629772",
       "Phone_Raw": "0946629772",
@@ -2083,9 +2540,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=109okgH6ObzNtSLYCF_Ll9aaVBbTOCBiF",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "สุตะบำรุงพิทยาคาร",
+      "Substance_Raw": "เหล้า เบียร",
+      "Substance_Clean": "เหล้า/เบียร์",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "ในฟอร์มรูปถ่ายนักเรียนกรอกเลขที่ 58",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "68201020061",
@@ -2093,7 +2555,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "กศิดิษ รักซ้อน",
       "Nickname": "สกาย",
       "Gender": "ชาย",
-      "Class_ID": "V2-MECH-G4",
+      "Class_ID": "ปวช.2 กลุ่ม4",
+      "Level_Year": "ปวช.2",
+      "Group_Label": "กลุ่ม4",
+      "Group_No": 4,
       "Status": "ปกติ",
       "Phone_Number": "0651145239",
       "Phone_Raw": "0651145239",
@@ -2117,9 +2582,15 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1FqSMuTOYa8N1Y4NwobwOuG_KaMDkofgw",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "เบญจมราชรังสฤษฎิ์1",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร",
+      "Substance_Clean": "บุหรี่, เหล้า/เบียร์",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020062",
@@ -2127,7 +2598,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "กิตติพงษ์ แพวกิ่ง",
       "Nickname": "ท็อป",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G4",
+      "Class_ID": "ปวช.1 กลุ่ม4",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม4",
+      "Group_No": 4,
       "Status": "ปกติ",
       "Phone_Number": "0612207613",
       "Phone_Raw": "0612207613",
@@ -2151,9 +2625,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1Q8KcZi_BmCGYEAO2r_JQwRivFvMQzFzy",
       "Commute_Method": "รถสองแถว",
       "Previous_School": "โรงเรียนวัดจุกเฌอ",
+      "Substance_Raw": "ไม่ครับ",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020063",
@@ -2161,7 +2640,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "จิรันธนิน ทวีพงษ์",
       "Nickname": "ออม",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G4",
+      "Class_ID": "ปวช.1 กลุ่ม4",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม4",
+      "Group_No": 4,
       "Status": "ปกติ",
       "Phone_Number": "0952503618",
       "Phone_Raw": "0952503618",
@@ -2185,9 +2667,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1j_mVjEhvtkiobzxKan1MNvF7cyKGrfri",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "โรงเรียนมารีวิทย์ศรีมโหสถ",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020064",
@@ -2195,7 +2682,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "จีรวัฒน์ อินทะสร",
       "Nickname": "ไนท์",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G4",
+      "Class_ID": "ปวช.1 กลุ่ม4",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม4",
+      "Group_No": 4,
       "Status": "ปกติ",
       "Phone_Number": "0661365810",
       "Phone_Raw": "0661365810",
@@ -2219,9 +2709,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1MRBI0zr29FTZ0-b23twSvJNEa5s0EF8g",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "พนมสารคามพนมอดุลย์วิทยา",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "กำหนดรหัสประจำตัว 69201020064 และย้ายกลุ่มเป็น 4 ตามที่ระบุในฟอร์มรูป (เดิมไม่ได้กรอกรหัส)",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020065",
@@ -2229,7 +2724,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ชัชวาล เหลือเริ่มวงศ์",
       "Nickname": "นนท์",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G4",
+      "Class_ID": "ปวช.1 กลุ่ม4",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม4",
+      "Group_No": 4,
       "Status": "ปกติ",
       "Phone_Number": "0995351548",
       "Phone_Raw": "0995351548",
@@ -2253,9 +2751,15 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1lyal__hgo83SOB0Ny4tTuR-FiTIenGbo",
       "Commute_Method": "รถตู้รับส่ง",
       "Previous_School": "กศน.",
+      "Substance_Raw": "บุหรี่, น้ำกระท่อม",
+      "Substance_Clean": "บุหรี่, น้ำกระท่อม",
+      "Substance_Tags": [
+        "บุหรี่",
+        "น้ำกระท่อม"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020066",
@@ -2263,7 +2767,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ชินวัตร จุ่นเจริญ",
       "Nickname": "แชมป์",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G4",
+      "Class_ID": "ปวช.1 กลุ่ม4",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม4",
+      "Group_No": 4,
       "Status": "ปกติ",
       "Phone_Number": "0660652044",
       "Phone_Raw": "0660652044",
@@ -2287,9 +2794,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1ItxOQr4mATvAokJ9K8b4VBQZb0Gg1Fc0",
       "Commute_Method": "รถตู้รับส่ง",
       "Previous_School": "โรงเรียนวัดโสธรวรารามวรวิหาร",
+      "Substance_Raw": "ไม่ครับ",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "ส่งฟอร์มรูปภาพ 2 ครั้ง (ใช้ข้อมูลครั้งล่าสุด)",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020067",
@@ -2297,7 +2809,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ณฐนนท์ โสภา",
       "Nickname": "ไฟท์",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G4",
+      "Class_ID": "ปวช.1 กลุ่ม4",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม4",
+      "Group_No": 4,
       "Status": "ปกติ",
       "Phone_Number": "0928359725",
       "Phone_Raw": "0928359725",
@@ -2321,9 +2836,15 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1hCkU4kJ7uZKcx0gFMndmfn1SRq9ZhTiv",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "กศน.",
+      "Substance_Raw": "บุหรี่, น้ำกระท่อม",
+      "Substance_Clean": "บุหรี่, น้ำกระท่อม",
+      "Substance_Tags": [
+        "บุหรี่",
+        "น้ำกระท่อม"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020068",
@@ -2331,7 +2852,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ณัฐกรณ์ สุดาเทพ",
       "Nickname": "ตี๋",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G4",
+      "Class_ID": "ปวช.1 กลุ่ม4",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม4",
+      "Group_No": 4,
       "Status": "ปกติ",
       "Phone_Number": "0637596051",
       "Phone_Raw": "0637596051",
@@ -2355,9 +2879,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1GEy0dBUiheoBHRtKKBsSVs14kBcoz5X8",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "วัดอ่าวช้างไล่",
+      "Substance_Raw": "ไม่มี",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "ส่งฟอร์มรูปภาพ 2 ครั้ง (ใช้ข้อมูลครั้งล่าสุด)",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020069",
@@ -2365,7 +2894,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ธนวัตน์ สะหะมาน",
       "Nickname": "อามิต",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G4",
+      "Class_ID": "ปวช.1 กลุ่ม4",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม4",
+      "Group_No": 4,
       "Status": "ปกติ",
       "Phone_Number": "0840185662",
       "Phone_Raw": "0840185662",
@@ -2389,9 +2921,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1BSLBZIqH3cqmOZrvXqyitIb8Nmbe8zDb",
       "Commute_Method": "ผู้ปกครองมาส่ง",
       "Previous_School": "โรงเรียน ผดุงอิสลาม",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020070",
@@ -2399,7 +2936,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ปธานิน พันงาม",
       "Nickname": "พอตเตอร์",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G4",
+      "Class_ID": "ปวช.1 กลุ่ม4",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม4",
+      "Group_No": 4,
       "Status": "ปกติ",
       "Phone_Number": "0945605001",
       "Phone_Raw": "0945605001",
@@ -2423,9 +2963,15 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1R_KMsb63kroZfLordn2Xg1k-SejfntRD",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "โรงเรียนเบญจมราชรังสฤษฎิ์2",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร",
+      "Substance_Clean": "บุหรี่, เหล้า/เบียร์",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020071",
@@ -2433,7 +2979,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ปรมินทร์ สาวสวย",
       "Nickname": "เติ้ล",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G4",
+      "Class_ID": "ปวช.1 กลุ่ม4",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม4",
+      "Group_No": 4,
       "Status": "ปกติ",
       "Phone_Number": "098541532",
       "Phone_Raw": "098541532",
@@ -2457,11 +3006,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1TvdBql29GGN9krtWRvvYVT_rlJbsIJc1",
       "Commute_Method": "รถไฟ",
       "Previous_School": "เตรียมอุดมศึกษาเปร็งวิสุทธบดี",
+      "Substance_Raw": "น้ำกระท่อม",
+      "Substance_Clean": "น้ำกระท่อม",
+      "Substance_Tags": [
+        "น้ำกระท่อม"
+      ],
       "Data_Note": "แก้ไขคำสะกดชื่อซ้ำ ทร์",
       "Data_Issues": [
         "เบอร์โทรนักเรียนมี 9 หลัก (098541532)"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020072",
@@ -2469,7 +3023,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ประพล ศรีใส",
       "Nickname": "ปลาย",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G4",
+      "Class_ID": "ปวช.1 กลุ่ม4",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม4",
+      "Group_No": 4,
       "Status": "ปกติ",
       "Phone_Number": "0841372831",
       "Phone_Raw": "0841372831",
@@ -2493,9 +3050,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1BvsrJ6XELsCMMYvN7Yf3ekNKRR-DPK7Q",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "บางน้ำเปรี",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020073",
@@ -2503,7 +3065,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "น.ส พรญาณี พรมการ",
       "Nickname": "แนท",
       "Gender": "หญิง",
-      "Class_ID": "V1-MECH-G4",
+      "Class_ID": "ปวช.1 กลุ่ม4",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม4",
+      "Group_No": 4,
       "Status": "ปกติ",
       "Phone_Number": "0980034409",
       "Phone_Raw": "0980034409",
@@ -2527,11 +3092,17 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "อาชีวะศึกษาฉะเชิงเทรา",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร",
+      "Substance_Clean": "บุหรี่, เหล้า/เบียร์",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020074",
@@ -2539,7 +3110,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "รัฐศาสตร์ ยูซบ",
       "Nickname": "มะดี",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G4",
+      "Class_ID": "ปวช.1 กลุ่ม4",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม4",
+      "Group_No": 4,
       "Status": "ปกติ",
       "Phone_Number": "0824477782",
       "Phone_Raw": "0824477782",
@@ -2563,9 +3137,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1caRRR0gBD1FrV0T5AjHbTWuMNtlvpAEX",
       "Commute_Method": "มามอไซล์กับพี่ชายเรียน ป.ว.ส",
       "Previous_School": "ศาสนวิทยา",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020075",
@@ -2573,7 +3152,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "เศรษฐพงศ์ คงเพชร",
       "Nickname": "เท็น",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G4",
+      "Class_ID": "ปวช.1 กลุ่ม4",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม4",
+      "Group_No": 4,
       "Status": "ปกติ",
       "Phone_Number": "0952864176",
       "Phone_Raw": "0952864176",
@@ -2597,9 +3179,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=144Z9iqv1u2bhDme9d4DlLZQwzbgf30Kv",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "โรงเรียนคิชฌกูฏวิทยา",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "แก้ไขรหัสประจำตัวจากเลขบัตรประชาชน 13 หลักเป็น 69201020075 และกลุ่ม 4 ตามฟอร์มรูปถ่าย",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020076",
@@ -2607,7 +3194,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "อธีรเดช",
       "Nickname": "เพชร",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G4",
+      "Class_ID": "ปวช.1 กลุ่ม4",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม4",
+      "Group_No": 4,
       "Status": "ปกติ",
       "Phone_Number": "0963470100",
       "Phone_Raw": "0963470100",
@@ -2631,12 +3221,17 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "ผู้ปกครองมาส่ง",
       "Previous_School": "โรงเรียน ยางคำวิทยา",
+      "Substance_Raw": "ไม่สูบ",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน",
         "ไม่ระบุอำเภอ/โซนพื้นที่"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020077",
@@ -2644,7 +3239,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "อนุชิต คะระนันท์",
       "Nickname": "โต๊ด",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G4",
+      "Class_ID": "ปวช.1 กลุ่ม4",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม4",
+      "Group_No": 4,
       "Status": "ปกติ",
       "Phone_Number": "0812784949",
       "Phone_Raw": "0812784949",
@@ -2668,9 +3266,15 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1BFQWjyQD6SYQk6QyDELmgFBH-N4W846M",
       "Commute_Method": "รถตู้รับส่ง",
       "Previous_School": "โรงเรียนเซนต์เดินโทนี",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร",
+      "Substance_Clean": "บุหรี่, เหล้า/เบียร์",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020103",
@@ -2678,7 +3282,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ภาณุ เลี่ยวกุล",
       "Nickname": "เลิฟ",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G4",
+      "Class_ID": "ปวช.1 กลุ่ม4",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม4",
+      "Group_No": 4,
       "Status": "ปกติ",
       "Phone_Number": "0956548835",
       "Phone_Raw": "0956548835",
@@ -2702,9 +3309,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1axL77MCtpoV8xRZKHsrDYBtWpLi6-SwW",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "โรงเรียนเทศบาล2พระยาศรีสุนทรโวหาร(น้อย อาจารยางกูร)",
+      "Substance_Raw": "ไม่สูบไม่ดื่ม",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020104",
@@ -2712,7 +3324,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ณัฐวุฒิ อาบทอง",
       "Nickname": "วัน",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G4",
+      "Class_ID": "ปวช.1 กลุ่ม4",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม4",
+      "Group_No": 4,
       "Status": "ปกติ",
       "Phone_Number": "0967192505",
       "Phone_Raw": "0967192505",
@@ -2736,9 +3351,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1Eg5OgWwKKL1UQzdcel0-ckVB9p4cerSj",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "สมาคมสงเคราะห์วิทยา",
+      "Substance_Raw": "ไม่",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "ส่งฟอร์มรูปภาพ 2 ครั้ง (ใช้ข้อมูลครั้งล่าสุด)",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69201020105",
@@ -2746,7 +3366,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "พูลพิพัฒน์ ทิมสุกใส",
       "Nickname": "ปีเตอร์",
       "Gender": "ชาย",
-      "Class_ID": "V1-MECH-G4",
+      "Class_ID": "ปวช.1 กลุ่ม4",
+      "Level_Year": "ปวช.1",
+      "Group_Label": "กลุ่ม4",
+      "Group_No": 4,
       "Status": "ปกติ",
       "Phone_Number": "0945035939",
       "Phone_Raw": "0945035939",
@@ -2770,9 +3393,15 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1K_gB4i7pUzQD5hzI9vy93n4H8MxpSfmW",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "โรงเรียนเซนต์หลุยส์ ฉะเชิงเทรา",
+      "Substance_Raw": "บุหรี่, กัญชา",
+      "Substance_Clean": "บุหรี่, กัญชา",
+      "Substance_Tags": [
+        "บุหรี่",
+        "กัญชา"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110001",
@@ -2780,7 +3409,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ก้องเกียรติ์ สามุติรัมย์",
       "Nickname": "เอ",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0947083176",
       "Phone_Raw": "0947083176",
@@ -2804,11 +3436,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "วิทยาลัยเทคโนโลยีอาเซียนไทยบ้านโพธิ์",
+      "Substance_Raw": "เลิกแล้ว",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110002",
@@ -2816,7 +3453,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "กันตพงศ์ คำพา",
       "Nickname": "เฟิร์ส",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0633306580",
       "Phone_Raw": "0633306580",
@@ -2840,11 +3480,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วิทยาลัยเทคนิคฉะเชิงเทรา",
+      "Substance_Raw": "ไม่ดื่ม ไม่สูบ",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110003",
@@ -2852,7 +3497,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "กิตติทัต โพธิ์ทอง",
       "Nickname": "พี",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0967904276",
       "Phone_Raw": "0967904276",
@@ -2876,11 +3524,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถไฟ",
       "Previous_School": "วิทยาลัยเทคนิคฉะเชิง",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110004",
@@ -2888,7 +3541,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "คมศร วราฤทธิ์",
       "Nickname": "ตอง",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0952856487",
       "Phone_Raw": "0952856487",
@@ -2912,11 +3568,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วิทยาลัยเทคนิคฉะเชิงเทรา",
+      "Substance_Raw": "ไม่สูบ ไม่ดื่ม",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110006",
@@ -2924,7 +3585,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ชิติพัทธ์ เอี่ยมริด",
       "Nickname": "มาลิก",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0960781140",
       "Phone_Raw": "0960781140",
@@ -2948,11 +3612,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วิทยาลัยการอาชีพกาญจนาภิเษกหนองจอก",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110007",
@@ -2960,7 +3629,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ชินภัทร สีทับทิม",
       "Nickname": "ซา",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0650479466",
       "Phone_Raw": "0650479466",
@@ -2984,11 +3656,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วิทยาลัยกาญอาชีพการจนาภีเษกหนองจอก",
+      "Substance_Raw": "ไม่สูบไม่ดื่ม",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110008",
@@ -2996,7 +3673,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "โชคอนันต์ เลาะหมุด",
       "Nickname": "ฮาบี๊บ",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0655966039",
       "Phone_Raw": "0655966039",
@@ -3020,11 +3700,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วิทยาลัยการอาชีพกาญจนาภิเษก หนองจอก",
+      "Substance_Raw": "ไม่",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110009",
@@ -3032,7 +3717,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ธนพนธ์ จุนเจือวงศ์",
       "Nickname": "มอส",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0949532535",
       "Phone_Raw": "0949532535",
@@ -3056,11 +3744,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "เทคนิคฉะเชิงเทรา (ช่างกลโรงงาน)",
+      "Substance_Raw": "ไม่ครับ",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110010",
@@ -3068,7 +3761,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ธนภัทร วิเศษศรี",
       "Nickname": "นิก",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0945966731",
       "Phone_Raw": "0945966731",
@@ -3092,11 +3788,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วิทยาลัยเทคฉะเชิงเทรา (ช่างกลโรงงาน)",
+      "Substance_Raw": "เหล้า เบียร",
+      "Substance_Clean": "เหล้า/เบียร์",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110012",
@@ -3104,7 +3805,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ธีรพงศ์ จ๋ายเจริญ",
       "Nickname": "ธี",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0855982527",
       "Phone_Raw": "0855982527",
@@ -3128,11 +3832,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "เทคนิคฉะเชิงเทรา",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110013",
@@ -3140,7 +3849,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ภาวิน แพรต่วน",
       "Nickname": "วิน",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0936318069",
       "Phone_Raw": "0936318069",
@@ -3164,11 +3876,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "เทคนิคฉะเชิงเทรา",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110014",
@@ -3176,7 +3893,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "วรเมธ มงคล",
       "Nickname": "น็อต",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0999800398",
       "Phone_Raw": "0999800398",
@@ -3200,11 +3920,17 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วิทยาลัยเทคนิคฉะเชิงเทรา",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร",
+      "Substance_Clean": "บุหรี่, เหล้า/เบียร์",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110015",
@@ -3212,7 +3938,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "วรวัช โพธิ์เจริญ",
       "Nickname": "เป้",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0620311918",
       "Phone_Raw": "0620311918",
@@ -3236,11 +3965,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วิทยาลัยเทคนิคฉะเชิงเทรา(แผนกช่างกลโรงงาน)",
+      "Substance_Raw": "ไม่ครับ",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110016",
@@ -3248,7 +3982,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "วัชรพล ศรีสุทำ",
       "Nickname": "ไอซ์",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0852523983",
       "Phone_Raw": "0852523983",
@@ -3272,11 +4009,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "วินมอเตอร์ไซค์",
       "Previous_School": "เทคนิคฉะเชิงเทรา(ช่างกลโรงงาน)",
+      "Substance_Raw": "ไม่ได้ดื่มหรือสูบ",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110017",
@@ -3284,7 +4026,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "วีรพล มะลิวัลย์",
       "Nickname": "มูอ๊าด",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0951357802",
       "Phone_Raw": "0951357802",
@@ -3308,11 +4053,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วิทยาลัยกาญจนาภิเษกหนองจอก",
+      "Substance_Raw": "ไม่สูบ ไม่ดื่ม",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110018",
@@ -3320,7 +4070,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ศราวุฒิ แก้วเกตุ",
       "Nickname": "โอ็ต",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0958343547",
       "Phone_Raw": "0958343547",
@@ -3344,9 +4097,15 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=16ZlRyN_zz0iu3uosFtNFtVvsDp8XhiTM",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วิทยาลัยเทคนิคฉะเชิงเทรา",
+      "Substance_Raw": "บุหรี่, น้ำกระท่อม",
+      "Substance_Clean": "บุหรี่, น้ำกระท่อม",
+      "Substance_Tags": [
+        "บุหรี่",
+        "น้ำกระท่อม"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110019",
@@ -3354,7 +4113,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ศิวกร จูเจริญ",
       "Nickname": "ไกร",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0929413381",
       "Phone_Raw": "0929413381",
@@ -3378,11 +4140,17 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วิทยาลัยเทคนิค ฉะเชิงเทรา",
+      "Substance_Raw": "บุหรี่, น้ำกระท่อม",
+      "Substance_Clean": "บุหรี่, น้ำกระท่อม",
+      "Substance_Tags": [
+        "บุหรี่",
+        "น้ำกระท่อม"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110020",
@@ -3390,7 +4158,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "สันติ ขำหลี",
       "Nickname": "อามีน",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0631190986",
       "Phone_Raw": "0631190986",
@@ -3414,9 +4185,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1pDaP4XF6ur5GIxp1iRkuv81Tn7h03zCy",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วิทยาลัยเทคนิคฉะเชิงเทรา",
+      "Substance_Raw": "ไม่มี",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110021",
@@ -3424,7 +4200,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "อภิเดช งามญาติ",
       "Nickname": "เรน",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0965679387",
       "Phone_Raw": "0965679387",
@@ -3448,11 +4227,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วิทยาลัยเทคนิคฉะเชิงเทรา",
+      "Substance_Raw": "ไม่มี",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110026",
@@ -3460,7 +4244,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "อานัส สังข์ยะลอ",
       "Nickname": "ฟาฮัท",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0619219291",
       "Phone_Raw": "0619219291",
@@ -3484,11 +4271,18 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วิทยาลัยเทคนิคฉะเชิงเทรา",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร, น้ำกระท่อม",
+      "Substance_Clean": "บุหรี่, เหล้า/เบียร์, น้ำกระท่อม",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์",
+        "น้ำกระท่อม"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110040",
@@ -3496,7 +4290,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ไตรภูมิ สุวรรณคำ",
       "Nickname": "ภูมิ",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G1",
+      "Class_ID": "ปวส.1 กลุ่ม1",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม1",
+      "Group_No": 1,
       "Status": "ปกติ",
       "Phone_Number": "0840919279",
       "Phone_Raw": "0840919279",
@@ -3520,11 +4317,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วัดโสธร",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110005",
@@ -3532,7 +4334,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ชัยวัฒน์ ใจเย็น",
       "Nickname": "ไม้กอล์ฟ",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G2",
+      "Class_ID": "ปวส.1 กลุ่ม2",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0993796658",
       "Phone_Raw": "0993796658",
@@ -3556,11 +4361,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "เทคนิคฉะเชิงเทรา แผนก ช่างกลโรงงาน",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110022",
@@ -3568,7 +4378,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "อภิรักษ์ สมสกุล",
       "Nickname": "นุ้ก",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G2",
+      "Class_ID": "ปวส.1 กลุ่ม2",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0945808872",
       "Phone_Raw": "0945808872",
@@ -3592,11 +4405,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วิทลัยเทคนิคฉะเชิงเทรา (ช่างกลโรงงาน)",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110023",
@@ -3604,7 +4422,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "อรรถพล สุดจินดา",
       "Nickname": "โอ๊ด",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G2",
+      "Class_ID": "ปวส.1 กลุ่ม2",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0929412674",
       "Phone_Raw": "0929412674",
@@ -3628,12 +4449,17 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วิทยาลัยเทคนิคฉะเชิงเทรา",
+      "Substance_Raw": "ไม่มี",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "เบอร์โทรผู้ปกครองไม่ครบ 10 หลัก (092835927109)",
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110024",
@@ -3641,7 +4467,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "อัครพล พันพิพัฒน์",
       "Nickname": "กาย",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G2",
+      "Class_ID": "ปวส.1 กลุ่ม2",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0944551045",
       "Phone_Raw": "0944551045",
@@ -3665,11 +4494,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วิทยาลัยเทคนิคพนมสารคาม",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "แก้ไขรหัสประจำตัวตัด 0 เกิน 1 ตัว จาก 693011100024 เป็น 69301110024",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110025",
@@ -3677,7 +4511,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "อาทิตย์ เริงธรรม",
       "Nickname": "คิงส์",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G2",
+      "Class_ID": "ปวส.1 กลุ่ม2",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0625806214",
       "Phone_Raw": "0625806214",
@@ -3701,9 +4538,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1iYTSuDDE1RKlowauMGaq-FTHOBYN3nyO",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "เทคนิคฉะเชิงเทรา",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110039",
@@ -3711,7 +4553,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ธนดล ทองประทุม",
       "Nickname": "เพชร",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G2",
+      "Class_ID": "ปวส.1 กลุ่ม2",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0984480931",
       "Phone_Raw": "0984480931",
@@ -3735,11 +4580,17 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถยนต์ส่วนตัว",
       "Previous_School": "วิทยาลัยเทคนิคฉะเชิงเทรา",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร",
+      "Substance_Clean": "บุหรี่, เหล้า/เบียร์",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110047",
@@ -3747,7 +4598,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ณัฐภูมิ รุ่งสอาด",
       "Nickname": "ภูมิ",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G2",
+      "Class_ID": "ปวส.1 กลุ่ม2",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0960843388",
       "Phone_Raw": "0960843388",
@@ -3771,11 +4625,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "รร.ก้อนแก้วพิทยาคม",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110048",
@@ -3783,7 +4642,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ครรชิต สมสุขเจริญ",
       "Nickname": "ปริ้น",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G2",
+      "Class_ID": "ปวส.1 กลุ่ม2",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0960914845",
       "Phone_Raw": "0960914845",
@@ -3807,11 +4669,17 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วิทยาลัยเทคนิคฉะเชิงเทาา",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร",
+      "Substance_Clean": "บุหรี่, เหล้า/เบียร์",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110050",
@@ -3819,7 +4687,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "วุฒิภัทร ฤทธิ์รื่น",
       "Nickname": "คิงส์",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G2",
+      "Class_ID": "ปวส.1 กลุ่ม2",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0948216632",
       "Phone_Raw": "0948216632",
@@ -3843,11 +4714,18 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "เทคนิคฉะเชิงเทรา (ยานยนต์ไฟฟ้า)",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร, น้ำกระท่อม",
+      "Substance_Clean": "บุหรี่, เหล้า/เบียร์, น้ำกระท่อม",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์",
+        "น้ำกระท่อม"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110051",
@@ -3855,7 +4733,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "รพีภัทร อินทรโชติ",
       "Nickname": "บัส",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G2",
+      "Class_ID": "ปวส.1 กลุ่ม2",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม2",
+      "Group_No": 2,
       "Status": "ปกติ",
       "Phone_Number": "0955288815",
       "Phone_Raw": "0955288815",
@@ -3879,11 +4760,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วิทยาลัยเทคนิคนครนายก",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110027",
@@ -3891,7 +4777,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ชนสรณ์ วิมลภักตร์",
       "Nickname": "69301110027",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G5",
+      "Class_ID": "ปวส.1 กลุ่ม5",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม5",
+      "Group_No": 5,
       "Status": "ปกติ",
       "Phone_Number": "0946287872",
       "Phone_Raw": "0946287872",
@@ -3915,11 +4804,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "เบญจม1",
+      "Substance_Raw": "เหล้า เบียร",
+      "Substance_Clean": "เหล้า/เบียร์",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110029",
@@ -3927,7 +4821,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ดนัยณัฐ เเก้วบุรี",
       "Nickname": "เจ",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G5",
+      "Class_ID": "ปวส.1 กลุ่ม5",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม5",
+      "Group_No": 5,
       "Status": "ปกติ",
       "Phone_Number": "0961438443",
       "Phone_Raw": "0961438443",
@@ -3951,11 +4848,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "ดอนฉิมพลีพิทยาคม",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110030",
@@ -3963,7 +4865,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "นันท์นภัส ไหลหลั่ง",
       "Nickname": "น้ำ",
       "Gender": "หญิง",
-      "Class_ID": "H1-IND-G5",
+      "Class_ID": "ปวส.1 กลุ่ม5",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม5",
+      "Group_No": 5,
       "Status": "ปกติ",
       "Phone_Number": "0834421196",
       "Phone_Raw": "0834421196",
@@ -3987,12 +4892,17 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถไฟ",
       "Previous_School": "โรงเรียนพรตพิทยพยัต",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน",
         "ไม่ระบุอำเภอ/โซนพื้นที่"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110031",
@@ -4000,7 +4910,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "นิธิกร จูเปีย",
       "Nickname": "เนม",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G5",
+      "Class_ID": "ปวส.1 กลุ่ม5",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม5",
+      "Group_No": 5,
       "Status": "ปกติ",
       "Phone_Number": "0926565690",
       "Phone_Raw": "0926565690",
@@ -4024,11 +4937,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "เบญจม 1",
+      "Substance_Raw": "เหล้า เบียร",
+      "Substance_Clean": "เหล้า/เบียร์",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110032",
@@ -4036,7 +4954,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ปฐมพร สุทธิอุดมรัตน์",
       "Nickname": "โต้ง",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G5",
+      "Class_ID": "ปวส.1 กลุ่ม5",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม5",
+      "Group_No": 5,
       "Status": "ปกติ",
       "Phone_Number": "0657398877",
       "Phone_Raw": "0657398877",
@@ -4060,11 +4981,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "ผู้ปกครองมาส่ง",
       "Previous_School": "เบญจมราชรังสฤษฎิ์ 2",
+      "Substance_Raw": "ไม่ดื่ม ไม่สูบ",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110033",
@@ -4072,7 +4998,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ภวพล ม่วงมะเริง",
       "Nickname": "ตูน",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G5",
+      "Class_ID": "ปวส.1 กลุ่ม5",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม5",
+      "Group_No": 5,
       "Status": "ปกติ",
       "Phone_Number": "0964569464",
       "Phone_Raw": "0964569464",
@@ -4096,11 +5025,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถยนต์ส่วนตัว",
       "Previous_School": "กศน",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110034",
@@ -4108,7 +5042,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "รัตน์ติกาญ ภูผา",
       "Nickname": "กัน",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G5",
+      "Class_ID": "ปวส.1 กลุ่ม5",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม5",
+      "Group_No": 5,
       "Status": "ปกติ",
       "Phone_Number": "0825065862",
       "Phone_Raw": "0825065862",
@@ -4132,11 +5069,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "โรงเรียนแปลงยาวพิทยาคม",
+      "Substance_Raw": "เหล้า เบียร",
+      "Substance_Clean": "เหล้า/เบียร์",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110035",
@@ -4144,7 +5086,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ศราวุฒิ คงประสิทธิ์",
       "Nickname": "เฟรช",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G5",
+      "Class_ID": "ปวส.1 กลุ่ม5",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม5",
+      "Group_No": 5,
       "Status": "ปกติ",
       "Phone_Number": "0616328549",
       "Phone_Raw": "0616328549",
@@ -4168,11 +5113,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "อาชีวศึกษาฉะเชิงเทรา",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110036",
@@ -4180,7 +5130,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "สุภโชค จันเรัยน",
       "Nickname": "หงษ์เข้ม",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G5",
+      "Class_ID": "ปวส.1 กลุ่ม5",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม5",
+      "Group_No": 5,
       "Status": "ปกติ",
       "Phone_Number": "0950961089",
       "Phone_Raw": "0950961089",
@@ -4204,11 +5157,17 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "ส.ก.ร.ตำบลบางขนาก",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร",
+      "Substance_Clean": "บุหรี่, เหล้า/เบียร์",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110037",
@@ -4216,7 +5175,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "สุทธิพงศ์ บุญเกิด",
       "Nickname": "ต้น",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G5",
+      "Class_ID": "ปวส.1 กลุ่ม5",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม5",
+      "Group_No": 5,
       "Status": "ปกติ",
       "Phone_Number": "0823650958",
       "Phone_Raw": "0823650958",
@@ -4240,11 +5202,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "แปลงยาวพิทยาคม",
+      "Substance_Raw": "เหล้า เบียร",
+      "Substance_Clean": "เหล้า/เบียร์",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110038",
@@ -4252,7 +5219,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "อมรวิชช์ ไพรสอน",
       "Nickname": "โอ๊ค",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G5",
+      "Class_ID": "ปวส.1 กลุ่ม5",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม5",
+      "Group_No": 5,
       "Status": "ปกติ",
       "Phone_Number": "0803407414",
       "Phone_Raw": "0803407414",
@@ -4276,11 +5246,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "ผู้ปกครองมาส่ง",
       "Previous_School": "แปลงยาวพิทยาคม",
+      "Substance_Raw": "เหล้า เบียร",
+      "Substance_Clean": "เหล้า/เบียร์",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110041",
@@ -4288,7 +5263,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ธราเทพ พานอินทร์",
       "Nickname": "วา",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G5",
+      "Class_ID": "ปวส.1 กลุ่ม5",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม5",
+      "Group_No": 5,
       "Status": "ปกติ",
       "Phone_Number": "0968275132",
       "Phone_Raw": "0968275132",
@@ -4312,9 +5290,14 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "https://drive.google.com/open?id=1GIWeNhzvT3f-o1nORnM_f6fcsakHIxFI",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "โรงเรียนแปลงยาวพิทยาคม",
+      "Substance_Raw": "เหล้า เบียร,",
+      "Substance_Clean": "เหล้า/เบียร์",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
       "Data_Note": "ลบข้อความอีเมลส่วนเกินออกจากช่องชื่อ; ส่งฟอร์มรูปภาพ 3 ครั้ง (ใช้ข้อมูลครั้งล่าสุด)",
       "Data_Issues": [],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110042",
@@ -4322,7 +5305,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "อิทธิพัทธ์ สายสังข์",
       "Nickname": "มาน",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G5",
+      "Class_ID": "ปวส.1 กลุ่ม5",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม5",
+      "Group_No": 5,
       "Status": "ปกติ",
       "Phone_Number": "0947785090",
       "Phone_Raw": "0947785090",
@@ -4346,11 +5332,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "โรงเรียนราชสาส์นวิทยา",
+      "Substance_Raw": "ไม่ดื่ม ไม่สูบ",
+      "Substance_Clean": "ไม่ดื่ม/ไม่สูบ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110045",
@@ -4358,7 +5349,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "คงภัทร์ นิรารมย์",
       "Nickname": "กระชาย",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G5",
+      "Class_ID": "ปวส.1 กลุ่ม5",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม5",
+      "Group_No": 5,
       "Status": "ปกติ",
       "Phone_Number": "0983326966",
       "Phone_Raw": "0983326966",
@@ -4382,11 +5376,18 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถโดยสารสาธารณะ",
       "Previous_School": "โรงเรียนสนามชัยเขต",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร, น้ำกระท่อม",
+      "Substance_Clean": "บุหรี่, เหล้า/เบียร์, น้ำกระท่อม",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์",
+        "น้ำกระท่อม"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110046",
@@ -4394,7 +5395,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "ธนกฤต ไชยสีมา",
       "Nickname": "หมาก",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G5",
+      "Class_ID": "ปวส.1 กลุ่ม5",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม5",
+      "Group_No": 5,
       "Status": "ปกติ",
       "Phone_Number": "0957755245",
       "Phone_Raw": "0957755245",
@@ -4418,11 +5422,18 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "วิทยาลัยเทคนิคสมุทรปราการ",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร, น้ำกระท่อม",
+      "Substance_Clean": "บุหรี่, เหล้า/เบียร์, น้ำกระท่อม",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์",
+        "น้ำกระท่อม"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Student_ID": "69301110052",
@@ -4430,7 +5441,10 @@ window.INITIAL_RELATIONAL_DB = {
       "Full_Name": "พีรพงษ์ สังข์ปาน",
       "Nickname": "มิว",
       "Gender": "ชาย",
-      "Class_ID": "H1-IND-G5",
+      "Class_ID": "ปวส.1 กลุ่ม5",
+      "Level_Year": "ปวส.1",
+      "Group_Label": "กลุ่ม5",
+      "Group_No": 5,
       "Status": "ปกติ",
       "Phone_Number": "0630762297",
       "Phone_Raw": "0630762297",
@@ -4454,11 +5468,16 @@ window.INITIAL_RELATIONAL_DB = {
       "Photo_Drive_Link": "",
       "Commute_Method": "รถมอเตอร์ไชล์ส่วนตัว",
       "Previous_School": "โรงเรียนบางน้ำเปรี้ยววิทยา",
+      "Substance_Raw": "บุหรี่",
+      "Substance_Clean": "บุหรี่",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
       "Data_Note": "",
       "Data_Issues": [
         "ยังไม่มีรูปถ่ายนักเรียน"
       ],
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     }
   ],
   "Discipline_Records": [],
@@ -4473,14 +5492,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-002",
@@ -4492,14 +5521,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่สูบ ไม่ดื่ม",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-003",
@@ -4511,14 +5546,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่เคย",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-004",
@@ -4530,14 +5571,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "ไม่เอาหมด",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "รายได้ครอบครัวต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Tags": [
+        "รายได้ต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ (<10,000 บ.)",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-005",
@@ -4549,14 +5600,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่ดื่มไม่สูบ",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-006",
@@ -4568,14 +5625,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่มี",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-007",
@@ -4587,14 +5650,28 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "น้อยกว่า 100 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "ไม่ยุ่งอะไรเลย",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "รายได้ครอบครัวต่ำ (<10,000 บ.)",
+        "ได้เงินมาเรียนน้อย (<100 บ./วัน)",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "รายได้ต่ำ (<10,000 บ.)",
+        "ค่าขนมน้อย (<100 บ.)",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ (<10,000 บ.), ได้เงินมาเรียนน้อย (<100 บ./วัน), ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-008",
@@ -4606,14 +5683,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-009",
@@ -4625,14 +5712,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่มีครับ",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-010",
@@ -4644,14 +5737,30 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "น้อยกว่า 100 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่), รายได้ครอบครัวต่ำ/ต้องการทุน",
-      "Overall_Risk_Level": "กลุ่มเสี่ยง",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "รายได้ครอบครัวต่ำ (<10,000 บ.)",
+        "ได้เงินมาเรียนน้อย (<100 บ./วัน)",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "รายได้ต่ำ (<10,000 บ.)",
+        "ค่าขนมน้อย (<100 บ.)",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, รายได้ครอบครัวต่ำ (<10,000 บ.), ได้เงินมาเรียนน้อย (<100 บ./วัน), ต้องการทุนการศึกษา",
+      "Overall_Risk_Level": "กลุ่มมีปัญหา",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-011",
@@ -4663,14 +5772,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่มี",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-012",
@@ -4682,14 +5797,26 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "เหล้า เบียร",
       "Substance_History": "เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (เหล้า/เบียร์), รายได้ครอบครัวต่ำ/ต้องการทุน",
-      "Overall_Risk_Level": "กลุ่มเสี่ยง",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "ดื่มเหล้า/เบียร์",
+        "รายได้ครอบครัวต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Tags": [
+        "ดื่มเหล้า/เบียร์",
+        "รายได้ต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Factors_Note": "ดื่มเหล้า/เบียร์, รายได้ครอบครัวต่ำ (<10,000 บ.)",
+      "Overall_Risk_Level": "กลุ่มมีปัญหา",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-013",
@@ -4701,14 +5828,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "ไม่ดูด",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-014",
@@ -4720,14 +5857,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ม่ายมี",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-015",
@@ -4739,14 +5882,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่กินอะไรเลย",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-016",
@@ -4758,14 +5907,26 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "เหล้า เบียร",
       "Substance_History": "เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (เหล้า/เบียร์)",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "ดื่มเหล้า/เบียร์",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "ดื่มเหล้า/เบียร์",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "ดื่มเหล้า/เบียร์, ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-017",
@@ -4777,14 +5938,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "ไม่สูบ",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "รายได้ครอบครัวต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Tags": [
+        "รายได้ต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ (<10,000 บ.)",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-018",
@@ -4796,14 +5967,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-019",
@@ -4815,14 +5996,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "ไม่สูบไม่ดื่ม",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "รายได้ครอบครัวต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Tags": [
+        "รายได้ต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ (<10,000 บ.)",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-020",
@@ -4834,14 +6025,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "ไม่",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-021",
@@ -4853,14 +6054,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่ยุ่งเกี่ยว",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-022",
@@ -4872,14 +6079,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "เหล้า เบียร",
       "Substance_History": "เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (เหล้า/เบียร์)",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Tags": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Factors_Note": "ดื่มเหล้า/เบียร์",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-023",
@@ -4891,14 +6108,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "ไม่มี",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "รายได้ครอบครัวต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Tags": [
+        "รายได้ต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ (<10,000 บ.)",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-024",
@@ -4910,14 +6137,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "-",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-025",
@@ -4929,14 +6162,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-026",
@@ -4948,14 +6191,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "ไม่ยุ่งเกี่ยว",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "รายได้ครอบครัวต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Tags": [
+        "รายได้ต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ (<10,000 บ.)",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-027",
@@ -4967,14 +6220,26 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "มากกว่า 200 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่), รายได้ครอบครัวต่ำ/ต้องการทุน",
-      "Overall_Risk_Level": "กลุ่มเสี่ยง",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "รายได้ครอบครัวต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "รายได้ต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, รายได้ครอบครัวต่ำ (<10,000 บ.)",
+      "Overall_Risk_Level": "กลุ่มมีปัญหา",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-028",
@@ -4986,14 +6251,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่ยุ่งเกี่ยวทุกชนิด",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-029",
@@ -5005,14 +6276,26 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "ไม่สูบ",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "รายได้ครอบครัวต่ำ (<10,000 บ.)",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "รายได้ต่ำ (<10,000 บ.)",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ (<10,000 บ.), ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-030",
@@ -5024,14 +6307,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "เหล้า เบียร",
       "Substance_History": "เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (เหล้า/เบียร์)",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Tags": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Factors_Note": "ดื่มเหล้า/เบียร์",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-031",
@@ -5043,14 +6336,26 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่), รายได้ครอบครัวต่ำ/ต้องการทุน",
-      "Overall_Risk_Level": "กลุ่มเสี่ยง",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "รายได้ครอบครัวต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "รายได้ต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, รายได้ครอบครัวต่ำ (<10,000 บ.)",
+      "Overall_Risk_Level": "กลุ่มมีปัญหา",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-032",
@@ -5062,14 +6367,32 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร, น้ำกระท่อม",
       "Substance_History": "บุหรี่, เหล้า/เบียร์, น้ำกระท่อม",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่, เหล้า/เบียร์, น้ำกระท่อม)",
-      "Overall_Risk_Level": "กลุ่มเสี่ยง",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์",
+        "น้ำกระท่อม"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์",
+        "ดื่มน้ำกระท่อม",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์",
+        "น้ำกระท่อม",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ดื่มเหล้า/เบียร์, ดื่มน้ำกระท่อม, ต้องการทุนการศึกษา",
+      "Overall_Risk_Level": "กลุ่มมีปัญหา",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-033",
@@ -5081,14 +6404,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่ดูด",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
-      "Overall_Risk_Level": "กลุ่มปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "ต้องการทุนการศึกษา",
+      "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-034",
@@ -5100,14 +6433,26 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-035",
@@ -5119,14 +6464,26 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "ไม่มี",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "รายได้ครอบครัวต่ำ (<10,000 บ.)",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "รายได้ต่ำ (<10,000 บ.)",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ (<10,000 บ.), ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-036",
@@ -5138,14 +6495,26 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่,",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-037",
@@ -5157,14 +6526,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-038",
@@ -5176,14 +6551,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่เอาครับ",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-039",
@@ -5195,14 +6576,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่สูบไม่ดิ่ม",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-040",
@@ -5210,18 +6597,26 @@ window.INITIAL_RELATIONAL_DB = {
       "Student_ID": "69201020042",
       "Family_Status": "อยู่ร่วมกัน",
       "Parent_Occupation": "",
-      "Family_Income_Range": "",
-      "Daily_Allowance": "",
-      "Scholarship_Need": "",
+      "Family_Income_Range": "ไม่ระบุ",
+      "Daily_Allowance": "ไม่ระบุ",
+      "Scholarship_Need": "ไม่ระบุ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ยังไม่ได้กรอกข้อมูล",
       "Substance_History": "ไม่ระบุ",
-      "Risk_Factors_Note": "ข้อมูลพื้นฐานยังไม่ครบ",
-      "Overall_Risk_Level": "กลุ่มปกติ",
+      "Substance_Tags": [],
+      "Risk_Reasons": [
+        "ยังไม่กรอกข้อมูลพื้นฐาน"
+      ],
+      "Risk_Tags": [
+        "ข้อมูลไม่ครบ"
+      ],
+      "Risk_Factors_Note": "ยังไม่กรอกข้อมูลพื้นฐาน",
+      "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-041",
@@ -5233,14 +6628,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "เหล้า เบียร",
       "Substance_History": "เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (เหล้า/เบียร์)",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Tags": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Factors_Note": "ดื่มเหล้า/เบียร์",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-042",
@@ -5252,14 +6657,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่ดืมแหละไม่สูบครับ",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-043",
@@ -5271,14 +6682,26 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่), รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-044",
@@ -5290,14 +6713,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่ดูดไม่กิน",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-045",
@@ -5309,14 +6738,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "ไม่เอาอะไรเลย",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-046",
@@ -5328,14 +6767,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "170 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่มี",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-047",
@@ -5347,14 +6792,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-048",
@@ -5366,14 +6821,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": ".",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-049",
@@ -5385,14 +6846,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-050",
@@ -5404,14 +6871,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่เคย",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-051",
@@ -5423,14 +6896,26 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "ไม่ดูด",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "รายได้ครอบครัวต่ำ (<10,000 บ.)",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "รายได้ต่ำ (<10,000 บ.)",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ (<10,000 บ.), ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-052",
@@ -5442,14 +6927,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่มี",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-053",
@@ -5461,14 +6952,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่สูบ",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-054",
@@ -5480,14 +6977,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ฉันไม่เสพของมึนเมา",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-055",
@@ -5499,14 +7002,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-056",
@@ -5518,14 +7031,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-057",
@@ -5537,14 +7060,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่มี",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-058",
@@ -5556,14 +7085,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "130 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "เหล้า เบียร",
       "Substance_History": "เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (เหล้า/เบียร์)",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Tags": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Factors_Note": "ดื่มเหล้า/เบียร์",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-059",
@@ -5575,14 +7114,29 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร",
       "Substance_History": "บุหรี่, เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่, เหล้า/เบียร์), รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ดื่มเหล้า/เบียร์, ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-060",
@@ -5594,14 +7148,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่ครับ",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-061",
@@ -5613,14 +7173,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "มากกว่า 200 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-062",
@@ -5632,14 +7202,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-063",
@@ -5651,14 +7231,27 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่, น้ำกระท่อม",
       "Substance_History": "บุหรี่, น้ำกระท่อม",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่, น้ำกระท่อม)",
-      "Overall_Risk_Level": "กลุ่มเสี่ยง",
+      "Substance_Tags": [
+        "บุหรี่",
+        "น้ำกระท่อม"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ดื่มน้ำกระท่อม"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "น้ำกระท่อม"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ดื่มน้ำกระท่อม",
+      "Overall_Risk_Level": "กลุ่มมีปัญหา",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-064",
@@ -5670,14 +7263,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่ครับ",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-065",
@@ -5689,14 +7288,27 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่, น้ำกระท่อม",
       "Substance_History": "บุหรี่, น้ำกระท่อม",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่, น้ำกระท่อม)",
-      "Overall_Risk_Level": "กลุ่มเสี่ยง",
+      "Substance_Tags": [
+        "บุหรี่",
+        "น้ำกระท่อม"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ดื่มน้ำกระท่อม"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "น้ำกระท่อม"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ดื่มน้ำกระท่อม",
+      "Overall_Risk_Level": "กลุ่มมีปัญหา",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-066",
@@ -5708,14 +7320,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่มี",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-067",
@@ -5727,14 +7345,26 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-068",
@@ -5746,14 +7376,27 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร",
       "Substance_History": "บุหรี่, เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่, เหล้า/เบียร์)",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ดื่มเหล้า/เบียร์",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-069",
@@ -5765,14 +7408,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "น้ำกระท่อม",
       "Substance_History": "น้ำกระท่อม",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (น้ำกระท่อม)",
-      "Overall_Risk_Level": "กลุ่มเสี่ยง",
+      "Substance_Tags": [
+        "น้ำกระท่อม"
+      ],
+      "Risk_Reasons": [
+        "ดื่มน้ำกระท่อม"
+      ],
+      "Risk_Tags": [
+        "น้ำกระท่อม"
+      ],
+      "Risk_Factors_Note": "ดื่มน้ำกระท่อม",
+      "Overall_Risk_Level": "กลุ่มมีปัญหา",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-070",
@@ -5784,14 +7437,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "มากกว่า 200 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-071",
@@ -5803,14 +7466,27 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร",
       "Substance_History": "บุหรี่, เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่, เหล้า/เบียร์)",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ดื่มเหล้า/เบียร์",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-072",
@@ -5822,14 +7498,26 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "120 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่), รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-073",
@@ -5841,14 +7529,26 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่), รายได้ครอบครัวต่ำ/ต้องการทุน",
-      "Overall_Risk_Level": "กลุ่มเสี่ยง",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "รายได้ครอบครัวต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "รายได้ต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, รายได้ครอบครัวต่ำ (<10,000 บ.)",
+      "Overall_Risk_Level": "กลุ่มมีปัญหา",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-074",
@@ -5860,14 +7560,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่สูบ",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-075",
@@ -5879,14 +7585,27 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร",
       "Substance_History": "บุหรี่, เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่, เหล้า/เบียร์)",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ดื่มเหล้า/เบียร์",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-076",
@@ -5898,14 +7617,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่สูบไม่ดื่ม",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-077",
@@ -5917,14 +7642,26 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "ไม่รู้แล้วแต่แม่",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "ไม่",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "รายได้ครอบครัวต่ำ (<10,000 บ.)",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "รายได้ต่ำ (<10,000 บ.)",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ (<10,000 บ.), ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-078",
@@ -5936,14 +7673,27 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่, กัญชา",
       "Substance_History": "บุหรี่, กัญชา",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่, กัญชา)",
-      "Overall_Risk_Level": "กลุ่มเสี่ยง",
+      "Substance_Tags": [
+        "บุหรี่",
+        "กัญชา"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ใช้กัญชา"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "กัญชา"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ใช้กัญชา",
+      "Overall_Risk_Level": "กลุ่มมีปัญหา",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-079",
@@ -5955,14 +7705,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "เลิกแล้ว",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-080",
@@ -5974,14 +7734,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "ไม่ดื่ม ไม่สูบ",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-081",
@@ -5993,14 +7763,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-082",
@@ -6012,14 +7792,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "ไม่สูบ ไม่ดื่ม",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "รายได้ครอบครัวต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Tags": [
+        "รายได้ต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ (<10,000 บ.)",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-083",
@@ -6031,14 +7821,26 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่), รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-084",
@@ -6050,14 +7852,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่สูบไม่ดื่ม",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-085",
@@ -6069,14 +7877,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "น้อยกว่า 100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "ไม่",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "ได้เงินมาเรียนน้อย (<100 บ./วัน)"
+      ],
+      "Risk_Tags": [
+        "ค่าขนมน้อย (<100 บ.)"
+      ],
+      "Risk_Factors_Note": "ได้เงินมาเรียนน้อย (<100 บ./วัน)",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-086",
@@ -6088,14 +7906,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่ครับ",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-087",
@@ -6107,14 +7931,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "เหล้า เบียร",
       "Substance_History": "เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (เหล้า/เบียร์)",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Tags": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Factors_Note": "ดื่มเหล้า/เบียร์",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-088",
@@ -6126,14 +7960,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-089",
@@ -6145,14 +7989,26 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่), รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-090",
@@ -6164,14 +8020,27 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร",
       "Substance_History": "บุหรี่, เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่, เหล้า/เบียร์)",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ดื่มเหล้า/เบียร์",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-091",
@@ -6183,14 +8052,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่ครับ",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-092",
@@ -6202,14 +8077,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "ไม่ได้ดื่มหรือสูบ",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-093",
@@ -6221,14 +8106,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่สูบ ไม่ดื่ม",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-094",
@@ -6240,14 +8131,27 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่, น้ำกระท่อม",
       "Substance_History": "บุหรี่, น้ำกระท่อม",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่, น้ำกระท่อม)",
-      "Overall_Risk_Level": "กลุ่มเสี่ยง",
+      "Substance_Tags": [
+        "บุหรี่",
+        "น้ำกระท่อม"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ดื่มน้ำกระท่อม"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "น้ำกระท่อม"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ดื่มน้ำกระท่อม",
+      "Overall_Risk_Level": "กลุ่มมีปัญหา",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-095",
@@ -6259,14 +8163,27 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่, น้ำกระท่อม",
       "Substance_History": "บุหรี่, น้ำกระท่อม",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่, น้ำกระท่อม)",
-      "Overall_Risk_Level": "กลุ่มเสี่ยง",
+      "Substance_Tags": [
+        "บุหรี่",
+        "น้ำกระท่อม"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ดื่มน้ำกระท่อม"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "น้ำกระท่อม"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ดื่มน้ำกระท่อม",
+      "Overall_Risk_Level": "กลุ่มมีปัญหา",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-096",
@@ -6278,14 +8195,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "ไม่มี",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-097",
@@ -6297,14 +8224,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่มี",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-098",
@@ -6316,14 +8249,30 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร, น้ำกระท่อม",
       "Substance_History": "บุหรี่, เหล้า/เบียร์, น้ำกระท่อม",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่, เหล้า/เบียร์, น้ำกระท่อม)",
-      "Overall_Risk_Level": "กลุ่มเสี่ยง",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์",
+        "น้ำกระท่อม"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์",
+        "ดื่มน้ำกระท่อม"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์",
+        "น้ำกระท่อม"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ดื่มเหล้า/เบียร์, ดื่มน้ำกระท่อม",
+      "Overall_Risk_Level": "กลุ่มมีปัญหา",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-099",
@@ -6335,14 +8284,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-100",
@@ -6354,14 +8313,28 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "น้อยกว่า 100 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่), รายได้ครอบครัวต่ำ/ต้องการทุน",
-      "Overall_Risk_Level": "กลุ่มเสี่ยง",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ได้เงินมาเรียนน้อย (<100 บ./วัน)",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ค่าขนมน้อย (<100 บ.)",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ได้เงินมาเรียนน้อย (<100 บ./วัน), ต้องการทุนการศึกษา",
+      "Overall_Risk_Level": "กลุ่มมีปัญหา",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-101",
@@ -6373,14 +8346,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-102",
@@ -6392,14 +8375,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "มากกว่า 200 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่มี",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-103",
@@ -6411,14 +8400,26 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-104",
@@ -6430,14 +8431,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "180",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-105",
@@ -6449,14 +8460,27 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร",
       "Substance_History": "บุหรี่, เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่, เหล้า/เบียร์)",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ดื่มเหล้า/เบียร์",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-106",
@@ -6468,14 +8492,26 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่), รายได้ครอบครัวต่ำ/ต้องการทุน",
-      "Overall_Risk_Level": "กลุ่มเสี่ยง",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "รายได้ครอบครัวต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "รายได้ต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, รายได้ครอบครัวต่ำ (<10,000 บ.)",
+      "Overall_Risk_Level": "กลุ่มมีปัญหา",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-107",
@@ -6487,14 +8523,27 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร",
       "Substance_History": "บุหรี่, เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่, เหล้า/เบียร์)",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ดื่มเหล้า/เบียร์",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-108",
@@ -6506,14 +8555,30 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร, น้ำกระท่อม",
       "Substance_History": "บุหรี่, เหล้า/เบียร์, น้ำกระท่อม",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่, เหล้า/เบียร์, น้ำกระท่อม)",
-      "Overall_Risk_Level": "กลุ่มเสี่ยง",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์",
+        "น้ำกระท่อม"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์",
+        "ดื่มน้ำกระท่อม"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์",
+        "น้ำกระท่อม"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ดื่มเหล้า/เบียร์, ดื่มน้ำกระท่อม",
+      "Overall_Risk_Level": "กลุ่มมีปัญหา",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-109",
@@ -6525,14 +8590,26 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่), รายได้ครอบครัวต่ำ/ต้องการทุน",
-      "Overall_Risk_Level": "กลุ่มเสี่ยง",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "รายได้ครอบครัวต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "รายได้ต่ำ (<10,000 บ.)"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, รายได้ครอบครัวต่ำ (<10,000 บ.)",
+      "Overall_Risk_Level": "กลุ่มมีปัญหา",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-110",
@@ -6544,14 +8621,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "เหล้า เบียร",
       "Substance_History": "เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (เหล้า/เบียร์)",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Tags": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Factors_Note": "ดื่มเหล้า/เบียร์",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-111",
@@ -6563,14 +8650,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-112",
@@ -6582,14 +8679,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-113",
@@ -6601,14 +8708,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "เหล้า เบียร",
       "Substance_History": "เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (เหล้า/เบียร์)",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Tags": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Factors_Note": "ดื่มเหล้า/เบียร์",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-114",
@@ -6620,14 +8737,20 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "ไม่ดื่ม ไม่สูบ",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "ปกติ",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [],
+      "Risk_Tags": [],
+      "Risk_Factors_Note": "ปกติ (ไม่พบความเสี่ยง)",
       "Overall_Risk_Level": "กลุ่มปกติ",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-115",
@@ -6639,14 +8762,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-116",
@@ -6658,14 +8791,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "เหล้า เบียร",
       "Substance_History": "เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (เหล้า/เบียร์)",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Tags": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Factors_Note": "ดื่มเหล้า/เบียร์",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-117",
@@ -6677,14 +8820,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่)",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-118",
@@ -6696,14 +8849,27 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร",
       "Substance_History": "บุหรี่, เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่, เหล้า/เบียร์)",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ดื่มเหล้า/เบียร์",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-119",
@@ -6715,14 +8881,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "เหล้า เบียร",
       "Substance_History": "เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (เหล้า/เบียร์)",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Tags": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Factors_Note": "ดื่มเหล้า/เบียร์",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-120",
@@ -6734,14 +8910,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ยังไม่ตัดสินใจ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "เหล้า เบียร",
       "Substance_History": "เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (เหล้า/เบียร์)",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Tags": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Factors_Note": "ดื่มเหล้า/เบียร์",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-121",
@@ -6753,14 +8939,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "เหล้า เบียร,",
       "Substance_History": "เหล้า/เบียร์",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (เหล้า/เบียร์)",
+      "Substance_Tags": [
+        "เหล้า/เบียร์"
+      ],
+      "Risk_Reasons": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Tags": [
+        "ดื่มเหล้า/เบียร์"
+      ],
+      "Risk_Factors_Note": "ดื่มเหล้า/เบียร์",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-122",
@@ -6772,14 +8968,24 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "150 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "ไม่ดื่ม ไม่สูบ",
       "Substance_History": "ไม่ดื่ม/ไม่สูบ",
-      "Risk_Factors_Note": "รายได้ครอบครัวต่ำ/ต้องการทุน",
+      "Substance_Tags": [
+        "ไม่ดื่ม/ไม่สูบ"
+      ],
+      "Risk_Reasons": [
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "ต้องการทุนการศึกษา",
       "Overall_Risk_Level": "กลุ่มเสี่ยง",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-123",
@@ -6791,14 +8997,30 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร, น้ำกระท่อม",
       "Substance_History": "บุหรี่, เหล้า/เบียร์, น้ำกระท่อม",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่, เหล้า/เบียร์, น้ำกระท่อม)",
-      "Overall_Risk_Level": "กลุ่มเสี่ยง",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์",
+        "น้ำกระท่อม"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์",
+        "ดื่มน้ำกระท่อม"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์",
+        "น้ำกระท่อม"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ดื่มเหล้า/เบียร์, ดื่มน้ำกระท่อม",
+      "Overall_Risk_Level": "กลุ่มมีปัญหา",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-124",
@@ -6810,14 +9032,30 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "200 บาท",
       "Scholarship_Need": "ไม่ต้องการ",
       "Financial_Status": "เพียงพอ",
+      "Substance_Raw": "บุหรี่, เหล้า เบียร, น้ำกระท่อม",
       "Substance_History": "บุหรี่, เหล้า/เบียร์, น้ำกระท่อม",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่, เหล้า/เบียร์, น้ำกระท่อม)",
-      "Overall_Risk_Level": "กลุ่มเสี่ยง",
+      "Substance_Tags": [
+        "บุหรี่",
+        "เหล้า/เบียร์",
+        "น้ำกระท่อม"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์",
+        "ดื่มน้ำกระท่อม"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "ดื่มเหล้า/เบียร์",
+        "น้ำกระท่อม"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, ดื่มเหล้า/เบียร์, ดื่มน้ำกระท่อม",
+      "Overall_Risk_Level": "กลุ่มมีปัญหา",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     },
     {
       "Screening_ID": "SCR-2569-125",
@@ -6829,22 +9067,36 @@ window.INITIAL_RELATIONAL_DB = {
       "Daily_Allowance": "100 บาท",
       "Scholarship_Need": "ต้องการ",
       "Financial_Status": "ขัดสน",
+      "Substance_Raw": "บุหรี่",
       "Substance_History": "บุหรี่",
-      "Risk_Factors_Note": "พฤติกรรมดื่ม/สูบ (บุหรี่), รายได้ครอบครัวต่ำ/ต้องการทุน",
-      "Overall_Risk_Level": "กลุ่มเสี่ยง",
+      "Substance_Tags": [
+        "บุหรี่"
+      ],
+      "Risk_Reasons": [
+        "สูบบุหรี่",
+        "รายได้ครอบครัวต่ำ (<10,000 บ.)",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Tags": [
+        "สูบบุหรี่",
+        "รายได้ต่ำ (<10,000 บ.)",
+        "ต้องการทุนการศึกษา"
+      ],
+      "Risk_Factors_Note": "สูบบุหรี่, รายได้ครอบครัวต่ำ (<10,000 บ.), ต้องการทุนการศึกษา",
+      "Overall_Risk_Level": "กลุ่มมีปัญหา",
       "Home_Visit_Status": "ยังไม่เยี่ยมบ้าน",
       "Home_Visit_Date": "",
       "Home_Visit_Photo": "",
       "Home_Visit_Summary": "",
-      "Updated_At": "2026-10-22T10:20:00+07:00"
+      "Updated_At": "2026-10-22T10:50:00+07:00"
     }
   ],
   "Audit_Logs": [
     {
-      "Log_ID": "LOG-INIT-001",
-      "Timestamp": "2026-10-22T10:20:00+07:00",
-      "Action": "นำเข้าและจัดโครงสร้างฐานข้อมูลเริ่มต้น (4 ตารางหลัก)",
-      "Details": "แปลงข้อมูลนักเรียน 125 คน, จัดมาตรฐานชื่ออำเภอ, แยกเบอร์โทรศัพท์ฉุกเฉิน และประเมินคัดกรองเบื้องต้น"
+      "Log_ID": "LOG-INIT-002",
+      "Timestamp": "2026-10-22T10:50:00+07:00",
+      "Action": "อัปเดตฐานข้อมูล V2 (ระบบกลุ่มเรียนภาษาไทย + ข้อมูลสารเสพติดจากแบบบันทึก + วิเคราะห์สาเหตุความเสี่ยงรายบุคคล)",
+      "Details": "ปรับรหัสกลุ่มเป็น กลุ่ม1-5, แสดงข้อมูลการดื่ม/สูบตามที่นักเรียนแจ้งจริง และจำแนกสาเหตุกลุ่มเสี่ยงครบ 125 คน"
     }
   ]
 };

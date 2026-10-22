@@ -1,13 +1,10 @@
 /**
  * ============================================================================
- * Export & Backup Utility (JSON, CSV, Excel .xlsx, Google Apps Script Code)
+ * Export & Backup Utility V2 (JSON, CSV, Excel .xlsx ครบ 4 ตาราง + สาเหตุความเสี่ยง)
  * ============================================================================
  */
 
 window.ExportManager = {
-  /**
-   * ส่งออกฐานข้อมูลทั้งหมดเป็นไฟล์ .json (4 ตารางหลัก + ประวัติการแก้ไข)
-   */
   exportFullJSON() {
     const dataStr = JSON.stringify(window.appDB.db, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json;charset=utf-8' });
@@ -22,40 +19,37 @@ window.ExportManager = {
     URL.revokeObjectURL(url);
   },
 
-  /**
-   * ส่งออกตารางสรุปข้อมูลนักเรียน 360 องศาเป็นไฟล์ CSV (เปิดใน Excel ภาษาไทยไม่เพี้ยนด้วย UTF-8 BOM)
-   */
   exportStudentsCSV() {
     const list = window.appDB.getAllStudents360();
     const headers = [
-      'Student_ID',
-      'Full_Name',
-      'Nickname',
-      'Class_ID',
-      'Level',
-      'Year',
-      'Major',
-      'Group_No',
-      'Advisor_Name',
-      'Status',
-      'Behavior_Score',
-      'Phone_Number',
-      'Parent_Name',
-      'Parent_Phone',
-      'Emergency_Phone',
-      'Emergency_Note',
-      'Address',
-      'Zone_District',
-      'Home_Location',
-      'Overall_Risk_Level',
-      'Financial_Status',
-      'Substance_History',
-      'Scholarship_Need',
-      'Home_Visit_Status',
-      'Home_Visit_Date',
-      'Photo_Status',
-      'Photo_URL',
-      'Data_Issues'
+      'รหัสนักศึกษา',
+      'ชื่อ-นามสกุล',
+      'ชื่อเล่น',
+      'ระดับชั้น',
+      'กลุ่มเรียน',
+      'สาขาวิชา',
+      'ครูที่ปรึกษา',
+      'สถานภาพ',
+      'คะแนนความประพฤติ',
+      'ระดับความเสี่ยงรวม',
+      'สาเหตุความเสี่ยง/ปัญหา',
+      'ข้อมูลบุหรี่/สารเสพติด (ตามที่แจ้งในแบบบันทึก)',
+      'ประเภทบุหรี่/สารเสพติดที่พบ',
+      'ฐานะเศรษฐกิจ',
+      'รายได้ครอบครัว',
+      'เงินมาเรียนต่อวัน',
+      'ความต้องการทุนการศึกษา',
+      'เบอร์โทรนักเรียน',
+      'ชื่อผู้ปกครอง',
+      'เบอร์โทรผู้ปกครอง',
+      'เบอร์ติดต่อฉุกเฉิน',
+      'ที่อยู่',
+      'โซนอำเภอ',
+      'พิกัด_GPS',
+      'สถานะเยี่ยมบ้าน',
+      'วันที่เยี่ยมบ้าน',
+      'สถานะรูปถ่าย',
+      'รายการข้อมูลไม่สมบูรณ์'
     ];
 
     const escapeCSV = (val) => {
@@ -67,30 +61,30 @@ window.ExportManager = {
       stu.Student_ID,
       stu.Full_Name,
       stu.Nickname,
-      stu.Class_ID,
-      stu.ClassGroup.Level,
-      stu.ClassGroup.Year,
+      stu.ClassGroup.Level_Year || `${stu.ClassGroup.Level}${stu.ClassGroup.Year}`,
+      stu.ClassGroup.Group_Label || `กลุ่ม${stu.ClassGroup.Group_No}`,
       stu.ClassGroup.Major,
-      stu.ClassGroup.Group_No,
       stu.ClassGroup.Advisor_Name,
       stu.Status,
       stu.BehaviorScore,
+      stu.Screening.Overall_Risk_Level,
+      stu.Screening.Risk_Factors_Note || (stu.Screening.Risk_Reasons || []).join(', '),
+      stu.Substance_Raw,
+      stu.Substance_Clean,
+      stu.Screening.Financial_Status,
+      stu.Screening.Family_Income_Range,
+      stu.Screening.Daily_Allowance,
+      stu.Screening.Scholarship_Need,
       stu.Phone_Number,
       stu.Parent_Name,
       stu.Parent_Phone,
-      stu.Emergency_Phone,
-      stu.Emergency_Contact_Note,
+      `${stu.Emergency_Phone || ''} ${stu.Emergency_Contact_Note ? '(' + stu.Emergency_Contact_Note + ')' : ''}`.trim(),
       stu.Address,
       stu.Zone_District,
       stu.Home_Location,
-      stu.Screening.Overall_Risk_Level,
-      stu.Screening.Financial_Status,
-      stu.Screening.Substance_History,
-      stu.Screening.Scholarship_Need,
       stu.Screening.Home_Visit_Status,
       stu.Screening.Home_Visit_Date,
       stu.Photo_Status,
-      stu.Photo_URL,
       (stu.Data_Issues || []).join('; ')
     ].map(escapeCSV).join(','));
 
@@ -107,9 +101,6 @@ window.ExportManager = {
     URL.revokeObjectURL(url);
   },
 
-  /**
-   * ส่งออกไฟล์ Excel (.xlsx) แยก 4 แผ่นงาน (Sheets) ตามโครงสร้าง Relational Database
-   */
   exportExcel4Sheets() {
     if (typeof XLSX === 'undefined') {
       alert('กำลังโหลดไลบรารีสร้างไฟล์ Excel กรุณาลองอีกครั้ง หรือใช้ปุ่มส่งออก CSV แทน');
@@ -126,8 +117,12 @@ window.ExportManager = {
       Student_ID: s.Student_ID,
       Full_Name: s.Full_Name,
       Nickname: s.Nickname,
+      Level_Year: s.Level_Year,
+      Group_Label: s.Group_Label,
       Class_ID: s.Class_ID,
       Status: s.Status,
+      Substance_Reported_Raw: s.Substance_Raw,
+      Substance_Summary: s.Substance_Clean,
       Phone_Number: s.Phone_Number,
       Parent_Name: s.Parent_Name,
       Parent_Phone: s.Parent_Phone,
@@ -158,10 +153,12 @@ window.ExportManager = {
       Screening_ID: sc.Screening_ID,
       Academic_Term: sc.Academic_Term,
       Student_ID: sc.Student_ID,
+      Overall_Risk_Level: sc.Overall_Risk_Level,
+      Risk_Reasons_Detail: sc.Risk_Factors_Note || (sc.Risk_Reasons || []).join(', '),
+      Substance_Reported_Raw: sc.Substance_Raw,
+      Substance_Category: sc.Substance_History,
       Family_Status: sc.Family_Status,
       Financial_Status: sc.Financial_Status,
-      Overall_Risk_Level: sc.Overall_Risk_Level,
-      Substance_History: sc.Substance_History,
       Parent_Occupation: sc.Parent_Occupation,
       Family_Income_Range: sc.Family_Income_Range,
       Daily_Allowance: sc.Daily_Allowance,
@@ -175,27 +172,5 @@ window.ExportManager = {
 
     const datePart = new Date().toISOString().slice(0, 10);
     XLSX.writeFile(wb, `ฐานข้อมูลนักเรียน_ช่างกลและเทคนิค_${datePart}.xlsx`);
-  },
-
-  /**
-   * โค้ด Google Apps Script สำเร็จรูปเผื่อผู้ใช้ต้องการนำไปวางใน Google Sheets เพื่อซิงก์ออนไลน์
-   */
-  getGoogleAppsScriptTemplate() {
-    return `// นำโค้ดนี้ไปวางใน Extensions > Apps Script ของ Google Sheets แล้วกด Deploy > New deployment (Web app: Anyone)
-function doGet(e) {
-  const prop = PropertiesService.getScriptProperties().getProperty('DB_JSON');
-  const out = prop ? prop : JSON.stringify({ error: 'Empty DB' });
-  return ContentService.createTextOutput(out).setMimeType(ContentService.MimeType.JSON);
-}
-
-function doPost(e) {
-  const body = JSON.parse(e.postData.contents);
-  if (body.action === 'SAVE_ALL' && body.payload) {
-    PropertiesService.getScriptProperties().setProperty('DB_JSON', JSON.stringify(body.payload));
-    return ContentService.createTextOutput(JSON.stringify({ status: 'ok', updated: new Date() }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-  return ContentService.createTextOutput(JSON.stringify({ status: 'invalid' })).setMimeType(ContentService.MimeType.JSON);
-}`;
   }
 };

@@ -23,33 +23,33 @@
   <!-- Custom Styles -->
   <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body class="min-h-screen flex flex-col pb-safe-mobile">
+<body class="min-h-screen flex flex-col pb-safe-mobile bg-slate-100/80">
 
   <!-- Toast Notification Container -->
   <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <!-- Top Header & Desktop Navigation -->
-  <header class="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white shadow-lg sticky top-0 z-30 no-print">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-3">
+  <header class="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white shadow-xl sticky top-0 z-30 no-print border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-3">
       <!-- Brand Title -->
-      <div class="flex items-center gap-3 min-w-0">
-        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md shrink-0">
+      <div onclick="switchMainTab('dashboard')" class="flex items-center gap-3 min-w-0 cursor-pointer">
+        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30 shrink-0 border border-white/20">
           <i data-lucide="wrench" class="w-5 h-5 sm:w-6 sm:h-6 text-white"></i>
         </div>
         <div class="min-w-0">
-          <h1 class="font-prompt font-bold text-base sm:text-lg lg:text-xl tracking-tight truncate">
-            ระบบสารสนเทศและดูแลนักเรียน 360°
+          <h1 class="font-prompt font-bold text-sm sm:text-lg lg:text-xl tracking-tight truncate">
+            ระบบดูแลและจัดการข้อมูลนักเรียน 360°
           </h1>
           <p class="text-[11px] sm:text-xs text-blue-200 truncate">
-            แผนกช่างกลโรงงาน & เทคนิคอุตสาหกรรม (Relational Database 4 ตาราง)
+            แผนกช่างกลโรงงาน & เทคนิคอุตสาหกรรม (รุ่น 69 • 125 คน)
           </p>
         </div>
       </div>
 
       <!-- Desktop Navigation Pills (Hidden on Mobile, Shown on lg+) -->
-      <nav class="hidden lg:flex items-center gap-1.5 bg-slate-900/50 p-1.5 rounded-2xl border border-white/10">
+      <nav class="hidden lg:flex items-center gap-1.5 bg-slate-900/60 p-1.5 rounded-2xl border border-white/10">
         <button id="desktop-nav-dashboard" onclick="switchMainTab('dashboard')" class="px-3.5 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 bg-white text-blue-950 shadow-sm transition">
-          <i data-lucide="layout-dashboard" class="w-4 h-4"></i> แดชบอร์ด & ตรวจข้อมูล
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i> ภาพรวม & สาเหตุปัญหา
         </button>
         <button id="desktop-nav-students" onclick="switchMainTab('students')" class="px-3.5 py-2 rounded-xl text-sm font-medium flex items-center gap-2 text-blue-100 hover:bg-white/10 transition">
           <i data-lucide="users" class="w-4 h-4"></i> ทำเนียบนักเรียน (125)
@@ -61,13 +61,13 @@
           <i data-lucide="map-pin" class="w-4 h-4"></i> คัดกรอง SDQ & เยี่ยมบ้าน
         </button>
         <button id="desktop-nav-settings" onclick="switchMainTab('settings')" class="px-3.5 py-2 rounded-xl text-sm font-medium flex items-center gap-2 text-blue-100 hover:bg-white/10 transition">
-          <i data-lucide="database" class="w-4 h-4"></i> กลุ่มเรียน & สำรองข้อมูล
+          <i data-lucide="database" class="w-4 h-4"></i> จัดการกลุ่ม & สำรองข้อมูล
         </button>
       </nav>
 
       <!-- Quick Add Student Button on Header -->
       <div class="flex items-center gap-2 shrink-0">
-        <button onclick="openEditStudentModal(null)" class="px-3 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-prompt font-semibold flex items-center gap-1.5 shadow transition">
+        <button onclick="openEditStudentModal(null)" class="px-3 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-prompt font-semibold flex items-center gap-1.5 shadow-md transition">
           <i data-lucide="user-plus" class="w-4 h-4"></i>
           <span class="hidden sm:inline">เพิ่มนักเรียน</span>
         </button>
@@ -76,85 +76,91 @@
   </header>
 
   <!-- Main Workspace Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-5">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
 
     <!-- ==================================================================== -->
-    <!-- TAB 1: แดชบอร์ด & ศูนย์ตรวจสอบความถูกต้องของข้อมูล (Dashboard)      -->
+    <!-- TAB 1: แดชบอร์ด, สรุปจำนวนเด็กมีปัญหาตามสาเหตุ & คิวตรวจข้อมูล       -->
     <!-- ==================================================================== -->
     <section id="tab-dashboard">
       <div id="dashboardContent"></div>
     </section>
 
     <!-- ==================================================================== -->
-    <!-- TAB 2: ทำเนียบนักเรียน & โปรไฟล์ 360 องศา (ตารางที่ 2: Students)     -->
+    <!-- TAB 2: ทำเนียบนักเรียน & ค้นหาตามกลุ่ม/สารเสพติด/สาเหตุความเสี่ยง     -->
     <!-- ==================================================================== -->
     <section id="tab-students" class="hidden">
       <!-- Search & Multi-Filter Control Panel -->
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200/90 p-4 mb-5">
+      <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 p-4 sm:p-5 mb-5 space-y-4">
+        
+        <!-- Row 1: Search Box & Main Dropdowns -->
         <div class="flex flex-col lg:flex-row gap-3">
-          <!-- Search Box -->
           <div class="relative flex-1">
             <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
             <input type="text" id="studentSearchInput"
                    oninput="window.AppState.searchQuery = this.value; renderStudentsTab(); if(window.lucide) lucide.createIcons();"
-                   placeholder="ค้นหารหัส 11 หลัก, ชื่อ-นามสกุล, ชื่อเล่น, เบอร์โทร, อำเภอ, โรงเรียนเดิม..."
-                   class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                   placeholder="ค้นหารหัส 11 หลัก, ชื่อ-นามสกุล, ชื่อเล่น, บุหรี่/น้ำกระท่อม, อำเภอ, เบอร์โทร..."
+                   class="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-slate-300 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50/50 focus:bg-white transition" />
           </div>
 
-          <!-- Filter Dropdowns -->
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <select id="filterClassSelect"
                     onchange="window.AppState.filterClassId = this.value; renderStudentsTab(); if(window.lucide) lucide.createIcons();"
-                    class="rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm bg-white outline-none">
-              <option value="ALL">ทุกกลุ่มเรียน</option>
+                    class="rounded-2xl border border-slate-300 px-3 py-2 text-xs sm:text-sm bg-white font-medium text-slate-800 outline-none">
+              <option value="ALL">ทุกระดับชั้น/ทุกกลุ่ม</option>
             </select>
 
             <select id="filterDistrictSelect"
                     onchange="window.AppState.filterDistrict = this.value; renderStudentsTab(); if(window.lucide) lucide.createIcons();"
-                    class="rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm bg-white outline-none">
+                    class="rounded-2xl border border-slate-300 px-3 py-2 text-xs sm:text-sm bg-white font-medium text-slate-800 outline-none">
               <option value="ALL">ทุกโซนอำเภอ</option>
             </select>
 
             <select id="filterPhotoSelect"
                     onchange="window.AppState.filterPhoto = this.value; renderStudentsTab(); if(window.lucide) lucide.createIcons();"
-                    class="rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm bg-white outline-none">
+                    class="rounded-2xl border border-slate-300 px-3 py-2 text-xs sm:text-sm bg-white font-medium text-slate-800 outline-none">
               <option value="ALL">รูปถ่าย: ทั้งหมด</option>
-              <option value="มีรูปแล้ว">มีรูปถ่ายแล้ว (77)</option>
-              <option value="ยังไม่มีรูป">ยังไม่มีรูปถ่าย (48)</option>
+              <option value="มีรูปแล้ว">มีรูปถ่ายแล้ว</option>
+              <option value="ยังไม่มีรูป">ยังไม่มีรูปถ่าย</option>
             </select>
 
             <select id="filterRiskSelect"
                     onchange="window.AppState.filterRisk = this.value; renderStudentsTab(); if(window.lucide) lucide.createIcons();"
-                    class="rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm bg-white outline-none">
-              <option value="ALL">ความเสี่ยง: ทั้งหมด</option>
-              <option value="กลุ่มปกติ">กลุ่มปกติ</option>
-              <option value="กลุ่มเสี่ยง">กลุ่มเสี่ยง</option>
-              <option value="กลุ่มมีปัญหา">กลุ่มมีปัญหา</option>
+                    class="rounded-2xl border border-slate-300 px-3 py-2 text-xs sm:text-sm bg-white font-medium text-slate-800 outline-none">
+              <option value="ALL">ระดับความเสี่ยง: ทั้งหมด</option>
+              <option value="กลุ่มมีปัญหา">🔴 กลุ่มมีปัญหา</option>
+              <option value="กลุ่มเสี่ยง">🟠 กลุ่มเสี่ยง</option>
+              <option value="กลุ่มปกติ">🟢 กลุ่มปกติ</option>
             </select>
           </div>
         </div>
 
-        <!-- Sub-bar: Issue Filter Toggle, View Mode & Count -->
-        <div class="flex flex-wrap items-center justify-between gap-2 mt-3 pt-3 border-t border-slate-100">
-          <div class="flex items-center gap-2">
+        <!-- Row 2: ปุ่มเลือก "กลุ่ม1 - กลุ่ม5" และ "ระดับชั้น" แบบกดง่ายบนมือถือและ PC -->
+        <div id="quickGroupFilterBar" class="pt-3 border-t border-slate-100"></div>
+
+        <!-- Row 3: ปุ่มกรองตาม "สาเหตุปัญหา / การใช้บุหรี่-สารเสพติด" พร้อมบอกจำนวนคนชัดเจน -->
+        <div id="quickProblemFilterBar" class="pt-3 border-t border-slate-100"></div>
+
+        <!-- Row 4: Sub-bar (Active Filter Status, View Mode & Count) -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-100">
+          <div class="flex flex-wrap items-center gap-2">
             <button id="toggleIssueOnlyBtn"
                     onclick="window.AppState.filterIssueOnly = !window.AppState.filterIssueOnly; renderStudentsTab(); if(window.lucide) lucide.createIcons();"
-                    class="px-3 py-2 rounded-xl text-xs font-prompt font-medium flex items-center gap-1.5 bg-slate-100 text-slate-700">
-              <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> เฉพาะข้อมูลผิดพลาด/ไม่ครบ
+                    class="px-3 py-1.5 rounded-xl text-xs font-prompt font-medium flex items-center gap-1.5 bg-slate-100 text-slate-700">
+              <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> เฉพาะข้อมูล/เบอร์โทรไม่ครบ
             </button>
-            <button onclick="resetStudentFilters()" class="px-3 py-2 rounded-xl text-xs text-slate-500 hover:bg-slate-100">
-              ล้างตัวกรอง
+            <button onclick="resetStudentFilters()" class="px-3 py-1.5 rounded-xl text-xs font-prompt font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 flex items-center gap-1 transition">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> ล้างตัวกรองทั้งหมด
             </button>
           </div>
 
           <div class="flex items-center gap-3">
-            <span class="text-xs text-slate-500">แสดงผล: <b id="filteredStudentCount" class="text-slate-900">125 คน</b></span>
+            <span class="text-xs text-slate-600">พบนักเรียน: <b id="filteredStudentCount" class="text-blue-900 font-prompt text-sm">125 คน</b></span>
             <div class="inline-flex rounded-xl bg-slate-100 p-1">
-              <button onclick="window.AppState.studentViewMode = 'grid'; renderStudentsTab(); if(window.lucide) lucide.createIcons();"
+              <button id="btnViewGrid" onclick="window.AppState.studentViewMode = 'grid'; renderStudentsTab(); if(window.lucide) lucide.createIcons();"
                       class="px-2.5 py-1 rounded-lg text-xs font-prompt font-semibold flex items-center gap-1 bg-white text-slate-800 shadow-sm">
                 <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i> การ์ด
               </button>
-              <button onclick="window.AppState.studentViewMode = 'table'; renderStudentsTab(); if(window.lucide) lucide.createIcons();"
+              <button id="btnViewTable" onclick="window.AppState.studentViewMode = 'table'; renderStudentsTab(); if(window.lucide) lucide.createIcons();"
                       class="px-2.5 py-1 rounded-lg text-xs font-prompt font-medium flex items-center gap-1 text-slate-600">
                 <i data-lucide="table" class="w-3.5 h-3.5"></i> ตาราง
               </button>
@@ -164,7 +170,7 @@
       </div>
 
       <!-- Grid Cards View -->
-      <div id="studentsGridContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      <div id="studentsGridContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 
       <!-- Table View -->
       <div id="studentsTableContainer" class="hidden"></div>
@@ -178,30 +184,31 @@
     </section>
 
     <!-- ==================================================================== -->
-    <!-- TAB 4: ระบบคัดกรอง SDQ & แผนที่โซนเยี่ยมบ้าน (ตารางที่ 4)            -->
+    <!-- TAB 4: ระบบคัดกรอง SDQ, สาเหตุความเสี่ยง & โซนเยี่ยมบ้าน (ตารางที่ 4) -->
     <!-- ==================================================================== -->
     <section id="tab-screening" class="hidden">
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 mb-5">
+      <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-4 sm:p-5 mb-5">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h2 class="font-prompt font-bold text-slate-900 text-base sm:text-lg flex items-center gap-2">
               <i data-lucide="compass" class="w-5 h-5 text-indigo-600"></i>
-              ตารางที่ 4: ระบบคัดกรอง SDQ และวางแผนเยี่ยมบ้านแยกตามโซนอำเภอ (Zone_District)
+              ระบบคัดกรองความเสี่ยง (SDQ), การใช้สารเสพติด และโซนเยี่ยมบ้าน
             </h2>
-            <p class="text-xs text-slate-500">เลือกโซนอำเภอด้านล่างเพื่อดูรายชื่อนักเรียนในสายเยี่ยมบ้านเดียวกัน พร้อมกดนำทาง Google Maps และถ่ายรูปเยี่ยมบ้านจากมือถือ</p>
+            <p class="text-xs text-slate-500">แสดงสาเหตุความเสี่ยง ข้อมูลบุหรี่/สุรา/น้ำกระท่อมตามที่นักเรียนแจ้ง และจัดสายเยี่ยมบ้านตามโซนอำเภอ</p>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex flex-wrap items-center gap-2">
             <select id="screeningZoneSelect"
                     onchange="window.AppState.screeningZoneFilter = this.value; renderScreeningTab(); if(window.lucide) lucide.createIcons();"
                     class="rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm bg-white outline-none">
               <option value="ALL">ทุกโซนพื้นที่</option>
             </select>
-            <select onchange="window.AppState.screeningRiskFilter = this.value; renderScreeningTab(); if(window.lucide) lucide.createIcons();"
+            <select id="screeningRiskSelect"
+                    onchange="window.AppState.screeningRiskFilter = this.value; renderScreeningTab(); if(window.lucide) lucide.createIcons();"
                     class="rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm bg-white outline-none">
               <option value="ALL">ทุกระดับความเสี่ยง</option>
-              <option value="กลุ่มปกติ">กลุ่มปกติ</option>
-              <option value="กลุ่มเสี่ยง">กลุ่มเสี่ยง</option>
-              <option value="กลุ่มมีปัญหา">กลุ่มมีปัญหา</option>
+              <option value="กลุ่มมีปัญหา">🔴 กลุ่มมีปัญหา</option>
+              <option value="กลุ่มเสี่ยง">🟠 กลุ่มเสี่ยง</option>
+              <option value="กลุ่มปกติ">🟢 กลุ่มปกติ</option>
             </select>
           </div>
         </div>
@@ -210,7 +217,7 @@
         <div id="zoneSummaryPills" class="flex items-center gap-2 overflow-x-auto no-scrollbar mt-3 pt-3 border-t border-slate-100"></div>
       </div>
 
-      <div id="screeningListContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      <div id="screeningListContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
     </section>
 
     <!-- ==================================================================== -->
@@ -229,7 +236,7 @@
     <div class="grid grid-cols-5 max-w-md mx-auto text-[11px] font-prompt">
       <button id="mobile-nav-dashboard" onclick="switchMainTab('dashboard')" class="flex flex-col items-center justify-center py-2 px-1 text-blue-700 font-semibold">
         <i data-lucide="layout-dashboard" class="w-5 h-5 mb-0.5"></i>
-        <span>หน้าแรก</span>
+        <span>ภาพรวม</span>
       </button>
       <button id="mobile-nav-students" onclick="switchMainTab('students')" class="flex flex-col items-center justify-center py-2 px-1 text-slate-500 font-medium">
         <i data-lucide="users" class="w-5 h-5 mb-0.5"></i>
@@ -241,11 +248,11 @@
       </button>
       <button id="mobile-nav-screening" onclick="switchMainTab('screening')" class="flex flex-col items-center justify-center py-2 px-1 text-slate-500 font-medium">
         <i data-lucide="map-pin" class="w-5 h-5 mb-0.5"></i>
-        <span>เยี่ยมบ้าน</span>
+        <span>คัดกรอง/บ้าน</span>
       </button>
       <button id="mobile-nav-settings" onclick="switchMainTab('settings')" class="flex flex-col items-center justify-center py-2 px-1 text-slate-500 font-medium">
         <i data-lucide="database" class="w-5 h-5 mb-0.5"></i>
-        <span>ตั้งค่า/ซิงก์</span>
+        <span>กลุ่ม/ซิงก์</span>
       </button>
     </div>
   </nav>
@@ -267,7 +274,7 @@
       <div class="bg-slate-900 text-white px-5 py-4 flex items-center justify-between shrink-0">
         <div class="flex items-center gap-2">
           <i data-lucide="user-cog" class="w-5 h-5 text-blue-400"></i>
-          <h3 class="font-prompt font-bold text-base">แก้ไข / บันทึกข้อมูลประวัตินักเรียน (ตาราง Students)</h3>
+          <h3 class="font-prompt font-bold text-sm sm:text-base">แก้ไขข้อมูลนักเรียน / ข้อมูลการดื่ม-สูบ / พิกัดบ้าน</h3>
         </div>
         <button onclick="closeModal('editStudentModal')" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20">
           <i data-lucide="x" class="w-4 h-4"></i>
@@ -283,7 +290,7 @@
       <div class="bg-indigo-950 text-white px-5 py-4 flex items-center justify-between shrink-0">
         <div class="flex items-center gap-2">
           <i data-lucide="home" class="w-5 h-5 text-emerald-400"></i>
-          <h3 class="font-prompt font-bold text-base">บันทึกการคัดกรอง SDQ และเยี่ยมบ้าน (ตาราง Screening_Records)</h3>
+          <h3 class="font-prompt font-bold text-sm sm:text-base">บันทึกการคัดกรอง SDQ, สารเสพติด และเยี่ยมบ้าน</h3>
         </div>
         <button onclick="closeModal('screeningModal')" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20">
           <i data-lucide="x" class="w-4 h-4"></i>
@@ -297,7 +304,7 @@
   <div id="classGroupModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-modal">
       <div class="bg-slate-900 text-white px-5 py-4 flex items-center justify-between">
-        <h3 class="font-prompt font-bold text-base">จัดการกลุ่มเรียนและครูที่ปรึกษา (Class_Groups)</h3>
+        <h3 class="font-prompt font-bold text-base">จัดการกลุ่มเรียนและครูที่ปรึกษา</h3>
         <button onclick="closeModal('classGroupModal')" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
