@@ -2243,20 +2243,44 @@ function renderSettingsTab() {
         </div>
 
         <!-- ตั้งค่า Cloud Sync & รหัส PIN -->
-        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-3">
-          <h3 class="font-prompt font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
-            <i data-lucide="shield" class="w-4 h-4 text-indigo-600"></i>
-            ตั้งค่ารหัสผ่าน PIN สำหรับครู & ซิงก์ Google Sheets อัตโนมัติ
-          </h3>
-          <div class="flex flex-col sm:flex-row gap-2">
-            <input type="password" id="settingPinInput" placeholder="ตั้งรหัส PIN ใหม่ (ค่าเริ่มต้น: 2569)"
-                   class="flex-1 rounded-xl border border-slate-300 px-3 py-2 text-xs" />
-            <button onclick="saveNewPinCode()" class="px-3.5 py-2 rounded-xl bg-slate-900 text-white text-xs font-prompt font-semibold shrink-0">
-              บันทึกรหัส PIN
-            </button>
-            <button onclick="openPinLockModal()" class="px-3.5 py-2 rounded-xl bg-amber-100 text-amber-900 text-xs font-prompt font-semibold shrink-0">
-              🔒 ล็อกหน้าจอทันที
-            </button>
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+            <div>
+              <h3 class="font-prompt font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
+                <i data-lucide="shield-check" class="w-4 h-4 text-indigo-600"></i>
+                ระบบรักษาความปลอดภัยรหัส PIN สำหรับครู
+              </h3>
+              <p class="text-xs text-slate-500 mt-0.5">จำกัดสิทธิ์การเข้าถึงข้อมูลส่วนตัว เบอร์โทรศัพท์ และผลการคัดกรองพฤติกรรมนักเรียน</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-full text-[11px] font-prompt font-semibold ${window.appDB.isPinEnabled() ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                ${window.appDB.isPinEnabled() ? '● เปิดใช้งาน (คุ้มครอง PDPA)' : '○ ปิดการล็อกชั่วคราว'}
+              </span>
+              <button onclick="togglePinProtection()" class="px-3 py-1.5 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-prompt font-medium transition">
+                ${window.appDB.isPinEnabled() ? 'ปิดการล็อก' : 'เปิดใช้งาน'}
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-slate-50 rounded-2xl p-3 sm:p-4 border border-slate-200/80 space-y-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <label class="block text-xs font-semibold text-slate-800">
+                เปลี่ยนรหัส PIN เข้าใช้งาน (รหัสเริ่มต้นของระบบ: <span class="font-mono font-bold text-blue-600">2569</span>)
+              </label>
+              <button onclick="resetPinToDefault()" class="text-[11px] text-slate-500 hover:text-blue-600 underline">
+                รีเซ็ตกลับเป็น 2569
+              </button>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <input type="password" id="settingPinInput" placeholder="กรอกรหัส PIN ใหม่ 4-8 หลัก" maxlength="8"
+                     class="flex-1 rounded-xl border border-slate-300 px-3 py-2 text-xs font-mono outline-none focus:border-blue-600" />
+              <button onclick="saveNewPinCode()" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-prompt font-semibold shrink-0 transition">
+                บันทึกรหัส PIN ใหม่
+              </button>
+              <button onclick="lockApp()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-prompt font-semibold shrink-0 transition flex items-center justify-center gap-1.5 shadow-sm">
+                <i data-lucide="lock" class="w-3.5 h-3.5"></i> ล็อกหน้าจอทันที
+              </button>
+            </div>
           </div>
 
           <div class="pt-2 border-t border-slate-100 space-y-2">
@@ -2293,11 +2317,32 @@ function renderSettingsTab() {
 function saveNewPinCode() {
   const val = (document.getElementById('settingPinInput')?.value || '').trim();
   if (!val || val.length < 4) {
-    showToast('กรุณาตั้งรหัส PIN อย่างน้อย 4 หลัก', 'error');
+    showToast('กรุณาตั้งรหัส PIN อย่างน้อย 4 หลัก (ตัวเลข)', 'error');
     return;
   }
   window.appDB.setPinCode(val);
   showToast('บันทึกรหัสผ่าน PIN ใหม่เรียบร้อยแล้ว');
+  renderAll();
+}
+
+function togglePinProtection() {
+  const current = window.appDB.isPinEnabled();
+  const next = !current;
+  window.appDB.setPinEnabled(next);
+  if (next) {
+    window.appDB.setAuthenticated(true);
+    showToast(`เปิดใช้งานระบบความปลอดภัย PIN เรียบร้อยแล้ว (รหัสปัจจุบัน: ${window.appDB.getPinCode()})`);
+  } else {
+    showToast('ปิดการถามรหัส PIN ชั่วคราวแล้ว');
+  }
+  renderAll();
+}
+
+function resetPinToDefault() {
+  if (!confirm('ต้องการรีเซ็ตรหัส PIN กลับเป็นค่าเริ่มต้น "2569" หรือไม่?')) return;
+  window.appDB.setPinCode('2569');
+  showToast('รีเซ็ตรหัส PIN กลับเป็น "2569" เรียบร้อยแล้ว');
+  renderAll();
 }
 
 async function saveAndSyncCloud() {
@@ -2876,39 +2921,174 @@ function submitClassGroupForm(e) {
   renderAll();
 }
 
+function lockApp() {
+  window.appDB.setAuthenticated(false);
+  openPinLockModal();
+  showToast('ล็อกหน้าจอระบบเรียบร้อยแล้ว');
+}
+
 function openPinLockModal() {
-  window.appDB.setPinLocked(true);
   const modal = document.getElementById('pinLockModal');
   const body = document.getElementById('pinLockModalBody');
   if (!modal || !body) return;
 
   body.innerHTML = `
-    <div class="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center mx-auto mb-3 shadow-lg">
-      <i data-lucide="lock" class="w-7 h-7"></i>
+    <div class="relative py-1">
+      <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-3xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-blue-700 text-white flex items-center justify-center mx-auto mb-3 shadow-xl ring-4 ring-blue-100">
+        <i data-lucide="shield-check" class="w-7 h-7 sm:w-8 sm:h-8"></i>
+      </div>
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-[11px] font-semibold mb-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        ระบบรักษาความปลอดภัยข้อมูลนักเรียน (PDPA)
+      </div>
+      <h3 class="font-prompt font-bold text-slate-900 text-lg sm:text-xl">ล็อกหน้าจอสำหรับครูผู้สอน</h3>
+      <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto leading-relaxed">แผนกวิชาช่างกลโรงงาน กรุณากรอกรหัส PIN 4 หลักเพื่อเข้าสู่ระบบ (รหัสเริ่มต้น: <b class="font-mono text-blue-600 font-bold">2569</b>)</p>
+      
+      <!-- PIN Indicator Dots -->
+      <div class="flex items-center justify-center gap-3 my-3.5" id="pinDotsContainer">
+        <span class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 bg-white transition-all duration-150" data-dot="0"></span>
+        <span class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 bg-white transition-all duration-150" data-dot="1"></span>
+        <span class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 bg-white transition-all duration-150" data-dot="2"></span>
+        <span class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 bg-white transition-all duration-150" data-dot="3"></span>
+      </div>
+
+      <form onsubmit="verifyPinUnlock(event)" class="space-y-3">
+        <!-- Physical keyboard input -->
+        <div class="relative max-w-[210px] mx-auto">
+          <input type="password" id="pinUnlockInput" inputmode="numeric" pattern="[0-9]*" maxlength="8"
+                 placeholder="••••" autofocus autocomplete="off"
+                 oninput="syncPinDots()"
+                 class="w-full text-center text-xl tracking-[0.35em] font-mono font-bold rounded-2xl border-2 border-slate-200 px-3 py-2 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 outline-none transition" />
+        </div>
+
+        <div id="pinErrorMsg" class="hidden text-xs text-rose-600 font-semibold py-1 animate-pulse">
+          ⚠️ รหัส PIN ไม่ถูกต้อง (รหัสเริ่มต้นของระบบคือ 2569)
+        </div>
+
+        <!-- Touch Keypad for Mobile & Tablet -->
+        <div class="grid grid-cols-3 gap-2 max-w-[230px] mx-auto my-2">
+          ${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => `
+            <button type="button" onclick="keypadPress('${n}')"
+                    class="h-11 sm:h-12 rounded-2xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-800 font-prompt font-bold text-lg transition flex items-center justify-center shadow-sm select-none">
+              ${n}
+            </button>
+          `).join('')}
+          <button type="button" onclick="keypadClear()"
+                  class="h-11 sm:h-12 rounded-2xl bg-rose-50 hover:bg-rose-100 active:scale-95 text-rose-600 font-prompt font-semibold text-xs transition flex items-center justify-center select-none">
+            ล้าง
+          </button>
+          <button type="button" onclick="keypadPress('0')"
+                  class="h-11 sm:h-12 rounded-2xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-800 font-prompt font-bold text-lg transition flex items-center justify-center shadow-sm select-none">
+            0
+          </button>
+          <button type="button" onclick="keypadBackspace()"
+                  class="h-11 sm:h-12 rounded-2xl bg-slate-200 hover:bg-slate-300 active:scale-95 text-slate-700 font-prompt font-semibold text-base transition flex items-center justify-center select-none">
+            ⌫
+          </button>
+        </div>
+
+        <div class="max-w-[230px] mx-auto pt-1">
+          <button type="submit" class="w-full py-2.5 sm:py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-95 text-white font-prompt font-bold text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-1.5">
+            <i data-lucide="unlock" class="w-4 h-4"></i> ปลดล็อกเข้าสู่ระบบ
+          </button>
+        </div>
+
+        <div class="pt-1.5">
+          <button type="button" onclick="quickFillDefaultPin()"
+                  class="text-[11px] text-blue-600 hover:text-blue-800 font-semibold underline inline-flex items-center gap-1">
+            <span>💡 กดเพื่อใส่รหัสเริ่มต้นทันที (2569)</span>
+          </button>
+        </div>
+      </form>
     </div>
-    <h3 class="font-prompt font-bold text-slate-900 text-lg">ล็อกหน้าจอสำหรับครูผู้สอน</h3>
-    <p class="text-xs text-slate-500 mt-1 mb-4">กรุณากรอกรหัส PIN เพื่อเข้าถึงข้อมูลการคัดกรองและเบอร์ผู้ปกครอง (รหัสเริ่มต้น: <b>2569</b>)</p>
-    <form onsubmit="verifyPinUnlock(event)" class="space-y-3">
-      <input type="password" id="pinUnlockInput" inputmode="numeric" placeholder="••••" required autofocus
-             class="w-full text-center text-2xl tracking-widest font-mono font-bold rounded-2xl border-2 border-slate-300 px-4 py-3 focus:border-blue-600 outline-none" />
-      <button type="submit" class="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-prompt font-bold text-sm shadow-md">
-        ปลดล็อกเข้าสู่ระบบ
-      </button>
-    </form>
   `;
   modal.classList.remove('hidden');
   if (window.lucide) lucide.createIcons();
+
+  const inp = document.getElementById('pinUnlockInput');
+  if (inp) {
+    inp.focus();
+    syncPinDots();
+  }
+}
+
+function keypadPress(digit) {
+  const inp = document.getElementById('pinUnlockInput');
+  if (!inp) return;
+  if (inp.value.length < 8) {
+    inp.value += digit;
+    syncPinDots();
+    const err = document.getElementById('pinErrorMsg');
+    if (err) err.classList.add('hidden');
+    if (inp.value.length === 4) {
+      setTimeout(() => {
+        verifyPinUnlock(new Event('submit'));
+      }, 120);
+    }
+  }
+}
+
+function keypadBackspace() {
+  const inp = document.getElementById('pinUnlockInput');
+  if (!inp) return;
+  inp.value = inp.value.slice(0, -1);
+  syncPinDots();
+  const err = document.getElementById('pinErrorMsg');
+  if (err) err.classList.add('hidden');
+}
+
+function keypadClear() {
+  const inp = document.getElementById('pinUnlockInput');
+  if (!inp) return;
+  inp.value = '';
+  syncPinDots();
+  const err = document.getElementById('pinErrorMsg');
+  if (err) err.classList.add('hidden');
+}
+
+function quickFillDefaultPin() {
+  const inp = document.getElementById('pinUnlockInput');
+  if (!inp) return;
+  inp.value = '2569';
+  syncPinDots();
+  setTimeout(() => {
+    verifyPinUnlock(new Event('submit'));
+  }, 100);
+}
+
+function syncPinDots() {
+  const inp = document.getElementById('pinUnlockInput');
+  const val = (inp?.value || '').trim();
+  const dots = document.querySelectorAll('#pinDotsContainer [data-dot]');
+  dots.forEach((dot, idx) => {
+    if (idx < val.length) {
+      dot.className = 'w-3.5 h-3.5 rounded-full border-2 border-blue-600 bg-blue-600 scale-110 shadow-sm transition-all duration-150';
+    } else {
+      dot.className = 'w-3.5 h-3.5 rounded-full border-2 border-slate-300 bg-white transition-all duration-150';
+    }
+  });
 }
 
 function verifyPinUnlock(e) {
-  e.preventDefault();
-  const input = document.getElementById('pinUnlockInput')?.value || '';
-  if (input.trim() === window.appDB.getPinCode()) {
-    window.appDB.setPinLocked(false);
+  if (e && e.preventDefault) e.preventDefault();
+  const inp = document.getElementById('pinUnlockInput');
+  const input = (inp?.value || '').trim();
+  if (window.appDB.verifyPin(input)) {
     closeModal('pinLockModal');
-    showToast('ปลดล็อกระบบเรียบร้อยแล้ว');
+    showToast('ปลดล็อกระบบเรียบร้อย ยินดีต้อนรับอาจารย์ทุกท่าน');
   } else {
-    showToast('รหัส PIN ไม่ถูกต้อง (ค่าเริ่มต้นคือ 2569)', 'error');
+    const err = document.getElementById('pinErrorMsg');
+    if (err) err.classList.remove('hidden');
+    if (inp) {
+      inp.classList.add('border-rose-500', 'bg-rose-50');
+      setTimeout(() => {
+        inp.classList.remove('border-rose-500', 'bg-rose-50');
+        inp.value = '';
+        syncPinDots();
+        inp.focus();
+      }, 700);
+    }
+    showToast('รหัส PIN ไม่ถูกต้อง (รหัสเริ่มต้นของระบบคือ 2569)', 'error');
   }
 }
 

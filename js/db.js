@@ -10,7 +10,8 @@
 const STORAGE_KEY = 'STUDENT_MACHINE_TOOL_DB_V3';
 const CLOUD_URL_KEY = 'STUDENT_MACHINE_TOOL_CLOUD_URL';
 const PIN_CODE_KEY = 'STUDENT_MACHINE_TOOL_PIN_CODE';
-const PIN_LOCKED_KEY = 'STUDENT_MACHINE_TOOL_PIN_LOCKED';
+const PIN_ENABLED_KEY = 'STUDENT_MACHINE_TOOL_PIN_ENABLED';
+const PIN_AUTH_KEY = 'STUDENT_MACHINE_TOOL_PIN_AUTH';
 
 const DISTRICT_COORDS_MAP = {
   'เมืองฉะเชิงเทรา': '13.6904, 101.0779',
@@ -1100,12 +1101,40 @@ class RelationalDatabase {
     localStorage.setItem(PIN_CODE_KEY, String(newPin).trim());
   }
 
+  isPinEnabled() {
+    const val = localStorage.getItem(PIN_ENABLED_KEY);
+    return val === null ? true : val === 'true';
+  }
+
+  setPinEnabled(enabled) {
+    localStorage.setItem(PIN_ENABLED_KEY, enabled ? 'true' : 'false');
+  }
+
+  isAuthenticated() {
+    if (!this.isPinEnabled()) return true;
+    return sessionStorage.getItem(PIN_AUTH_KEY) === 'true';
+  }
+
+  setAuthenticated(auth) {
+    sessionStorage.setItem(PIN_AUTH_KEY, auth ? 'true' : 'false');
+  }
+
   isPinLocked() {
-    return sessionStorage.getItem(PIN_LOCKED_KEY) === 'true';
+    return !this.isAuthenticated();
   }
 
   setPinLocked(locked) {
-    sessionStorage.setItem(PIN_LOCKED_KEY, locked ? 'true' : 'false');
+    this.setAuthenticated(!locked);
+  }
+
+  verifyPin(inputPin) {
+    const entered = String(inputPin || '').trim();
+    const correct = this.getPinCode();
+    if (entered === correct) {
+      this.setAuthenticated(true);
+      return true;
+    }
+    return false;
   }
 
   getCloudUrl() {
