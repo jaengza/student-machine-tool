@@ -1,15 +1,16 @@
 /**
  * ============================================================================
- * Relational Database Engine V3 (4 Core Tables + Bulk Import for Other Years)
+ * Relational Database Engine V4
+ * - 4 Core Relational Tables (Class_Groups, Students, Discipline_Records, Screening_Records)
+ * - 5-Dimension Behavioral & Risk Screening + Case Follow-up Tracking System
+ * - Smart Google Forms Importer (Main Survey + Photo Form + Google Sheets CSV URL)
  * ============================================================================
- * ตารางที่ 1: Class_Groups (PK: Class_ID เช่น "ปวช.1 กลุ่ม1", Group_Label: "กลุ่ม1")
- * ตารางที่ 2: Students (PK: Student_ID, FK: Class_ID)
- * ตารางที่ 3: Discipline_Records (PK: Record_ID, FK: Student_ID)
- * ตารางที่ 4: Screening_Records (PK: Screening_ID, FK: Student_ID)
  */
 
 const STORAGE_KEY = 'STUDENT_MACHINE_TOOL_DB_V3';
 const CLOUD_URL_KEY = 'STUDENT_MACHINE_TOOL_CLOUD_URL';
+const PIN_CODE_KEY = 'STUDENT_MACHINE_TOOL_PIN_CODE';
+const PIN_LOCKED_KEY = 'STUDENT_MACHINE_TOOL_PIN_LOCKED';
 
 const DISTRICT_COORDS_MAP = {
   'เมืองฉะเชิงเทรา': '13.6904, 101.0779',
@@ -31,6 +32,54 @@ const DISTRICT_COORDS_MAP = {
   'องครักษ์': '14.1206, 101.0028'
 };
 
+/**
+ * โครงสร้างหมวดหมู่พฤติกรรมนักเรียนสำหรับการคัดกรองและติดตามผล
+ */
+window.BEHAVIOR_CATALOG = {
+  learning: {
+    title: 'หมวดที่ 1: พฤติกรรมการเรียน & การมาเรียน',
+    icon: 'book-open',
+    color: 'indigo',
+    items: [
+      { id: 'ขาดเรียนบ่อย', label: 'ขาดเรียนบ่อย / เสี่ยงหมดสิทธิ์สอบ', severity: 'high', icon: 'calendar-x' },
+      { id: 'มาสายบ่อย', label: 'มาสายประจำ / ไม่ทันเข้าแถว', severity: 'medium', icon: 'clock' },
+      { id: 'หนีเรียน', label: 'โดดเรียน / ออกนอกวิทยาลัย', severity: 'high', icon: 'log-out' },
+      { id: 'เสี่ยงติด 0/ร/มส', label: 'ค้างส่งงาน / เสี่ยงติด 0, ร, มส', severity: 'medium', icon: 'file-warning' },
+      { id: 'เสี่ยงออกกลางคัน', label: 'เสี่ยงออกกลางคัน (Drop-out Risk)', severity: 'high', icon: 'user-x' }
+    ]
+  },
+  emotional: {
+    title: 'หมวดที่ 2: พฤติกรรมอารมณ์ สังคม & การใช้ชีวิต',
+    icon: 'heart-handshake',
+    color: 'purple',
+    items: [
+      { id: 'ติดเกม/มือถือ', label: 'ติดเกม / เล่นมือถือในเวลาเรียน', severity: 'medium', icon: 'gamepad-2' },
+      { id: 'เก็บตัว/ซึมเศร้า/เครียด', label: 'เก็บตัว / เครียดสะสม / ซึมเศร้า', severity: 'high', icon: 'cloud-rain' },
+      { id: 'อารมณ์ร้อน/ก้าวร้าว', label: 'อารมณ์ร้อน / ก้าวร้าว / เสี่ยงวิวาท', severity: 'high', icon: 'zap' },
+      { id: 'ผิดระเบียบการแต่งกาย', label: 'ผิดระเบียบการแต่งกาย / ทรงผมซ้ำ', severity: 'medium', icon: 'shirt' },
+      { id: 'ทำงานพิเศษเลิกดึก', label: 'ทำงานพาร์ทไทม์เลิกดึก / อ่อนเพลีย', severity: 'medium', icon: 'moon' }
+    ]
+  },
+  positive: {
+    title: 'หมวดที่ 3: พฤติกรรมเชิงบวก / จุดแข็ง',
+    icon: 'award',
+    color: 'emerald',
+    items: [
+      { id: 'จิตอาสา/ช่วยงานแผนก', label: 'จิตอาสา / ช่วยงานครูและแผนกดีเยี่ยม', severity: 'positive', icon: 'sparkles' },
+      { id: 'ทักษะฝีมือช่างดีเด่น', label: 'ทักษะปฏิบัติงานช่างกล/อุตสาหกรรมดีเด่น', severity: 'positive', icon: 'wrench' },
+      { id: 'มีความรับผิดชอบ/ผู้นำ', label: 'มีความรับผิดชอบสูง / หัวหน้ากลุ่ม', severity: 'positive', icon: 'star' }
+    ]
+  }
+};
+
+window.FOLLOWUP_STATUS_LIST = [
+  { id: 'ปกติ', label: '🟢 ปกติ (ไม่ต้องติดตามพิเศษ)', badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
+  { id: 'เฝ้าระวัง', label: '🟡 เฝ้าระวัง / รอครูที่ปรึกษาพูดคุย', badgeClass: 'bg-amber-100 text-amber-900 border-amber-300' },
+  { id: 'กำลังติดตาม', label: '🟠 กำลังติดตามดูแล / ทำข้อตกลงแล้ว', badgeClass: 'bg-orange-100 text-orange-900 border-orange-300' },
+  { id: 'ส่งต่อผู้ปกครอง/ปกครอง', label: '🔴 เชิญผู้ปกครอง / ส่งงานปกครอง-แนะแนว', badgeClass: 'bg-red-100 text-red-900 border-red-300' },
+  { id: 'ดูแลสำเร็จ/ดีขึ้นแล้ว', label: '✅ ปรับพฤติกรรมสำเร็จ / ดีขึ้นแล้ว', badgeClass: 'bg-teal-100 text-teal-900 border-teal-300' }
+];
+
 class RelationalDatabase {
   constructor() {
     this.db = null;
@@ -46,7 +95,7 @@ class RelationalDatabase {
           throw new Error('Invalid schema in localStorage');
         }
       } catch (e) {
-        console.warn('Fallback to initial DB V3:', e);
+        console.warn('Fallback to initial DB:', e);
         this.resetToInitial(false);
       }
     } else {
@@ -74,7 +123,7 @@ class RelationalDatabase {
   normalizeDistrictName(rawDist) {
     if (!rawDist) return 'ไม่ระบุ';
     let d = String(rawDist).trim();
-    d = d.replace(/อำเภอ|จังหวัดฉะเชิงเทรา|ฉะเชิงเทรา|ฉะเฉิงเทรา|ฮะเชิงเทรา/g, '').trim();
+    d = d.replace(/อำเภอ|อ\.|จังหวัดฉะเชิงเทรา|จ\.ฉะเชิงเทรา|ฉะเชิงเทรา|ฉะเฉิงเทรา|ฮะเชิงเทรา/g, '').trim();
     d = d.replace('เเปลงยาว', 'แปลงยาว')
          .replace('เมื่อง', 'เมือง')
          .replace('บางคบ้า', 'บางคล้า')
@@ -84,6 +133,39 @@ class RelationalDatabase {
     if (!d || d === '-' || d === '.') return 'ไม่ระบุ';
     if (d === 'เมือง') return 'เมืองฉะเชิงเทรา';
     return d;
+  }
+
+  /**
+   * แปลงลิงก์ Google Drive จาก Google Form (เช่น open?id=... หรือ file/d/...) ให้เป็น Direct Thumbnail URL
+   */
+  normalizePhotoUrl(rawUrl) {
+    const s = String(rawUrl || '').trim();
+    if (!s || s === '-') return '';
+    if (s.startsWith('data:image/')) return s;
+    const idMatch = s.match(/(?:id=|\/d\/)([a-zA-Z0-9_-]{20,})/);
+    if (idMatch && idMatch[1]) {
+      return `https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w800`;
+    }
+    if (s.startsWith('http://') || s.startsWith('https://')) {
+      return s;
+    }
+    return '';
+  }
+
+  cleanPhoneNumber(rawPhone) {
+    if (!rawPhone) return { phone: '', note: '' };
+    const s = String(rawPhone).trim();
+    if (['-', 'ไม่มี', '.'].includes(s)) return { phone: '', note: '' };
+    const m = s.match(/0\d[\d\s\-]{7,10}\d|\b[689]\d{8}\b/);
+    if (m) {
+      let num = m[0].replace(/[\s\-]/g, '');
+      if (num.length === 9 && ['6', '8', '9'].includes(num[0])) {
+        num = '0' + num;
+      }
+      const note = s.replace(m[0], '').replace(/^[()\s\-/,]+|[()\s\-/,]+$/g, '').trim();
+      return { phone: num, note };
+    }
+    return { phone: s.replace(/\D/g, ''), note: s };
   }
 
   parseSubstanceString(rawSub) {
@@ -155,11 +237,13 @@ class RelationalDatabase {
     return issues;
   }
 
-  /**
-   * ตรวจสอบและสร้างกลุ่มเรียนในตาราง Class_Groups อัตโนมัติ เมื่อเพิ่มนักเรียนชั้นปีอื่น (เช่น ปวช.2, ปวช.3, ปวส.2)
-   */
   ensureClassGroupExists(levelYear, groupNo, major = null) {
-    const cleanLvlYear = String(levelYear || 'ปวช.1').trim();
+    let cleanLvlYear = String(levelYear || 'ปวช.1').trim().replace(/\s+/g, '');
+    if (/^ปวช(\d)$/.test(cleanLvlYear)) cleanLvlYear = cleanLvlYear.replace('ปวช', 'ปวช.');
+    if (/^ปวส(\d)$/.test(cleanLvlYear)) cleanLvlYear = cleanLvlYear.replace('ปวส', 'ปวส.');
+    if (cleanLvlYear === 'ปวช.') cleanLvlYear = 'ปวช.1';
+    if (cleanLvlYear === 'ปวส.') cleanLvlYear = 'ปวส.1';
+
     const gNum = Number(String(groupNo || '1').replace(/\D/g, '')) || 1;
     const classId = `${cleanLvlYear} กลุ่ม${gNum}`;
     const existing = (this.db.Class_Groups || []).find(c => c.Class_ID === classId);
@@ -180,16 +264,21 @@ class RelationalDatabase {
       Major: defaultMajor,
       Group_No: gNum,
       Advisor_Name: `ครูที่ปรึกษา ${classId} (คลิกเพื่อระบุชื่อ)`,
-      Note: 'สร้างอัตโนมัติจากการเพิ่มข้อมูลนักเรียน'
+      Note: 'สร้างอัตโนมัติจากระบบนำเข้าข้อมูล'
     };
     this.db.Class_Groups.push(newGroup);
-    // เรียงลำดับกลุ่มเรียนให้สวยงาม (ปวช.1 -> ปวช.2 -> ปวช.3 -> ปวส.1 -> ปวส.2)
     this.db.Class_Groups.sort((a, b) => a.Class_ID.localeCompare(b.Class_ID, 'th'));
     return newGroup;
   }
 
   recomputeAllIssuesAndRisks() {
     if (!this.db || !this.db.Students) return;
+
+    const highSeverityBehaviors = ['ขาดเรียนบ่อย', 'หนีเรียน', 'เสี่ยงออกกลางคัน', 'เก็บตัว/ซึมเศร้า/เครียด', 'อารมณ์ร้อน/ก้าวร้าว'];
+    const allRiskBehaviorIds = [
+      ...window.BEHAVIOR_CATALOG.learning.items.map(i => i.id),
+      ...window.BEHAVIOR_CATALOG.emotional.items.map(i => i.id)
+    ];
 
     this.db.Students.forEach(stu => {
       const cg = (this.db.Class_Groups || []).find(c => c.Class_ID === stu.Class_ID);
@@ -209,6 +298,11 @@ class RelationalDatabase {
         stu.Group_No = createdCg.Group_No;
       }
 
+      if (stu.Photo_URL) {
+        stu.Photo_URL = this.normalizePhotoUrl(stu.Photo_URL);
+        stu.Photo_Status = stu.Photo_URL ? 'มีรูปแล้ว' : 'ยังไม่มีรูป';
+      }
+
       stu.Data_Issues = this.computeStudentIssues(stu);
 
       let sc = (this.db.Screening_Records || []).find(r => r.Student_ID === stu.Student_ID);
@@ -224,6 +318,9 @@ class RelationalDatabase {
           Scholarship_Need: 'ไม่ระบุ',
           Financial_Status: 'เพียงพอ',
           Substance_Raw: stu.Substance_Raw || 'ยังไม่ได้กรอกข้อมูล',
+          Behavior_Tags: [],
+          Followup_Status: '',
+          Followup_History: [],
           Home_Visit_Status: 'ยังไม่เยี่ยมบ้าน',
           Home_Visit_Date: '',
           Home_Visit_Photo: '',
@@ -231,6 +328,9 @@ class RelationalDatabase {
         };
         this.db.Screening_Records.push(sc);
       }
+
+      if (!Array.isArray(sc.Behavior_Tags)) sc.Behavior_Tags = [];
+      if (!Array.isArray(sc.Followup_History)) sc.Followup_History = [];
 
       const rawSubSource = stu.Substance_Raw || sc.Substance_Raw || '';
       const subInfo = this.parseSubstanceString(rawSubSource);
@@ -245,6 +345,18 @@ class RelationalDatabase {
       const reasons = [];
       const rTags = [];
 
+      // 1. พฤติกรรมนักเรียน (Learning & Emotional Behavior Tags)
+      const stuBehaviorRiskTags = sc.Behavior_Tags.filter(b => allRiskBehaviorIds.includes(b));
+      const stuPositiveTags = sc.Behavior_Tags.filter(b => !allRiskBehaviorIds.includes(b));
+      stu.Behavior_Tags = sc.Behavior_Tags;
+      stu.Positive_Behavior_Tags = stuPositiveTags;
+
+      stuBehaviorRiskTags.forEach(bTag => {
+        reasons.push(`พฤติกรรม: ${bTag}`);
+        rTags.push(bTag);
+      });
+
+      // 2. สารเสพติด
       if (subInfo.tags.includes('บุหรี่')) {
         reasons.push('สูบบุหรี่');
         rTags.push('สูบบุหรี่');
@@ -262,6 +374,7 @@ class RelationalDatabase {
         rTags.push('กัญชา');
       }
 
+      // 3. เศรษฐกิจ & ครอบครัว
       const income = String(sc.Family_Income_Range || '');
       const allowance = String(sc.Daily_Allowance || '');
       const schol = String(sc.Scholarship_Need || '');
@@ -294,6 +407,7 @@ class RelationalDatabase {
         rTags.push('ครอบครัวหย่าร้าง/แยกกันอยู่');
       }
 
+      // 4. งานปกครอง
       const discList = (this.db.Discipline_Records || []).filter(d => d.Student_ID === stu.Student_ID);
       const deducted = discList.reduce((acc, cur) => acc + Math.abs(Number(cur.Points_Deducted || 0)), 0);
       if (deducted > 0) {
@@ -310,18 +424,29 @@ class RelationalDatabase {
       sc.Risk_Tags = rTags;
       sc.Risk_Factors_Note = reasons.length > 0 ? reasons.join(', ') : 'ปกติ (ไม่พบความเสี่ยง)';
 
+      const hasHighBehavior = stuBehaviorRiskTags.some(b => highSeverityBehaviors.includes(b));
+
       if (!sc.Manual_Risk_Override) {
         if (
           subInfo.tags.includes('น้ำกระท่อม') ||
           subInfo.tags.includes('กัญชา') ||
+          hasHighBehavior ||
           deducted >= 20 ||
-          (subInfo.hasSubstanceRisk && (income.includes('ต่ำกว่า 10000') || isLowAlw))
+          (subInfo.hasSubstanceRisk && (income.includes('ต่ำกว่า 10000') || isLowAlw || stuBehaviorRiskTags.length > 0))
         ) {
           sc.Overall_Risk_Level = 'กลุ่มมีปัญหา';
         } else if (reasons.length > 0) {
           sc.Overall_Risk_Level = 'กลุ่มเสี่ยง';
         } else {
           sc.Overall_Risk_Level = 'กลุ่มปกติ';
+        }
+      }
+
+      if (!sc.Followup_Status) {
+        if (sc.Overall_Risk_Level === 'กลุ่มมีปัญหา' || sc.Overall_Risk_Level === 'กลุ่มเสี่ยง') {
+          sc.Followup_Status = 'เฝ้าระวัง';
+        } else {
+          sc.Followup_Status = 'ปกติ';
         }
       }
     });
@@ -374,6 +499,9 @@ class RelationalDatabase {
       Family_Status: 'อยู่ร่วมกัน',
       Financial_Status: 'เพียงพอ',
       Overall_Risk_Level: 'กลุ่มปกติ',
+      Behavior_Tags: [],
+      Followup_Status: 'ปกติ',
+      Followup_History: [],
       Risk_Reasons: [],
       Risk_Tags: [],
       Risk_Factors_Note: 'ปกติ',
@@ -419,8 +547,29 @@ class RelationalDatabase {
       lowAllowance: 0,
       brokenFamily: 0,
       disciplineDeducted: 0,
-      dataIncomplete: 0
+      dataIncomplete: 0,
+      // Behavior & Follow-up counts
+      anyBehaviorIssue: 0,
+      positiveBehavior: 0,
+      behaviorCounts: {},
+      followupCounts: {
+        'ปกติ': 0,
+        'เฝ้าระวัง': 0,
+        'กำลังติดตาม': 0,
+        'ส่งต่อผู้ปกครอง/ปกครอง': 0,
+        'ดูแลสำเร็จ/ดีขึ้นแล้ว': 0
+      },
+      homeVisited: 0
     };
+
+    Object.values(window.BEHAVIOR_CATALOG).forEach(cat => {
+      cat.items.forEach(it => { counts.behaviorCounts[it.id] = 0; });
+    });
+
+    const riskBehaviorIds = [
+      ...window.BEHAVIOR_CATALOG.learning.items.map(i => i.id),
+      ...window.BEHAVIOR_CATALOG.emotional.items.map(i => i.id)
+    ];
 
     all.forEach(s => {
       const sc = s.Screening;
@@ -447,11 +596,66 @@ class RelationalDatabase {
       if (rTags.includes('ครอบครัวหย่าร้าง/แยกกันอยู่')) counts.brokenFamily++;
       if (s.TotalPointsDeducted > 0) counts.disciplineDeducted++;
 
+      const bTags = sc.Behavior_Tags || [];
+      bTags.forEach(bt => {
+        counts.behaviorCounts[bt] = (counts.behaviorCounts[bt] || 0) + 1;
+      });
+      if (bTags.some(bt => riskBehaviorIds.includes(bt))) counts.anyBehaviorIssue++;
+      if (bTags.some(bt => !riskBehaviorIds.includes(bt))) counts.positiveBehavior++;
+
+      const fStat = sc.Followup_Status || 'ปกติ';
+      counts.followupCounts[fStat] = (counts.followupCounts[fStat] || 0) + 1;
+
+      if (sc.Home_Visit_Status === 'เยี่ยมบ้านแล้ว') counts.homeVisited++;
+
       const nonPhotoIssues = (s.Data_Issues || []).filter(i => i !== 'ยังไม่มีรูปถ่ายนักเรียน');
       if (nonPhotoIssues.length > 0) counts.dataIncomplete++;
     });
 
     return counts;
+  }
+
+  /**
+   * บันทึกการคัดกรองพฤติกรรมนักเรียนและประวัติการติดตามเคส (Follow-up)
+   */
+  saveBehaviorAndFollowup(studentId, payload) {
+    let sc = (this.db.Screening_Records || []).find(r => r.Student_ID === studentId);
+    const stu = this.getStudentById(studentId);
+    if (!sc) return;
+
+    sc.Behavior_Tags = Array.isArray(payload.Behavior_Tags) ? payload.Behavior_Tags : (sc.Behavior_Tags || []);
+    if (payload.Followup_Status) sc.Followup_Status = payload.Followup_Status;
+    if (payload.Substance_Raw !== undefined) {
+      sc.Substance_Raw = payload.Substance_Raw;
+      if (stu) stu.Substance_Raw = payload.Substance_Raw;
+    }
+    if (payload.Scholarship_Need !== undefined) sc.Scholarship_Need = payload.Scholarship_Need;
+    if (payload.Family_Status !== undefined) sc.Family_Status = payload.Family_Status;
+    if (payload.Financial_Status !== undefined) sc.Financial_Status = payload.Financial_Status;
+
+    if (payload.Manual_Risk_Level && payload.Manual_Risk_Level !== 'AUTO') {
+      sc.Overall_Risk_Level = payload.Manual_Risk_Level;
+      sc.Manual_Risk_Override = true;
+    } else {
+      sc.Manual_Risk_Override = false;
+    }
+
+    if (payload.Followup_Note && payload.Followup_Note.trim() !== '') {
+      if (!Array.isArray(sc.Followup_History)) sc.Followup_History = [];
+      sc.Followup_History.unshift({
+        Followup_ID: `FLW-${Date.now()}`,
+        Date_Time: new Date().toISOString(),
+        Action_Type: payload.Followup_Action_Type || 'ครูที่ปรึกษาพูดคุย/ให้คำปรึกษา',
+        Note: payload.Followup_Note.trim(),
+        Teacher_Name: payload.Teacher_Name || 'ครูที่ปรึกษา'
+      });
+    }
+
+    this.addAuditLog(
+      'บันทึกคัดกรองพฤติกรรม/ติดตามเคส',
+      `${stu ? stu.Full_Name : studentId} -> สถานะ: ${sc.Followup_Status} (${sc.Behavior_Tags.join(', ') || 'ไม่มีแท็กพฤติกรรม'})`
+    );
+    this.save();
   }
 
   upsertClassGroup(groupObj) {
@@ -474,10 +678,10 @@ class RelationalDatabase {
     const targetId = oldStudentId || studentData.Student_ID;
     const idx = this.db.Students.findIndex(s => s.Student_ID === targetId);
 
-    // หากระบุ Level_Year และ Group_No มา ให้สร้างกลุ่มเรียนในตาราง 1 อัตโนมัติถ้ายังไม่มี
     if (studentData.Level_Year && studentData.Group_No) {
       const cg = this.ensureClassGroupExists(studentData.Level_Year, studentData.Group_No, studentData.Major);
       studentData.Class_ID = cg.Class_ID;
+      studentData.Level_Year = cg.Level_Year;
       studentData.Group_Label = cg.Group_Label;
     }
 
@@ -498,7 +702,8 @@ class RelationalDatabase {
       studentData.Address = 'ยังไม่ได้กรอกที่อยู่';
     }
 
-    studentData.Photo_Status = (studentData.Photo_URL && studentData.Photo_URL.trim() !== '') ? 'มีรูปแล้ว' : 'ยังไม่มีรูป';
+    studentData.Photo_URL = this.normalizePhotoUrl(studentData.Photo_URL);
+    studentData.Photo_Status = studentData.Photo_URL ? 'มีรูปแล้ว' : 'ยังไม่มีรูป';
 
     if (idx >= 0) {
       if (oldStudentId && oldStudentId !== studentData.Student_ID) {
@@ -514,7 +719,7 @@ class RelationalDatabase {
     } else {
       this.db.Students.push(studentData);
       this.db.Screening_Records.push({
-        Screening_ID: `SCR-2569-${Date.now().toString().slice(-4)}-${Math.floor(Math.random()*90+10)}`,
+        Screening_ID: `SCR-2569-${Date.now().toString().slice(-4)}-${Math.floor(Math.random() * 90 + 10)}`,
         Academic_Term: '1/2569',
         Student_ID: studentData.Student_ID,
         Family_Status: 'อยู่ร่วมกัน',
@@ -525,6 +730,9 @@ class RelationalDatabase {
         Financial_Status: 'เพียงพอ',
         Substance_Raw: studentData.Substance_Raw || 'ไม่สูบ ไม่ดื่ม',
         Substance_History: 'ไม่ดื่ม/ไม่สูบ',
+        Behavior_Tags: [],
+        Followup_Status: 'ปกติ',
+        Followup_History: [],
         Overall_Risk_Level: 'กลุ่มปกติ',
         Home_Visit_Status: 'ยังไม่เยี่ยมบ้าน',
         Home_Visit_Date: '',
@@ -537,87 +745,248 @@ class RelationalDatabase {
   }
 
   /**
-   * นำเข้ารายชื่อนักเรียนชั้นปีอื่นแบบยกกลุ่ม (Bulk Import)
+   * ตรวจจับระดับชั้นปีอัตโนมัติจากข้อมูลใน Google Form หรือรหัสนักศึกษา 11 หลัก
    */
-  bulkUpsertStudents(recordsList, defaultLevelYear, defaultGroupNo, defaultMajor) {
-    const cg = this.ensureClassGroupExists(defaultLevelYear, defaultGroupNo, defaultMajor);
+  detectLevelYearFromStudent(rawLevelCol, sid, fallbackLevelYear = 'ปวช.1') {
+    const raw = String(rawLevelCol || '').trim().replace(/\s+/g, '');
+    if (/ปวช\.?1/.test(raw)) return 'ปวช.1';
+    if (/ปวช\.?2/.test(raw)) return 'ปวช.2';
+    if (/ปวช\.?3/.test(raw)) return 'ปวช.3';
+    if (/ปวส\.?1/.test(raw)) return 'ปวส.1';
+    if (/ปวส\.?2/.test(raw)) return 'ปวส.2';
+
+    const cleanSid = String(sid || '').trim();
+    if (cleanSid.startsWith('692')) return 'ปวช.1';
+    if (cleanSid.startsWith('682')) return 'ปวช.2';
+    if (cleanSid.startsWith('672')) return 'ปวช.3';
+    if (cleanSid.startsWith('693')) return 'ปวส.1';
+    if (cleanSid.startsWith('683')) return 'ปวส.2';
+
+    if (raw.startsWith('ปวส')) {
+      return fallbackLevelYear.startsWith('ปวส') ? fallbackLevelYear : 'ปวส.1';
+    }
+    if (raw.startsWith('ปวช')) {
+      return fallbackLevelYear.startsWith('ปวช') ? fallbackLevelYear : 'ปวช.1';
+    }
+    return fallbackLevelYear || 'ปวช.1';
+  }
+
+  /**
+   * ระบบนำเข้าข้อมูลอัจฉริยะจาก Google Forms (รองรับทั้งฟอร์มข้อมูลหลัก 24 คอลัมน์ และฟอร์มส่งรูปถ่าย Google Drive)
+   */
+  importFromGoogleFormRows(rows, options = {}) {
+    const {
+      levelMode = 'AUTO', // 'AUTO' หรือระบุชั้นปี เช่น 'ปวช.2'
+      defaultLevelYear = 'ปวช.2',
+      defaultGroupNo = 1,
+      defaultMajor = 'ช่างกลโรงงาน'
+    } = options;
+
     let addedCount = 0;
     let updatedCount = 0;
+    let photoMatchedCount = 0;
+    const touchedGroups = new Set();
 
-    recordsList.forEach(item => {
-      const sid = String(item.Student_ID || '').trim();
-      const name = String(item.Full_Name || '').trim();
-      if (!sid || !name) return;
+    rows.forEach(r => {
+      // ค้นหาค่าจากหัวคอลัมน์ทุกแบบที่ Google Form อาจตั้งชื่อ
+      const getVal = (...keys) => {
+        for (const k of keys) {
+          if (r[k] !== undefined && String(r[k]).trim() !== '') return String(r[k]).trim();
+        }
+        // ลองค้นหาแบบไม่สนใจช่องว่างหัวท้ายของชื่อคอลัมน์
+        const rowKeys = Object.keys(r);
+        for (const k of keys) {
+          const foundKey = rowKeys.find(rk => rk.trim() === k.trim() || rk.includes(k));
+          if (foundKey && r[foundKey] !== undefined && String(r[foundKey]).trim() !== '') {
+            return String(r[foundKey]).trim();
+          }
+        }
+        return '';
+      };
 
-      const existingIdx = this.db.Students.findIndex(s => s.Student_ID === sid);
-      const stuLvlYear = item.Level_Year || cg.Level_Year;
-      const stuGrpNo = item.Group_No || cg.Group_No;
-      const targetCg = this.ensureClassGroupExists(stuLvlYear, stuGrpNo, item.Major || defaultMajor);
+      let rawSid = getVal('รหัสประจำตัวนักเรียนนักศึกษา', 'รหัสประจำตัวนักเรียน', 'รหัสนักศึกษา', 'Student_ID');
+      let rawName = getVal('ชื่อ-นามสกุล', 'ชื่อนาม-นามสกุล', 'ชื่อ - นามสกุล', 'Full_Name');
 
-      const zoneDist = this.normalizeDistrictName(item.Zone_District || 'ไม่ระบุ');
+      let prefix = 'นาย';
+      const prefixMatch = rawName.match(/^(นาย|นางสาว|น\.ส\.|นาง)\s*/);
+      if (prefixMatch) {
+        prefix = prefixMatch[1] === 'น.ส.' ? 'นางสาว' : prefixMatch[1];
+        rawName = rawName.replace(/^(นาย|นางสาว|น\.ส\.|นาง)\s*/, '').trim();
+      }
+
+      // ตรวจหาลิงก์รูปภาพ Google Drive จากทุกคอลัมน์ในแถวนี้
+      let detectedPhotoUrl = getVal('ลิงก์แสดงรูปภาพ_Direct', 'Photo_URL', 'รูปถ่าย', 'รูปภาพ');
+      if (!detectedPhotoUrl) {
+        for (const val of Object.values(r)) {
+          const sVal = String(val || '').trim();
+          if (sVal.includes('drive.google.com') || sVal.startsWith('data:image/')) {
+            detectedPhotoUrl = sVal;
+            break;
+          }
+        }
+      }
+      const cleanPhotoUrl = this.normalizePhotoUrl(detectedPhotoUrl);
+
+      // กรณีเป็นฟอร์มส่งรูปภาพที่เด็กกรอกรหัสแค่ 3 ตัวท้าย (เช่น "020") หรือกรอกแค่ชื่อ
+      let matchedStudent = null;
+      const digitsSid = rawSid.replace(/\D/g, '');
+      if (digitsSid.length === 11) {
+        matchedStudent = this.db.Students.find(s => s.Student_ID === digitsSid);
+      } else if (digitsSid.length > 0 && digitsSid.length <= 4) {
+        matchedStudent = this.db.Students.find(s => s.Student_ID.endsWith(digitsSid.padStart(3, '0')) || (rawName && s.Full_Name === rawName));
+      } else if (rawName) {
+        matchedStudent = this.db.Students.find(s => s.Full_Name === rawName);
+      }
+
+      // ถ้าแถวนี้เป็นแถวจาก "ฟอร์มส่งรูปภาพ" (มีรูป + เจอนักเรียนในระบบแล้ว และไม่มีคอลัมน์ที่อยู่/ผู้ปกครอง)
+      const hasMainSurveyCols = Boolean(getVal('เบอร์โทรศัพท์มือถือ ของผู้ปกครอง', 'เบอร์โทรศัพท์มือถือ_ผู้ปกครอง', 'บ้านเลขที่', 'ดิ่มหรือสูบไหม', 'รายได้โดยเฉลี่ยของครอบครัว'));
+      if (matchedStudent && cleanPhotoUrl && !hasMainSurveyCols) {
+        matchedStudent.Photo_URL = cleanPhotoUrl;
+        matchedStudent.Photo_Status = 'มีรูปแล้ว';
+        photoMatchedCount++;
+        touchedGroups.add(matchedStudent.Class_ID);
+        return;
+      }
+
+      if (!rawName && !matchedStudent) return;
+
+      const finalSid = digitsSid.length === 11
+        ? digitsSid
+        : (matchedStudent ? matchedStudent.Student_ID : (digitsSid || `690000${Math.floor(Math.random() * 90000 + 10000)}`));
+
+      const rawLvlCol = getVal('ชั้นปี', 'ระดับชั้นปี', 'ระดับชั้น', 'Level_Year');
+      const resolvedLevelYear = levelMode === 'AUTO'
+        ? this.detectLevelYearFromStudent(rawLvlCol, finalSid, defaultLevelYear)
+        : defaultLevelYear;
+
+      const rawGrpCol = getVal('กลุ่มเรียน', 'กลุ่ม', 'Group_No');
+      const grpNo = Number(String(rawGrpCol || defaultGroupNo).replace(/\D/g, '')) || defaultGroupNo;
+
+      const isPvs = resolvedLevelYear.startsWith('ปวส');
+      const resolvedMajor = getVal('สาขาวิชา', 'Major') || (isPvs ? 'เทคนิคอุตสาหกรรม' : defaultMajor);
+      const targetCg = this.ensureClassGroupExists(resolvedLevelYear, grpNo, resolvedMajor);
+      touchedGroups.add(targetCg.Class_ID);
+
+      const stuPhoneObj = this.cleanPhoneNumber(getVal('เบอร์โทรศัพท์มือถือ ของนักเรียน', 'เบอร์โทรศัพท์มือถือ_นักเรียน', 'Phone_Number'));
+      const parPhoneObj = this.cleanPhoneNumber(getVal('เบอร์โทรศัพท์มือถือ ของผู้ปกครอง', 'เบอร์โทรศัพท์มือถือ_ผู้ปกครอง', 'Parent_Phone'));
+      const emgPhoneObj = this.cleanPhoneNumber(getVal('เบอร์โทรศัพท์มือถือ ของผู้ปกครอง (กรณีฉุกเฉิน)', 'เบอร์โทรศัพท์มือถือ_ผู้ปกครอง_ฉุกเฉิน', 'Emergency_Phone'));
+
+      const houseNo = getVal('บ้านเลขที่', 'House_No');
+      const road = getVal('ถนน', 'Road');
+      const subdist = getVal('ตำบล', 'Subdistrict');
+      const rawDist = getVal('อำเภอ', 'Zone_District');
+      const zipcode = getVal('รหัสไปรษณีย์', 'Zipcode');
+      const zoneDist = this.normalizeDistrictName(rawDist || (matchedStudent ? matchedStudent.Zone_District : 'ไม่ระบุ'));
+
+      const addrParts = [];
+      if (houseNo && houseNo !== '-') addrParts.push(`บ้านเลขที่ ${houseNo}`);
+      if (road && road !== '-') addrParts.push(`ถ.${road}`);
+      if (subdist && subdist !== '-') addrParts.push(`ต.${subdist}`);
+      if (zoneDist && zoneDist !== 'ไม่ระบุ') addrParts.push(`อ.${zoneDist}`);
+      if (zipcode && zipcode !== '-') addrParts.push(zipcode);
+
       const stuPayload = {
-        Student_ID: sid,
-        Prefix: item.Prefix || 'นาย',
-        Full_Name: name,
-        Nickname: item.Nickname || '',
-        Gender: item.Gender || 'ชาย',
+        Student_ID: finalSid,
+        Prefix: prefix,
+        Full_Name: rawName || (matchedStudent ? matchedStudent.Full_Name : ''),
+        Nickname: getVal('ชื่อเล่น', 'Nickname') || (matchedStudent ? matchedStudent.Nickname : ''),
+        Gender: getVal('เพศ', 'Gender') || 'ชาย',
         Class_ID: targetCg.Class_ID,
         Level_Year: targetCg.Level_Year,
         Group_Label: targetCg.Group_Label,
         Group_No: targetCg.Group_No,
         Status: 'ปกติ',
-        Phone_Number: String(item.Phone_Number || '').replace(/\D/g, ''),
-        Parent_Name: item.Parent_Name || '',
-        Parent_Phone: String(item.Parent_Phone || '').replace(/\D/g, ''),
-        Emergency_Phone: String(item.Emergency_Phone || '').replace(/\D/g, ''),
-        Emergency_Contact_Note: item.Emergency_Contact_Note || '',
-        Social_Contact: item.Social_Contact || '',
-        House_No: item.House_No || '',
-        Road: item.Road || '',
-        Subdistrict: item.Subdistrict || '',
+        Phone_Number: stuPhoneObj.phone || (matchedStudent ? matchedStudent.Phone_Number : ''),
+        Parent_Name: getVal('ชื่อ-นามสกุล ผู้ปกครอง', 'ชื่อ-นามสกุล_ผู้ปกครอง', 'Parent_Name') || (matchedStudent ? matchedStudent.Parent_Name : ''),
+        Parent_Phone: parPhoneObj.phone || (matchedStudent ? matchedStudent.Parent_Phone : ''),
+        Emergency_Phone: emgPhoneObj.phone || (matchedStudent ? matchedStudent.Emergency_Phone : ''),
+        Emergency_Contact_Note: emgPhoneObj.note || (matchedStudent ? matchedStudent.Emergency_Contact_Note : ''),
+        Social_Contact: getVal('ข้อมูลการติดต่ออื่นๆ IG หรือ Facebook', 'ข้อมูลการติดต่ออื่นๆ_IG_Facebook') || (matchedStudent ? matchedStudent.Social_Contact : ''),
+        House_No: houseNo || (matchedStudent ? matchedStudent.House_No : ''),
+        Road: road || (matchedStudent ? matchedStudent.Road : ''),
+        Subdistrict: subdist || (matchedStudent ? matchedStudent.Subdistrict : ''),
         Zone_District: zoneDist,
-        Zipcode: item.Zipcode || '',
-        Address: item.Address || (zoneDist !== 'ไม่ระบุ' ? `อ.${zoneDist}` : 'ยังไม่ได้กรอกที่อยู่'),
-        Home_Location: DISTRICT_COORDS_MAP[zoneDist] || '',
-        Photo_URL: item.Photo_URL || '',
-        Photo_Status: item.Photo_URL ? 'มีรูปแล้ว' : 'ยังไม่มีรูป',
-        Commute_Method: item.Commute_Method || '',
-        Previous_School: item.Previous_School || '',
-        Substance_Raw: item.Substance_Raw || 'ไม่สูบ ไม่ดื่ม',
-        Data_Note: item.Data_Note || 'นำเข้าผ่านระบบ Bulk Import'
+        Zipcode: zipcode || (matchedStudent ? matchedStudent.Zipcode : ''),
+        Address: addrParts.length > 0 ? addrParts.join(' ') : (matchedStudent ? matchedStudent.Address : 'ยังไม่ได้กรอกที่อยู่'),
+        Home_Location: DISTRICT_COORDS_MAP[zoneDist] || (matchedStudent ? matchedStudent.Home_Location : ''),
+        Photo_URL: cleanPhotoUrl || (matchedStudent ? matchedStudent.Photo_URL : ''),
+        Photo_Status: (cleanPhotoUrl || (matchedStudent && matchedStudent.Photo_URL)) ? 'มีรูปแล้ว' : 'ยังไม่มีรูป',
+        Commute_Method: getVal('นักเรียนเดินทางมาวิทยาลัยอย่างไร', 'Commute_Method') || (matchedStudent ? matchedStudent.Commute_Method : ''),
+        Previous_School: getVal('สถานศึกษาเดิมที่นักเรียนจบมา', 'นักเรียนจบมาจากโรงเรียนอะไร', 'Previous_School') || (matchedStudent ? matchedStudent.Previous_School : ''),
+        Substance_Raw: getVal('ดิ่มหรือสูบไหม', 'ดื่มหรือสูบไหม', 'Substance_Reported_Raw', 'Substance_Raw') || (matchedStudent ? matchedStudent.Substance_Raw : 'ไม่สูบ ไม่ดื่ม'),
+        Data_Note: 'นำเข้าจากระบบ Google Forms / Bulk Import'
       };
 
+      const existingIdx = this.db.Students.findIndex(s => s.Student_ID === finalSid);
       if (existingIdx >= 0) {
         this.db.Students[existingIdx] = { ...this.db.Students[existingIdx], ...stuPayload };
         updatedCount++;
       } else {
         this.db.Students.push(stuPayload);
+        addedCount++;
+      }
+
+      // อัปเดตตารางที่ 4 (Screening_Records)
+      const incomeVal = getVal('รายได้โดยเฉลี่ยของครอบครัว', 'Family_Income_Range');
+      const allowVal = getVal('นักเรียนได้เงินมากินวันละกี่บาท', 'Daily_Allowance');
+      const scholVal = getVal('นักเรียนมีความต้องกาารทุนการศึกษาไหมในอนาคต', 'นักเรียนมีความต้องการทุนการศึกษาไหมในอนาคต', 'Scholarship_Need');
+      const jobVal = getVal('อาชีพของผู้ปกครอง', 'Parent_Occupation');
+
+      let sc = (this.db.Screening_Records || []).find(x => x.Student_ID === finalSid);
+      const isLowInc = incomeVal.includes('ต่ำกว่า 10000');
+      const isLowAlw = allowVal.includes('น้อยกว่า 100');
+
+      if (sc) {
+        if (jobVal) sc.Parent_Occupation = jobVal;
+        if (incomeVal) sc.Family_Income_Range = incomeVal;
+        if (allowVal) sc.Daily_Allowance = allowVal;
+        if (scholVal) sc.Scholarship_Need = scholVal;
+        if (isLowInc || isLowAlw) sc.Financial_Status = 'ขัดสน';
+        sc.Substance_Raw = stuPayload.Substance_Raw;
+      } else {
         this.db.Screening_Records.push({
-          Screening_ID: `SCR-2569-${sid.slice(-4)}`,
+          Screening_ID: `SCR-2569-${finalSid.slice(-4)}`,
           Academic_Term: '1/2569',
-          Student_ID: sid,
+          Student_ID: finalSid,
           Family_Status: 'อยู่ร่วมกัน',
-          Parent_Occupation: item.Parent_Occupation || '',
-          Family_Income_Range: item.Family_Income_Range || 'ไม่ระบุ',
-          Daily_Allowance: item.Daily_Allowance || 'ไม่ระบุ',
-          Scholarship_Need: item.Scholarship_Need || 'ไม่ระบุ',
-          Financial_Status: 'เพียงพอ',
+          Parent_Occupation: jobVal || '',
+          Family_Income_Range: incomeVal || 'ไม่ระบุ',
+          Daily_Allowance: allowVal || 'ไม่ระบุ',
+          Scholarship_Need: scholVal || 'ไม่ระบุ',
+          Financial_Status: (isLowInc || isLowAlw) ? 'ขัดสน' : 'เพียงพอ',
           Substance_Raw: stuPayload.Substance_Raw,
+          Behavior_Tags: [],
+          Followup_Status: 'ปกติ',
+          Followup_History: [],
           Home_Visit_Status: 'ยังไม่เยี่ยมบ้าน',
           Home_Visit_Date: '',
           Home_Visit_Photo: '',
           Home_Visit_Summary: ''
         });
-        addedCount++;
       }
     });
 
+    const groupSummary = Array.from(touchedGroups).join(', ') || `${defaultLevelYear} กลุ่ม${defaultGroupNo}`;
     this.addAuditLog(
-      'นำเข้าข้อมูลนักเรียนยกกลุ่ม (Bulk Import)',
-      `ชั้น ${cg.Class_ID}: เพิ่มใหม่ ${addedCount} คน, อัปเดต ${updatedCount} คน`
+      'นำเข้าข้อมูลจาก Google Forms / Excel',
+      `เพิ่มใหม่ ${addedCount} คน, อัปเดตข้อมูล ${updatedCount} คน, จับคู่รูปถ่าย ${photoMatchedCount} คน (${groupSummary})`
     );
     this.save();
-    return { addedCount, updatedCount, classId: cg.Class_ID };
+    return {
+      addedCount,
+      updatedCount,
+      photoMatchedCount,
+      classId: Array.from(touchedGroups)[0] || `${defaultLevelYear} กลุ่ม${defaultGroupNo}`
+    };
+  }
+
+  bulkUpsertStudents(recordsList, defaultLevelYear, defaultGroupNo, defaultMajor, levelMode = 'FORCE') {
+    return this.importFromGoogleFormRows(recordsList, {
+      levelMode,
+      defaultLevelYear,
+      defaultGroupNo,
+      defaultMajor
+    });
   }
 
   deleteStudent(studentId) {
@@ -681,6 +1050,9 @@ class RelationalDatabase {
         Screening_ID: `SCR-2569-${Date.now().toString().slice(-4)}`,
         Academic_Term: '1/2569',
         Student_ID: studentId,
+        Behavior_Tags: [],
+        Followup_Status: 'ปกติ',
+        Followup_History: [],
         ...screeningData
       });
     }
@@ -709,7 +1081,7 @@ class RelationalDatabase {
       throw new Error('ไฟล์ JSON ไม่มีโครงสร้างตาราง Class_Groups และ Students ที่ถูกต้อง');
     }
     this.db = {
-      metadata: jsonObj.metadata || { app_name: 'Student Machine Tool DB V3', updated_at: new Date().toISOString() },
+      metadata: jsonObj.metadata || { app_name: 'Student Machine Tool DB V4', updated_at: new Date().toISOString() },
       Class_Groups: jsonObj.Class_Groups,
       Students: jsonObj.Students,
       Discipline_Records: jsonObj.Discipline_Records || [],
@@ -718,6 +1090,22 @@ class RelationalDatabase {
     };
     this.addAuditLog('นำเข้าฐานข้อมูล (Import JSON)', `นำเข้าข้อมูลนักเรียน ${this.db.Students.length} คน สำเร็จ`);
     this.save();
+  }
+
+  getPinCode() {
+    return localStorage.getItem(PIN_CODE_KEY) || '2569';
+  }
+
+  setPinCode(newPin) {
+    localStorage.setItem(PIN_CODE_KEY, String(newPin).trim());
+  }
+
+  isPinLocked() {
+    return sessionStorage.getItem(PIN_LOCKED_KEY) === 'true';
+  }
+
+  setPinLocked(locked) {
+    sessionStorage.setItem(PIN_LOCKED_KEY, locked ? 'true' : 'false');
   }
 
   getCloudUrl() {

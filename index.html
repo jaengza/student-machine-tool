@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
   <meta name="theme-color" content="#0f172a" />
-  <title>ระบบจัดการนักเรียน แผนกช่างกลโรงงาน & เทคนิคอุตสาหกรรม</title>
+  <title>ระบบดูแลและคัดกรองพฤติกรรมนักเรียน 360° | ช่างกลโรงงาน & เทคนิคอุตสาหกรรม</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -17,118 +17,130 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- SheetJS for 4-Table Excel (.xlsx) Export & Import -->
+  <!-- SheetJS for 4-Table Excel (.xlsx) & Google Forms CSV Import/Export -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <!-- Leaflet CSS & JS for Interactive Department Home Visit Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <!-- Custom Styles -->
   <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body class="min-h-screen flex flex-col pb-safe-mobile bg-slate-100/90">
+<body class="min-h-screen flex flex-col pb-safe-mobile bg-slate-100/95">
 
   <!-- Toast Notification Container -->
-  <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+  <div id="toastContainer" class="fixed top-3 right-3 left-3 sm:left-auto z-50 flex flex-col items-end gap-2 pointer-events-none"></div>
+
+  <!-- One-Page A4 Print Report Area (Visible only when printing) -->
+  <div id="printReportArea"></div>
 
   <!-- Top Header & Desktop Navigation -->
   <header class="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white shadow-xl sticky top-0 z-30 no-print border-b border-white/10">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-2">
-      <!-- Brand Title -->
-      <div onclick="switchMainTab('dashboard')" class="flex items-center gap-2.5 sm:gap-3 min-w-0 cursor-pointer">
-        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30 shrink-0 border border-white/20">
-          <i data-lucide="wrench" class="w-5 h-5 sm:w-6 sm:h-6 text-white"></i>
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3">
+      <div class="flex items-center justify-between gap-2">
+        <!-- Brand Title (Anti-overflow on small mobile screens) -->
+        <div onclick="switchMainTab('dashboard')" class="flex items-center gap-2.5 min-w-0 flex-1 cursor-pointer">
+          <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30 shrink-0 border border-white/20">
+            <i data-lucide="wrench" class="w-4 h-4 sm:w-5 sm:h-5 text-white"></i>
+          </div>
+          <div class="min-w-0 flex-1">
+            <h1 class="font-prompt font-bold text-xs sm:text-base lg:text-lg leading-snug text-white">
+              ระบบดูแลและคัดกรองนักเรียน 360°
+            </h1>
+            <p class="text-[11px] sm:text-xs text-blue-200 leading-tight">
+              ช่างกลโรงงาน & เทคนิคอุตสาหกรรม (ปวช.1–3 / ปวส.1–2)
+            </p>
+          </div>
         </div>
-        <div class="min-w-0">
-          <h1 class="font-prompt font-bold text-sm sm:text-lg lg:text-xl tracking-tight truncate">
-            ระบบดูแลและจัดการข้อมูลนักเรียน 360°
-          </h1>
-          <p class="text-[11px] sm:text-xs text-blue-200 truncate">
-            แผนกช่างกลโรงงาน & เทคนิคอุตสาหกรรม (รองรับ ปวช.1–3 & ปวส.1–2)
-          </p>
+
+        <!-- Desktop Navigation Pills (Hidden on Mobile, Shown on lg+) -->
+        <nav class="hidden lg:flex items-center gap-1 bg-slate-900/60 p-1.5 rounded-2xl border border-white/10 shrink-0">
+          <button id="desktop-nav-dashboard" onclick="switchMainTab('dashboard')" class="px-3 py-2 rounded-xl text-xs xl:text-sm font-semibold flex items-center gap-1.5 bg-white text-blue-950 shadow-sm transition">
+            <i data-lucide="layout-dashboard" class="w-4 h-4"></i> ภาพรวม & คัดกรอง
+          </button>
+          <button id="desktop-nav-students" onclick="switchMainTab('students')" class="px-3 py-2 rounded-xl text-xs xl:text-sm font-medium flex items-center gap-1.5 text-blue-100 hover:bg-white/10 transition">
+            <i data-lucide="users" class="w-4 h-4"></i> ทำเนียบนักเรียน
+          </button>
+          <button id="desktop-nav-screening" onclick="switchMainTab('screening')" class="px-3 py-2 rounded-xl text-xs xl:text-sm font-medium flex items-center gap-1.5 text-blue-100 hover:bg-white/10 transition">
+            <i data-lucide="clipboard-list" class="w-4 h-4"></i> ติดตามพฤติกรรม & เยี่ยมบ้าน
+          </button>
+          <button id="desktop-nav-discipline" onclick="switchMainTab('discipline')" class="px-3 py-2 rounded-xl text-xs xl:text-sm font-medium flex items-center gap-1.5 text-blue-100 hover:bg-white/10 transition">
+            <i data-lucide="shield-alert" class="w-4 h-4"></i> งานปกครอง
+          </button>
+          <button id="desktop-nav-settings" onclick="switchMainTab('settings')" class="px-3 py-2 rounded-xl text-xs xl:text-sm font-medium flex items-center gap-1.5 text-blue-100 hover:bg-white/10 transition">
+            <i data-lucide="database" class="w-4 h-4"></i> กลุ่มเรียน & ซิงก์
+          </button>
+        </nav>
+
+        <!-- Action Buttons on Header -->
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button onclick="openBulkImportModal()" class="px-2.5 sm:px-3.5 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 text-white text-[11px] sm:text-xs font-prompt font-semibold flex items-center gap-1.5 border border-white/20 shadow-md transition" title="นำเข้าข้อมูลจาก Google Form หรือเพิ่มชั้นปีอื่น">
+            <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0"></i>
+            <span>นำเข้าชั้นปีอื่น</span>
+          </button>
+          <button onclick="openEditStudentModal(null)" class="px-2.5 sm:px-3 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] sm:text-xs font-prompt font-semibold flex items-center gap-1 shadow-md transition" title="เพิ่มนักเรียนรายคน">
+            <i data-lucide="user-plus" class="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0"></i>
+            <span class="hidden sm:inline">เพิ่มรายคน</span>
+          </button>
+          <button onclick="openPinLockModal()" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-blue-200 hover:text-white transition" title="ล็อกหน้าจอด้วยรหัส PIN สำหรับครู">
+            <i data-lucide="lock" class="w-4 h-4"></i>
+          </button>
         </div>
-      </div>
-
-      <!-- Desktop Navigation Pills (Hidden on Mobile, Shown on lg+) -->
-      <nav class="hidden lg:flex items-center gap-1 bg-slate-900/60 p-1.5 rounded-2xl border border-white/10">
-        <button id="desktop-nav-dashboard" onclick="switchMainTab('dashboard')" class="px-3 py-2 rounded-xl text-xs xl:text-sm font-semibold flex items-center gap-1.5 bg-white text-blue-950 shadow-sm transition">
-          <i data-lucide="layout-dashboard" class="w-4 h-4"></i> ภาพรวม & สาเหตุปัญหา
-        </button>
-        <button id="desktop-nav-students" onclick="switchMainTab('students')" class="px-3 py-2 rounded-xl text-xs xl:text-sm font-medium flex items-center gap-1.5 text-blue-100 hover:bg-white/10 transition">
-          <i data-lucide="users" class="w-4 h-4"></i> ทำเนียบนักเรียน
-        </button>
-        <button id="desktop-nav-discipline" onclick="switchMainTab('discipline')" class="px-3 py-2 rounded-xl text-xs xl:text-sm font-medium flex items-center gap-1.5 text-blue-100 hover:bg-white/10 transition">
-          <i data-lucide="shield-alert" class="w-4 h-4"></i> งานปกครอง
-        </button>
-        <button id="desktop-nav-screening" onclick="switchMainTab('screening')" class="px-3 py-2 rounded-xl text-xs xl:text-sm font-medium flex items-center gap-1.5 text-blue-100 hover:bg-white/10 transition">
-          <i data-lucide="map-pin" class="w-4 h-4"></i> คัดกรอง & เยี่ยมบ้าน
-        </button>
-        <button id="desktop-nav-settings" onclick="switchMainTab('settings')" class="px-3 py-2 rounded-xl text-xs xl:text-sm font-medium flex items-center gap-1.5 text-blue-100 hover:bg-white/10 transition">
-          <i data-lucide="database" class="w-4 h-4"></i> กลุ่มเรียน & ซิงก์ข้อมูล
-        </button>
-      </nav>
-
-      <!-- Action Buttons on Header (Add Single / Bulk Import Other Years) -->
-      <div class="flex items-center gap-1.5 shrink-0">
-        <button onclick="openBulkImportModal()" class="px-2.5 sm:px-3 py-2 rounded-xl bg-indigo-500/90 hover:bg-indigo-500 text-white text-xs font-prompt font-semibold flex items-center gap-1.5 border border-indigo-400/40 shadow-md transition" title="นำเข้าข้อมูลนักเรียนชั้นปีอื่นทีละหลายคน">
-          <i data-lucide="folder-plus" class="w-4 h-4"></i>
-          <span class="hidden sm:inline">นำเข้าชั้นปีอื่น</span>
-        </button>
-        <button onclick="openEditStudentModal(null)" class="px-2.5 sm:px-3 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-prompt font-semibold flex items-center gap-1.5 shadow-md transition">
-          <i data-lucide="user-plus" class="w-4 h-4"></i>
-          <span class="hidden sm:inline">เพิ่มรายคน</span>
-        </button>
       </div>
     </div>
   </header>
 
   <!-- Main Workspace Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-2.5 sm:px-6 lg:px-8 py-3.5 sm:py-6">
 
     <!-- ==================================================================== -->
-    <!-- TAB 1: แดชบอร์ด, สรุปจำนวนเด็กมีปัญหาตามสาเหตุ & คิวตรวจข้อมูล       -->
+    <!-- TAB 1: แดชบอร์ด, ศูนย์คัดกรอง 5 มิติ & คิวตรวจข้อมูล                 -->
     <!-- ==================================================================== -->
     <section id="tab-dashboard">
       <div id="dashboardContent"></div>
     </section>
 
     <!-- ==================================================================== -->
-    <!-- TAB 2: ทำเนียบนักเรียน & ค้นหาตามกลุ่ม/สารเสพติด/สาเหตุความเสี่ยง     -->
+    <!-- TAB 2: ทำเนียบนักเรียน & ค้นหาตามหมวดหมู่พฤติกรรม/ความเสี่ยง         -->
     <!-- ==================================================================== -->
     <section id="tab-students" class="hidden">
-      <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 p-3.5 sm:p-5 mb-5 space-y-3.5">
+      <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 p-3 sm:p-5 mb-4 sm:mb-5 space-y-3">
         
         <!-- Row 1: Search Box & Main Dropdowns -->
         <div class="flex flex-col lg:flex-row gap-2.5">
-          <div class="relative flex-1">
+          <div class="relative flex-1 min-w-0">
             <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
             <input type="text" id="studentSearchInput"
                    oninput="window.AppState.searchQuery = this.value; renderStudentsTab(); if(window.lucide) lucide.createIcons();"
-                   placeholder="ค้นหารหัส 11 หลัก, ชื่อ-นามสกุล, ชื่อเล่น, บุหรี่/น้ำกระท่อม, อำเภอ, เบอร์โทร..."
-                   class="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-slate-300 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50/60 focus:bg-white transition" />
+                   placeholder="ค้นหารหัส 11 หลัก, ชื่อ-นามสกุล, ชื่อเล่น, พฤติกรรม, บุหรี่/น้ำกระท่อม, อำเภอ..."
+                   class="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-slate-300 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50/70 focus:bg-white transition" />
           </div>
 
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <select id="filterClassSelect"
                     onchange="window.AppState.filterClassId = this.value; renderStudentsTab(); if(window.lucide) lucide.createIcons();"
-                    class="rounded-2xl border border-slate-300 px-3 py-2 text-xs sm:text-sm bg-white font-medium text-slate-800 outline-none">
+                    class="w-full rounded-2xl border border-slate-300 px-2.5 py-2 text-xs sm:text-sm bg-white font-medium text-slate-800 outline-none">
               <option value="ALL">ทุกระดับชั้น/ทุกกลุ่ม</option>
             </select>
 
             <select id="filterDistrictSelect"
                     onchange="window.AppState.filterDistrict = this.value; renderStudentsTab(); if(window.lucide) lucide.createIcons();"
-                    class="rounded-2xl border border-slate-300 px-3 py-2 text-xs sm:text-sm bg-white font-medium text-slate-800 outline-none">
+                    class="w-full rounded-2xl border border-slate-300 px-2.5 py-2 text-xs sm:text-sm bg-white font-medium text-slate-800 outline-none">
               <option value="ALL">ทุกโซนอำเภอ</option>
             </select>
 
             <select id="filterPhotoSelect"
                     onchange="window.AppState.filterPhoto = this.value; renderStudentsTab(); if(window.lucide) lucide.createIcons();"
-                    class="rounded-2xl border border-slate-300 px-3 py-2 text-xs sm:text-sm bg-white font-medium text-slate-800 outline-none">
+                    class="w-full rounded-2xl border border-slate-300 px-2.5 py-2 text-xs sm:text-sm bg-white font-medium text-slate-800 outline-none">
               <option value="ALL">รูปถ่าย: ทั้งหมด</option>
-              <option value="มีรูปแล้ว">มีรูปถ่ายแล้ว</option>
-              <option value="ยังไม่มีรูป">ยังไม่มีรูปถ่าย</option>
+              <option value="มีรูปแล้ว">📸 มีรูปถ่ายแล้ว</option>
+              <option value="ยังไม่มีรูป">⚠️ ยังไม่มีรูปถ่าย</option>
             </select>
 
             <select id="filterRiskSelect"
                     onchange="window.AppState.filterRisk = this.value; renderStudentsTab(); if(window.lucide) lucide.createIcons();"
-                    class="rounded-2xl border border-slate-300 px-3 py-2 text-xs sm:text-sm bg-white font-medium text-slate-800 outline-none">
+                    class="w-full rounded-2xl border border-slate-300 px-2.5 py-2 text-xs sm:text-sm bg-white font-medium text-slate-800 outline-none">
               <option value="ALL">ความเสี่ยง: ทั้งหมด</option>
               <option value="กลุ่มมีปัญหา">🔴 กลุ่มมีปัญหา</option>
               <option value="กลุ่มเสี่ยง">🟠 กลุ่มเสี่ยง</option>
@@ -137,39 +149,39 @@
           </div>
         </div>
 
-        <!-- Row 2: ปุ่มเลือก "ระดับชั้น" และ "กลุ่ม1 - กลุ่ม5" แบบกดง่ายบนมือถือและ PC -->
-        <div id="quickGroupFilterBar" class="pt-3 border-t border-slate-100"></div>
+        <!-- Row 2: ปุ่มเลือก "ระดับชั้น" และ "กลุ่ม1 - กลุ่ม6" -->
+        <div id="quickGroupFilterBar" class="pt-2.5 border-t border-slate-100"></div>
 
-        <!-- Row 3: ปุ่มกรองตาม "สาเหตุปัญหา / การใช้บุหรี่-สารเสพติด" พร้อมบอกจำนวนคนชัดเจน -->
-        <div id="quickProblemFilterBar" class="pt-3 border-t border-slate-100"></div>
+        <!-- Row 3: ปุ่มกรองแยกตามหมวดหมู่ (พฤติกรรม / สารเสพติด / เศรษฐกิจ / การติดตาม) -->
+        <div id="quickProblemFilterBar" class="pt-2.5 border-t border-slate-100"></div>
 
         <!-- Row 4: Sub-bar (Active Filter Status, 3 View Modes & Count) -->
-        <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-100">
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-2.5 border-t border-slate-100">
           <div class="flex flex-wrap items-center gap-1.5">
             <button id="toggleIssueOnlyBtn"
                     onclick="window.AppState.filterIssueOnly = !window.AppState.filterIssueOnly; renderStudentsTab(); if(window.lucide) lucide.createIcons();"
-                    class="px-3 py-1.5 rounded-xl text-xs font-prompt font-medium flex items-center gap-1.5 bg-slate-100 text-slate-700">
+                    class="px-2.5 py-1.5 rounded-xl text-xs font-prompt font-medium flex items-center gap-1.5 bg-slate-100 text-slate-700">
               <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> เฉพาะข้อมูลไม่ครบ
             </button>
-            <button onclick="resetStudentFilters()" class="px-3 py-1.5 rounded-xl text-xs font-prompt font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 flex items-center gap-1 transition">
+            <button onclick="resetStudentFilters()" class="px-2.5 py-1.5 rounded-xl text-xs font-prompt font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 flex items-center gap-1 transition">
               <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> ล้างตัวกรอง
             </button>
           </div>
 
-          <div class="flex items-center gap-2.5 ml-auto">
+          <div class="flex flex-wrap items-center gap-2 ml-auto">
             <span class="text-xs text-slate-600">แสดงผล: <b id="filteredStudentCount" class="text-blue-900 font-prompt text-sm">125 คน</b></span>
             <div class="inline-flex rounded-xl bg-slate-100 p-1">
               <button id="btnViewGrid" onclick="window.AppState.studentViewMode = 'grid'; renderStudentsTab(); if(window.lucide) lucide.createIcons();"
                       class="px-2.5 py-1 rounded-lg text-xs font-prompt font-semibold flex items-center gap-1 bg-white text-slate-900 shadow-sm">
-                <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i> การ์ดละเอียด
+                <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i> การ์ด
               </button>
               <button id="btnViewCompact" onclick="window.AppState.studentViewMode = 'compact'; renderStudentsTab(); if(window.lucide) lucide.createIcons();"
                       class="px-2.5 py-1 rounded-lg text-xs font-prompt font-medium flex items-center gap-1 text-slate-600">
-                <i data-lucide="list" class="w-3.5 h-3.5"></i> รายการมือถือ
+                <i data-lucide="list" class="w-3.5 h-3.5"></i> มือถือ
               </button>
               <button id="btnViewTable" onclick="window.AppState.studentViewMode = 'table'; renderStudentsTab(); if(window.lucide) lucide.createIcons();"
                       class="px-2.5 py-1 rounded-lg text-xs font-prompt font-medium flex items-center gap-1 text-slate-600">
-                <i data-lucide="table" class="w-3.5 h-3.5"></i> ตาราง PC
+                <i data-lucide="table" class="w-3.5 h-3.5"></i> ตาราง
               </button>
             </div>
           </div>
@@ -177,7 +189,7 @@
       </div>
 
       <!-- View 1: Categorized Grid Cards View -->
-      <div id="studentsGridContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      <div id="studentsGridContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4"></div>
 
       <!-- View 2: Mobile Compact List View -->
       <div id="studentsCompactContainer" class="hidden space-y-2.5"></div>
@@ -194,40 +206,30 @@
     </section>
 
     <!-- ==================================================================== -->
-    <!-- TAB 4: ระบบคัดกรอง SDQ, สาเหตุความเสี่ยง & โซนเยี่ยมบ้าน (ตารางที่ 4) -->
+    <!-- TAB 4: ระบบติดตามพฤติกรรม, คัดกรองแยกหมวดหมู่, เยี่ยมบ้าน & แผนที่   -->
     <!-- ==================================================================== -->
     <section id="tab-screening" class="hidden">
-      <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-4 sm:p-5 mb-5">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h2 class="font-prompt font-bold text-slate-900 text-base sm:text-lg flex items-center gap-2">
-              <i data-lucide="compass" class="w-5 h-5 text-indigo-600"></i>
-              ระบบคัดกรองความเสี่ยง (SDQ), การใช้สารเสพติด และโซนเยี่ยมบ้าน
-            </h2>
-            <p class="text-xs text-slate-500">แยกข้อมูลตามโซนอำเภอบ้านพัก แสดงสาเหตุความเสี่ยงและข้อมูลบุหรี่/สารเสพติดที่นักเรียนแจ้ง</p>
+      <div id="screeningHeaderContainer"></div>
+      <div id="screeningMapWrapper" class="hidden mb-5">
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-3 sm:p-5 space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h3 class="font-prompt font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
+                <i data-lucide="map" class="w-5 h-5 text-blue-600"></i>
+                แผนที่ปักหมุดบ้านพักนักเรียนตามระดับความเสี่ยง (แตะที่หมุดเพื่อดูข้อมูลและนำทาง)
+              </h3>
+              <p class="text-xs text-slate-500">หมุดสีแดง = กลุ่มมีปัญหา • หมุดสีส้ม = กลุ่มเสี่ยง • หมุดสีเขียว = กลุ่มปกติ</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 text-xs font-prompt font-semibold">
+              <span class="px-2.5 py-1 rounded-full bg-red-100 text-red-800 border border-red-300">🔴 มีปัญหา</span>
+              <span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-300">🟠 กลุ่มเสี่ยง</span>
+              <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">🟢 ปกติ</span>
+            </div>
           </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <select id="screeningZoneSelect"
-                    onchange="window.AppState.screeningZoneFilter = this.value; renderScreeningTab(); if(window.lucide) lucide.createIcons();"
-                    class="rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm bg-white outline-none">
-              <option value="ALL">ทุกโซนพื้นที่</option>
-            </select>
-            <select id="screeningRiskSelect"
-                    onchange="window.AppState.screeningRiskFilter = this.value; renderScreeningTab(); if(window.lucide) lucide.createIcons();"
-                    class="rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm bg-white outline-none">
-              <option value="ALL">ทุกระดับความเสี่ยง</option>
-              <option value="กลุ่มมีปัญหา">🔴 กลุ่มมีปัญหา</option>
-              <option value="กลุ่มเสี่ยง">🟠 กลุ่มเสี่ยง</option>
-              <option value="กลุ่มปกติ">🟢 กลุ่มปกติ</option>
-            </select>
-          </div>
+          <div id="departmentMapContainer" class="border border-slate-200 shadow-inner"></div>
         </div>
-
-        <!-- Horizontal Scrollable Zone Pills for Mobile -->
-        <div id="zoneSummaryPills" class="flex items-center gap-2 overflow-x-auto no-scrollbar mt-3 pt-3 border-t border-slate-100"></div>
       </div>
-
-      <div id="screeningListContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      <div id="screeningListContainer"></div>
     </section>
 
     <!-- ==================================================================== -->
@@ -240,108 +242,134 @@
   </main>
 
   <!-- ====================================================================== -->
-  <!-- MOBILE BOTTOM NAVIGATION BAR (ออกแบบให้พอดีนิ้วโป้งบนจอมือถือ)          -->
+  <!-- MOBILE BOTTOM NAVIGATION BAR (ขนาดพอดีนิ้วโป้ง ตัวหนังสือไม่ตกขอบ)     -->
   <!-- ====================================================================== -->
   <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-2xl z-40 bottom-nav-safe no-print">
     <div class="grid grid-cols-5 max-w-md mx-auto text-[11px] font-prompt">
-      <button id="mobile-nav-dashboard" onclick="switchMainTab('dashboard')" class="flex flex-col items-center justify-center py-2 px-1 text-blue-700 font-semibold">
+      <button id="mobile-nav-dashboard" onclick="switchMainTab('dashboard')" class="flex flex-col items-center justify-center py-2 px-0.5 text-blue-700 font-semibold">
         <i data-lucide="layout-dashboard" class="w-5 h-5 mb-0.5"></i>
-        <span>ภาพรวม</span>
+        <span class="leading-tight">ภาพรวม</span>
       </button>
-      <button id="mobile-nav-students" onclick="switchMainTab('students')" class="flex flex-col items-center justify-center py-2 px-1 text-slate-500 font-medium">
+      <button id="mobile-nav-students" onclick="switchMainTab('students')" class="flex flex-col items-center justify-center py-2 px-0.5 text-slate-500 font-medium">
         <i data-lucide="users" class="w-5 h-5 mb-0.5"></i>
-        <span>นักเรียน</span>
+        <span class="leading-tight">ทำเนียบ</span>
       </button>
-      <button id="mobile-nav-discipline" onclick="switchMainTab('discipline')" class="flex flex-col items-center justify-center py-2 px-1 text-slate-500 font-medium">
+      <button id="mobile-nav-screening" onclick="switchMainTab('screening')" class="flex flex-col items-center justify-center py-2 px-0.5 text-slate-500 font-medium">
+        <i data-lucide="activity" class="w-5 h-5 mb-0.5"></i>
+        <span class="leading-tight">คัดกรอง/ติดตาม</span>
+      </button>
+      <button id="mobile-nav-discipline" onclick="switchMainTab('discipline')" class="flex flex-col items-center justify-center py-2 px-0.5 text-slate-500 font-medium">
         <i data-lucide="shield-alert" class="w-5 h-5 mb-0.5"></i>
-        <span>ปกครอง</span>
+        <span class="leading-tight">ปกครอง</span>
       </button>
-      <button id="mobile-nav-screening" onclick="switchMainTab('screening')" class="flex flex-col items-center justify-center py-2 px-1 text-slate-500 font-medium">
-        <i data-lucide="map-pin" class="w-5 h-5 mb-0.5"></i>
-        <span>คัดกรอง/บ้าน</span>
-      </button>
-      <button id="mobile-nav-settings" onclick="switchMainTab('settings')" class="flex flex-col items-center justify-center py-2 px-1 text-slate-500 font-medium">
+      <button id="mobile-nav-settings" onclick="switchMainTab('settings')" class="flex flex-col items-center justify-center py-2 px-0.5 text-slate-500 font-medium">
         <i data-lucide="database" class="w-5 h-5 mb-0.5"></i>
-        <span>กลุ่ม/ซิงก์</span>
+        <span class="leading-tight">กลุ่ม/ซิงก์</span>
       </button>
     </div>
   </nav>
 
   <!-- ====================================================================== -->
-  <!-- MODALS (โปรไฟล์ 360°, แก้ไขข้อมูล, นำเข้าชั้นปีอื่น, คัดกรอง, กลุ่มเรียน) -->
+  <!-- MODALS (โปรไฟล์ 360°, พฤติกรรม/ติดตามเคส, แก้ไข, นำเข้า Google Form)   -->
   <!-- ====================================================================== -->
 
   <!-- 1. Student 360 Profile Modal -->
-  <div id="student360Modal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full max-w-3xl rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-modal">
-      <div id="student360ModalBody"></div>
+  <div id="student360Modal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4 no-print">
+    <div class="bg-white w-full max-w-3xl rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-modal max-h-[94vh] flex flex-col">
+      <div id="student360ModalBody" class="overflow-y-auto flex-1"></div>
     </div>
   </div>
 
-  <!-- 2. Edit / Add Student Modal -->
-  <div id="editStudentModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full max-w-2xl rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-modal max-h-[92vh] flex flex-col">
-      <div class="bg-slate-900 text-white px-5 py-4 flex items-center justify-between shrink-0">
-        <div class="flex items-center gap-2">
-          <i data-lucide="user-cog" class="w-5 h-5 text-blue-400"></i>
-          <h3 class="font-prompt font-bold text-sm sm:text-base">เพิ่ม / แก้ไขข้อมูลนักเรียน (รองรับ ปวช.1–3 และ ปวส.1–2)</h3>
-        </div>
-        <button onclick="closeModal('editStudentModal')" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
-      </div>
-      <div id="editStudentModalBody" class="p-5 overflow-y-auto"></div>
-    </div>
-  </div>
-
-  <!-- 3. Bulk Import Students for Other Academic Years Modal (นำเข้าชั้นปีอื่น) -->
-  <div id="bulkImportModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full max-w-3xl rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-modal max-h-[92vh] flex flex-col">
-      <div class="bg-gradient-to-r from-indigo-950 via-blue-900 to-slate-900 text-white px-5 py-4 flex items-center justify-between shrink-0">
-        <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center">
-            <i data-lucide="folder-plus" class="w-5 h-5 text-indigo-200"></i>
+  <!-- 2. Behavior Screening & Follow-up Tracking Modal (ใหม่! สำหรับคัดกรองพฤติกรรมและติดตามเคส) -->
+  <div id="behaviorFollowupModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4 no-print">
+    <div class="bg-white w-full max-w-2xl rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-modal max-h-[94vh] flex flex-col">
+      <div class="bg-gradient-to-r from-indigo-950 via-purple-950 to-slate-900 text-white px-4 sm:px-5 py-3.5 sm:py-4 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center shrink-0">
+            <i data-lucide="clipboard-check" class="w-5 h-5 text-amber-300"></i>
           </div>
-          <div>
-            <h3 class="font-prompt font-bold text-sm sm:text-base">ระบบเพิ่มข้อมูลนักเรียนชั้นปีอื่น / นำเข้ายกกลุ่ม (ปวช.1–3, ปวส.1–2)</h3>
-            <p class="text-[11px] text-blue-200">วางรายชื่อจากใบรายชื่อ Excel หรืออัปโหลดไฟล์แบบสอบถามเพื่อสร้างกลุ่มเรียนและเพิ่มนักเรียนอัตโนมัติ</p>
+          <div class="min-w-0">
+            <h3 class="font-prompt font-bold text-sm sm:text-base leading-snug">คัดกรองพฤติกรรมนักเรียน & บันทึกการติดตามดูแล</h3>
+            <p class="text-[11px] text-indigo-200 leading-tight">เลือกพฤติกรรมที่พบตามหมวดหมู่ อัปเดตสถานะการดูแล และบันทึกการเยี่ยมบ้าน</p>
           </div>
         </div>
-        <button onclick="closeModal('bulkImportModal')" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20">
+        <button onclick="closeModal('behaviorFollowupModal')" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 shrink-0">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
-      <div id="bulkImportModalBody" class="p-5 overflow-y-auto"></div>
+      <div id="behaviorFollowupModalBody" class="p-4 sm:p-5 overflow-y-auto flex-1"></div>
     </div>
   </div>
 
-  <!-- 4. Screening SDQ & Home Visit Modal -->
-  <div id="screeningModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full max-w-xl rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-modal max-h-[92vh] flex flex-col">
-      <div class="bg-indigo-950 text-white px-5 py-4 flex items-center justify-between shrink-0">
-        <div class="flex items-center gap-2">
-          <i data-lucide="home" class="w-5 h-5 text-emerald-400"></i>
-          <h3 class="font-prompt font-bold text-sm sm:text-base">บันทึกการคัดกรอง SDQ, สารเสพติด และเยี่ยมบ้าน</h3>
+  <!-- 3. Edit / Add Student Modal -->
+  <div id="editStudentModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4 no-print">
+    <div class="bg-white w-full max-w-2xl rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-modal max-h-[94vh] flex flex-col">
+      <div class="bg-slate-900 text-white px-4 sm:px-5 py-3.5 sm:py-4 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2 min-w-0">
+          <i data-lucide="user-cog" class="w-5 h-5 text-blue-400 shrink-0"></i>
+          <h3 class="font-prompt font-bold text-sm sm:text-base leading-snug">เพิ่ม / แก้ไขข้อมูลนักเรียน (รองรับ ปวช.1–3 และ ปวส.1–2)</h3>
         </div>
-        <button onclick="closeModal('screeningModal')" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20">
+        <button onclick="closeModal('editStudentModal')" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 shrink-0">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
-      <div id="screeningModalBody" class="p-5 overflow-y-auto"></div>
+      <div id="editStudentModalBody" class="p-4 sm:p-5 overflow-y-auto flex-1"></div>
     </div>
   </div>
 
-  <!-- 5. Class Group Editor Modal -->
-  <div id="classGroupModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4">
+  <!-- 4. Smart Google Forms & Other Academic Years Bulk Import Modal -->
+  <div id="bulkImportModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4 no-print">
+    <div class="bg-white w-full max-w-3xl rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-modal max-h-[94vh] flex flex-col">
+      <div class="bg-gradient-to-r from-indigo-950 via-blue-900 to-slate-900 text-white px-4 sm:px-5 py-3.5 sm:py-4 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center shrink-0">
+            <i data-lucide="file-spreadsheet" class="w-5 h-5 text-emerald-300"></i>
+          </div>
+          <div class="min-w-0">
+            <h3 class="font-prompt font-bold text-sm sm:text-base leading-snug">ศูนย์นำเข้าข้อมูลจาก Google Forms & เพิ่มนักเรียนชั้นปีอื่น</h3>
+            <p class="text-[11px] text-blue-200 leading-tight">รองรับไฟล์ CSV/Excel จาก Google Forms (ทั้งฟอร์มข้อมูลหลัก & ฟอร์มรูปถ่าย), ลิงก์ Google Sheets, และก๊อปปี้วาง</p>
+          </div>
+        </div>
+        <button onclick="closeModal('bulkImportModal')" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 shrink-0">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div id="bulkImportModalBody" class="p-4 sm:p-5 overflow-y-auto flex-1"></div>
+    </div>
+  </div>
+
+  <!-- 5. Screening SDQ & Home Visit Modal -->
+  <div id="screeningModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4 no-print">
+    <div class="bg-white w-full max-w-xl rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-modal max-h-[94vh] flex flex-col">
+      <div class="bg-indigo-950 text-white px-4 sm:px-5 py-3.5 sm:py-4 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2 min-w-0">
+          <i data-lucide="home" class="w-5 h-5 text-emerald-400 shrink-0"></i>
+          <h3 class="font-prompt font-bold text-sm sm:text-base leading-snug">บันทึกการเยี่ยมบ้านและพิกัด GPS</h3>
+        </div>
+        <button onclick="closeModal('screeningModal')" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 shrink-0">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div id="screeningModalBody" class="p-4 sm:p-5 overflow-y-auto flex-1"></div>
+    </div>
+  </div>
+
+  <!-- 6. Class Group Editor Modal -->
+  <div id="classGroupModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4 no-print">
     <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-modal">
-      <div class="bg-slate-900 text-white px-5 py-4 flex items-center justify-between">
-        <h3 class="font-prompt font-bold text-base">จัดการกลุ่มเรียนและครูที่ปรึกษา</h3>
+      <div class="bg-slate-900 text-white px-4 sm:px-5 py-3.5 sm:py-4 flex items-center justify-between">
+        <h3 class="font-prompt font-bold text-sm sm:text-base">จัดการกลุ่มเรียนและครูที่ปรึกษา</h3>
         <button onclick="closeModal('classGroupModal')" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
-      <div id="classGroupModalBody" class="p-5"></div>
+      <div id="classGroupModalBody" class="p-4 sm:p-5"></div>
     </div>
+  </div>
+
+  <!-- 7. Teacher PIN Lock Modal -->
+  <div id="pinLockModal" class="hidden fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-lg flex items-center justify-center p-4 no-print">
+    <div id="pinLockModalBody" class="bg-white w-full max-w-sm rounded-3xl shadow-2xl p-6 text-center animate-modal"></div>
   </div>
 
   <!-- Application Scripts -->
